@@ -22,15 +22,7 @@ public class Sheep extends EntitySheep {
 
     public Sheep(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.ax, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        this.setPosition(location.getX(), location.getY(), location.getZ());
-        this.setHealth(20.0f);
-        this.ageLocked = true;
-        this.setBaby(true);
-        this.setCustomNameVisible(true);
-        this.setInvulnerable(true);
-        this.setGoalTarget(((CraftPlayer) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
-        pet.setOwnerUUID(player.getUniqueId());
-        pet.setOwnUUID(this.getUniqueID());
+        new EntityManager(this, player, pet);
         initPathfinder();
     }
 

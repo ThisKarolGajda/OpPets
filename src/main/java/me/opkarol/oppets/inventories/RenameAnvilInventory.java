@@ -14,13 +14,13 @@ import org.jetbrains.annotations.NotNull;
 import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 
 public class RenameAnvilInventory {
-    private final String title = getMessage("AnvilInventories.RenameInventory.title");
     private final String thisNameIsBlocked = getMessage("AnvilInventories.RenameInventory.thisNameIsBlocked");
     private final String nameWithSpaces = getMessage("AnvilInventories.RenameInventory.nameWithSpaces");
     private final String changedName = getMessage("AnvilInventories.RenameInventory.changedName");
     private final String incorrectValueName = getMessage("AnvilInventories.RenameInventory.incorrectValueName");
 
     public RenameAnvilInventory(@NotNull Pet pet, Player playerOpened){
+        String title = getMessage("AnvilInventories.RenameInventory.title");
         new AnvilGUI.Builder()
                 .itemLeft(new ItemStack(Material.PAPER))
                 .preventClose()

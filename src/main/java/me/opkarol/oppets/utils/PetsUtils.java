@@ -2,10 +2,11 @@ package me.opkarol.oppets.utils;
 
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.pets.Pet;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.craftbukkit.libs.jline.internal.TestAccessible;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -15,7 +16,7 @@ public class PetsUtils {
     public static void killPetFromPlayerUUID(UUID playerUUID) {
         if (OpPets.getDatabase().getCurrentPet(playerUUID) != null) {
             if (EntityUtils.getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) != null)
-                ((LivingEntity) Objects.requireNonNull(EntityUtils.getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID()))).setHealth(0);
+                Objects.requireNonNull(EntityUtils.getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID())).remove();
 
         }
     }
@@ -25,6 +26,8 @@ public class PetsUtils {
         OpPets.getCreator().spawnMiniPet(pet, player);
     }
 
+    @TestOnly
+    @TestAccessible
     public static @NotNull String serializeSettingsOfPet(boolean @NotNull... settings){
         StringBuilder stringBuilder = new StringBuilder();
         for (boolean b : settings){

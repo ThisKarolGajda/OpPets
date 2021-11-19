@@ -10,6 +10,7 @@ import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.EntityUtils;
 import me.opkarol.oppets.utils.PetsUtils;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,7 +22,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-
 
 public class PlayerInteract implements Listener {
 
@@ -58,9 +58,7 @@ public class PlayerInteract implements Listener {
                     pet.setVisibleToOthers(getOppositeBoolean(pet.isVisibleToOthers()));
                     PetsUtils.respawnPet(pet, player);
                 }
-                case 10 -> {
-                    pet.setGiftable(getOppositeBoolean(pet.isGiftable()));
-                }
+                case 10 -> pet.setGiftable(getOppositeBoolean(pet.isGiftable()));
                 case 11 -> {
                     pet.setGlow(getOppositeBoolean(pet.isGlowing()));
                     PetsUtils.respawnPet(pet, player);
@@ -73,15 +71,9 @@ public class PlayerInteract implements Listener {
                     pet.setTeleportingToPlayer(getOppositeBoolean(pet.isTeleportingToPlayer()));
                     PetsUtils.respawnPet(pet, player);
                 }
-                case 14 -> {
-                    pet.setRideable(getOppositeBoolean(pet.isRideable()));
-                }
-                case 15 -> {
-                    pet.setOtherRideable(getOppositeBoolean(pet.isOtherRideable()));
-                }
-                case 16 -> {
-                    pet.setParticlesEnabled(getOppositeBoolean(pet.areParticlesEnabled()));
-                }
+                case 14 -> pet.setRideable(getOppositeBoolean(pet.isRideable()));
+                case 15 -> pet.setOtherRideable(getOppositeBoolean(pet.isOtherRideable()));
+                case 16 -> pet.setParticlesEnabled(getOppositeBoolean(pet.areParticlesEnabled()));
                 case 17 -> {
                     pet.setVisibleToOthers(true);
                     pet.setGiftable(false);
@@ -97,9 +89,11 @@ public class PlayerInteract implements Listener {
             }
             openSettingsInventory(player, pet);
             player.sendMessage("");
+
         } else if (holder instanceof LevelInventoryHolder) {
             event.setCancelled(true);
-        } else if (holder instanceof  PetMainInventoryHolder){
+
+        } else if (holder instanceof PetMainInventoryHolder){
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
             Pet pet = OpPets.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
@@ -111,7 +105,7 @@ public class PlayerInteract implements Listener {
                 case 14 -> player.openInventory(new SettingsInventory(pet).getInventory());
                 case 16 -> {
                     player.closeInventory();
-                    entity.setHealth(0);
+                    entity.remove();
                     OpPets.getCreator().spawnMiniPet(pet, player);
                 }
             }

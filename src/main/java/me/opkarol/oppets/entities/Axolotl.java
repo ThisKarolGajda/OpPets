@@ -19,15 +19,7 @@ public class Axolotl extends net.minecraft.world.entity.animal.axolotl.Axolotl {
 
     public Axolotl(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.e, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        this.setPosition(location.getX(), location.getY(), location.getZ());
-        this.setHealth(20.0f);
-        this.ageLocked = true;
-        this.setBaby(true);
-        this.setCustomNameVisible(true);
-        this.setInvulnerable(true);
-        this.setGoalTarget(((CraftPlayer)player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
-        pet.setOwnerUUID(player.getUniqueId());
-        pet.setOwnUUID(this.getUniqueID());
+        new EntityManager(this, player, pet);
         initPathfinder();
     }
 

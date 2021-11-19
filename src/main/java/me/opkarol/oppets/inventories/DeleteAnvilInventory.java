@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 
 public class DeleteAnvilInventory {
-    private final String title = getMessage("AnvilInventories.DeleteInventory.title");
     private final String deletedMessage = getMessage("AnvilInventories.DeleteInventory.deletedMessage");
     private final String confirmMessage = getMessage("AnvilInventories.DeleteInventory.confirmMessage");
 
     public DeleteAnvilInventory(@NotNull Pet pet, Player playerOpened) {
+        String title = getMessage("AnvilInventories.DeleteInventory.title");
         new AnvilGUI.Builder()
                 .onComplete((player, s) -> {
                     if (ChatColor.stripColor(s).equals(ChatColor.stripColor(pet.getPetName()))) {
