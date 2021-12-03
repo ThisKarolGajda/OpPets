@@ -1,6 +1,6 @@
 package me.opkarol.oppets.listeners;
 
-import me.opkarol.oppets.utils.PetsUtils;
+import me.opkarol.oppets.OpPets;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,6 +15,6 @@ public class PlayerLeaves implements Listener {
     public void playerLeaves(PlayerQuitEvent event){
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
-        PetsUtils.killPetFromPlayerUUID(playerUUID);
+        OpPets.getUtils().killPetFromPlayerUUID(playerUUID);
     }
 }

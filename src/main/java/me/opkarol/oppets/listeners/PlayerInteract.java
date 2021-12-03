@@ -8,10 +8,9 @@ import me.opkarol.oppets.inventories.holders.LevelInventoryHolder;
 import me.opkarol.oppets.inventories.holders.PetMainInventoryHolder;
 import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.EntityUtils;
-import me.opkarol.oppets.utils.PetsUtils;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import me.opkarol.oppets.utils.versionUtils.UtilsInterface;
+import net.minecraft.world.entity.Entity;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,29 +46,29 @@ public class PlayerInteract implements Listener {
     public void playerInteract2(@NotNull InventoryClickEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
         if (event.getSlot() == -999) return;
+        UtilsInterface utils = OpPets.getUtils();
 
         if (holder instanceof SettingsInventoryHolder) {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
             Pet pet = OpPets.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
-
             switch (event.getSlot()) {
                 case 9 -> {
                     pet.setVisibleToOthers(getOppositeBoolean(pet.isVisibleToOthers()));
-                    PetsUtils.respawnPet(pet, player);
+                    utils.respawnPet(pet, player);
                 }
                 case 10 -> pet.setGiftable(getOppositeBoolean(pet.isGiftable()));
                 case 11 -> {
                     pet.setGlow(getOppositeBoolean(pet.isGlowing()));
-                    PetsUtils.respawnPet(pet, player);
+                    utils.respawnPet(pet, player);
                 }
                 case 12 -> {
                     pet.setFollowPlayer(getOppositeBoolean(pet.isFollowingPlayer()));
-                    PetsUtils.respawnPet(pet, player);
+                    utils.respawnPet(pet, player);
                 }
                 case 13 -> {
                     pet.setTeleportingToPlayer(getOppositeBoolean(pet.isTeleportingToPlayer()));
-                    PetsUtils.respawnPet(pet, player);
+                    utils.respawnPet(pet, player);
                 }
                 case 14 -> pet.setRideable(getOppositeBoolean(pet.isRideable()));
                 case 15 -> pet.setOtherRideable(getOppositeBoolean(pet.isOtherRideable()));
@@ -83,7 +82,7 @@ public class PlayerInteract implements Listener {
                     pet.setRideable(true);
                     pet.setOtherRideable(false);
                     pet.setParticlesEnabled(true);
-                    PetsUtils.respawnPet(pet, player);
+                    utils.respawnPet(pet, player);
                 }
 
             }
@@ -97,15 +96,22 @@ public class PlayerInteract implements Listener {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
             Pet pet = OpPets.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
-            LivingEntity entity = (LivingEntity) EntityUtils.getEntityByUniqueId(pet.getOwnUUID());
-            assert entity != null;
             switch (event.getSlot()) {
                 case 10 -> player.openInventory(new LevelInventory(pet).getInventory());
                 case 12 -> new RenameAnvilInventory(pet, player);
                 case 14 -> player.openInventory(new SettingsInventory(pet).getInventory());
                 case 16 -> {
                     player.closeInventory();
-                    entity.remove();
+                    Object version = utils.getVersion();
+                    if ("v1_17_1R".equals(version)) {
+                        Entity entity = (Entity) utils.getEntityByUniqueId(pet.getOwnUUID());
+                        assert entity != null;
+                        entity.setRemoved(Entity.RemovalReason.b);
+                    } else if ("v1_16_3R".equals(version)) {
+                        CraftEntity entity = (CraftEntity) utils.getEntityByUniqueId(pet.getOwnUUID());
+                        assert entity != null;
+                        entity.remove();
+                    }
                     OpPets.getCreator().spawnMiniPet(pet, player);
                 }
             }

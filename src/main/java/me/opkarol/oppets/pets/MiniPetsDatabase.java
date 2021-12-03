@@ -1,9 +1,6 @@
 package me.opkarol.oppets.pets;
 
 import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.utils.EntityUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -44,14 +41,11 @@ public class MiniPetsDatabase {
 
     public void removePet(UUID uuid, @NotNull Pet pet){
         List<Pet> list = petsMap.get(uuid);
-        setPets(uuid, list);
-        UUID entityUUID = pet.getOwnUUID();
         try {
             list.remove(pet);
+            OpPets.getUtils().killPetFromPlayerUUID(pet.getOwnerUUID());
         } catch (Exception ignore){}
-        try {
-            ((LivingEntity) EntityUtils.getEntityByUniqueId(entityUUID)).setHealth(0);
-        } catch (Exception ignore){}
+        setPets(uuid, list);
     }
 
     public HashMap<UUID, Pet> getActivePetMap() {

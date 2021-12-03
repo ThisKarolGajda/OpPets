@@ -4,6 +4,7 @@ import org.bukkit.Warning;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.TestOnly;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ public class Pet implements Serializable {
 
     public Pet(){}
 
-    public String getPetName() {
+    public @Nullable String getPetName() {
         return a;
     }
 

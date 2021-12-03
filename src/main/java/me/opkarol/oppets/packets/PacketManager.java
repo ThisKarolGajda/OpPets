@@ -1,6 +1,5 @@
 package me.opkarol.oppets.packets;
 
-
 import io.netty.channel.*;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.events.PacketPlayInSteerVehicleEvent;

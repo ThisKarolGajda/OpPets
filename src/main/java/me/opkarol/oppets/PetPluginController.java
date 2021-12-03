@@ -1,14 +1,14 @@
 package me.opkarol.oppets;
 
 import me.opkarol.oppets.commands.MainCommand;
+import me.opkarol.oppets.entities.v1_17_1R.EntityManager;
 import me.opkarol.oppets.listeners.PlayerInteract;
 import me.opkarol.oppets.listeners.PlayerJoin;
 import me.opkarol.oppets.listeners.PlayerLeaves;
 import me.opkarol.oppets.listeners.PlayerSteerVehicle;
 import me.opkarol.oppets.misc.Metrics;
-import me.opkarol.oppets.packets.PacketManager;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.EntityUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.PluginManager;
@@ -85,7 +85,6 @@ public class PetPluginController {
         manager.registerEvents(new PlayerJoin(), instance);
         manager.registerEvents(new PlayerLeaves(), instance);
         manager.registerEvents(new PlayerInteract(), instance);
-        manager.registerEvents(new PlayerSteerVehicle(), instance);
 
     }
 
@@ -97,17 +96,60 @@ public class PetPluginController {
     public void removeAllPets(){
         for (UUID uuid : OpPets.getDatabase().getActivePetMap().keySet()){
             if (OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID() != null) {
-                Entity entity = EntityUtils.getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID());
+                Entity entity = OpPets.getUtils().getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID());
                 if (entity != null) {
-                    ((LivingEntity) EntityUtils.getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID())).setHealth(0);
+                    ((LivingEntity) OpPets.getUtils().getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID())).setHealth(0);
                 }
             }
         }
     }
 
-
     public void setupInventories(){
         OpPets.getInventoryManager().setupList();
 
+    }
+
+    public boolean setupVersion() {
+        String version;
+        try {
+            version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        } catch (ArrayIndexOutOfBoundsException whatVersionAreYouUsingException) {
+            return false;
+        }
+
+        instance.getLogger().info("Your server is running version " + version);
+        PluginManager manager = instance.getServer().getPluginManager();
+
+        switch (version){
+            case "v1_16_R1" -> {
+                OpPets.setEntityManager(new me.opkarol.oppets.entities.v1_16_1R.EntityManager());
+                OpPets.setCreator(new me.opkarol.oppets.pets.v1_16_1R.BabyEntityCreator());
+                OpPets.setUtils(new me.opkarol.oppets.utils.versionUtils.v1_16_1R.Utils());
+                return true;
+            }
+            case "v1_16_R2" -> {
+                OpPets.setEntityManager(new me.opkarol.oppets.entities.v1_16_3R.EntityManager());
+                OpPets.setCreator(new me.opkarol.oppets.pets.v1_16_3R.BabyEntityCreator());
+                OpPets.setUtils(new me.opkarol.oppets.utils.versionUtils.v1_16_3R.Utils());
+                return true;
+            }
+            case "v1_16_R3" -> {
+                OpPets.setEntityManager(new me.opkarol.oppets.entities.v1_16_5R.EntityManager());
+                OpPets.setCreator(new me.opkarol.oppets.pets.v1_16_5R.BabyEntityCreator());
+                OpPets.setUtils(new me.opkarol.oppets.utils.versionUtils.v1_16_5R.Utils());
+                return true;
+            }
+            case "v1_17_R1" -> {
+                OpPets.setEntityManager(new me.opkarol.oppets.entities.v1_17_1R.EntityManager());
+                OpPets.setCreator(new me.opkarol.oppets.pets.v1_17_1R.BabyEntityCreator());
+                OpPets.setUtils(new me.opkarol.oppets.utils.versionUtils.v1_17_1R.Utils());
+                manager.registerEvents(new PlayerSteerVehicle(), instance);
+                return true;
+            }
+            default -> {
+                return false;
+            }
+
+        }
     }
 }

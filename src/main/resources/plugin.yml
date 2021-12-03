@@ -1,7 +1,7 @@
 name: OpPets
 version: '${project.version}'
 main: me.opkarol.oppets.OpPets
-api-version: 1.17
+api-version: 1.13
 authors: [ OpKarol, ThisOpKarol, NotOpKarol ]
 
 commands:

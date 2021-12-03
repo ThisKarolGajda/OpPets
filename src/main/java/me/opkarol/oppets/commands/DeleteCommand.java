@@ -4,12 +4,11 @@ import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.inventories.DeleteAnvilInventory;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
@@ -57,7 +56,7 @@ public class DeleteCommand implements SubCommandInterface{
     private Pet getPetByName(UUID playerUUID, String petName){
         final Pet[] petI = new Pet[1];
         OpPets.getDatabase().getPetList(playerUUID).forEach(pet -> {
-            if (ChatColor.stripColor(pet.getPetName()).equals(ChatColor.stripColor(petName))){
+            if (Objects.equals(ChatColor.stripColor(pet.getPetName()), ChatColor.stripColor(petName))){
                 petI[0] = pet;
             }
         });

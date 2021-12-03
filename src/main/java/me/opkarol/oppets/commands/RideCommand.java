@@ -2,12 +2,9 @@ package me.opkarol.oppets.commands;
 
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.packets.PacketManager;
-import me.opkarol.oppets.utils.EntityUtils;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -24,7 +21,7 @@ public class RideCommand implements SubCommandInterface{
             return returnMessage(sender, "");
         }
 
-        Entity entity = EntityUtils.getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID());
+        Entity entity = OpPets.getUtils().getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID());
 
         if (entity != null) {
             entity.addPassenger(player);

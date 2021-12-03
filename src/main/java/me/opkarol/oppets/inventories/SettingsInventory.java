@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static me.opkarol.oppets.utils.ConfigUtils.*;
 import static me.opkarol.oppets.utils.InventoryUtils.*;
@@ -26,7 +27,7 @@ public class SettingsInventory {
 
     public SettingsInventory(@NotNull Pet pet) {
         this.pet = pet;
-        inventory = Bukkit.createInventory(new SettingsInventoryHolder(), 27, getMessage("SettingsInventory.title").replace("%pet_name%", pet.getPetName()));
+        inventory = Bukkit.createInventory(new SettingsInventoryHolder(), 27, getMessage("SettingsInventory.title").replace("%pet_name%", Objects.requireNonNull(pet.getPetName())));
         setupInventory();
     }
 

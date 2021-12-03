@@ -7,15 +7,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static me.opkarol.oppets.utils.FormatUtils.*;
+import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
     public static String noPetsString = "<NO-PETS>";
-    public static List<String> allowedEntities = Arrays.asList("Axolotl", "Cat", "Chicken", "Cow", "Donkey", "Fox", "Goat", "Zoglin", "Horse", "Llama", "Mule", "Mushroom_Cow", "Ocelot", "Panda", "Parrot", "Pig", "PolarBear", "Rabbit", "Sheep", "Turtle", "Wolf");
 
     List<SubCommandInterface> commands;
     public MainCommand(){
@@ -36,12 +36,24 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             switch (args[0]){
                 case "summon", "delete" -> {
                     List<String> result = new ArrayList<>();
-                    OpPets.getDatabase().getPetList(player.getUniqueId()).forEach(pet -> result.add(ChatColor.stripColor(pet.getPetName())));
+                    if (OpPets.getDatabase().getPetList(player.getUniqueId()) == null) return List.of(noPetsString);
+                    OpPets.getDatabase().getPetList(player.getUniqueId()).forEach(pet -> result.add(ChatColor.stripColor(Objects.requireNonNull(pet.getPetName()))));
                     if (result.size() == 0) result.add(noPetsString);
                     return result;
                 }
                 case "create" -> {
-                    return allowedEntities;
+                    List<String> completions = new ArrayList<>(OpPets.getEntityManager().getAllowedEntities());
+                    List<String> result = new ArrayList<>();
+                    StringUtil.copyPartialMatches(args[1], completions, result);
+                    Collections.sort(result);
+                    return result;
+                    /*
+                    String arg = args.length > 1 ? args[args.length -1] : "";
+                    return OpPets.getEntityManager().getAllowedEntities().stream()
+                            .filter(s -> (arg.isEmpty() || s.startsWith(arg.toLowerCase(Locale.ENGLISH))))
+                            .collect(Collectors.toList());
+                                                 */
+
                 }
             }
         }

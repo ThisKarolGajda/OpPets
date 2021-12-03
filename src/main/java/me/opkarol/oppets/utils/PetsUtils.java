@@ -1,30 +1,11 @@
 package me.opkarol.oppets.utils;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.pets.Pet;
 import org.bukkit.craftbukkit.libs.jline.internal.TestAccessible;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-import java.util.Objects;
-import java.util.UUID;
-
 public class PetsUtils {
-
-    public static void killPetFromPlayerUUID(UUID playerUUID) {
-        if (OpPets.getDatabase().getCurrentPet(playerUUID) != null) {
-            if (EntityUtils.getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) != null)
-                Objects.requireNonNull(EntityUtils.getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID())).remove();
-
-        }
-    }
-
-    public static void respawnPet(Pet pet, @NotNull Player player){
-        killPetFromPlayerUUID(player.getUniqueId());
-        OpPets.getCreator().spawnMiniPet(pet, player);
-    }
 
     @TestOnly
     @TestAccessible

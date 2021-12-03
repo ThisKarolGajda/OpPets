@@ -4,12 +4,13 @@ import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.commands.MainCommand;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.PetsUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 
@@ -34,7 +35,7 @@ public class RenameAnvilInventory {
                                 return AnvilGUI.Response.text(nameWithSpaces);
                             }
                         }
-                        PetsUtils.killPetFromPlayerUUID(player.getUniqueId());
+                        OpPets.getUtils().killPetFromPlayerUUID(player.getUniqueId());
                         if (player.hasPermission("oppets.pet.rename.colors")) {
                             pet.setPetName(FormatUtils.formatMessage(s));
                             player.sendMessage(changedName.replace("%new_pet_name%", FormatUtils.formatMessage(s)));
@@ -48,7 +49,7 @@ public class RenameAnvilInventory {
                         return AnvilGUI.Response.text(incorrectValueName);
                     }
                 }))
-                .text(pet.getPetName())
+                .text(Objects.requireNonNull(pet.getPetName()))
                 .title(title)
                 .plugin(OpPets.getInstance())
                 .open(playerOpened);

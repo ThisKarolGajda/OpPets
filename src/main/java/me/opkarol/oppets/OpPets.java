@@ -1,28 +1,53 @@
 package me.opkarol.oppets;
 
-import me.opkarol.oppets.api.OpPetsAPI;
+import api.OpPetsAPI;
+import me.opkarol.oppets.entities.EntityManagerInterface;
 import me.opkarol.oppets.inventories.InventoryManager;
-import me.opkarol.oppets.pets.BabyEntityCreator;
+import me.opkarol.oppets.pets.BabyEntityCreatorInterface;
 import me.opkarol.oppets.pets.MiniPetsDatabase;
+import me.opkarol.oppets.utils.versionUtils.UtilsInterface;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class OpPets extends JavaPlugin {
     private static OpPets opPets;
     private static PetPluginController controller;
     private static MiniPetsDatabase database;
-    private static BabyEntityCreator creator;
     private static OpPetsAPI api;
     private static InventoryManager inventoryManager;
+    private static BabyEntityCreatorInterface creator;
+    private static EntityManagerInterface entityManager;
+    private static UtilsInterface utils;
+
+    public static EntityManagerInterface getEntityManager() {
+        return entityManager;
+    }
+
+    public static void setEntityManager(EntityManagerInterface entityManager2) {
+        OpPets.entityManager = entityManager2;
+    }
+
+    public static void setCreator(BabyEntityCreatorInterface creator2) {
+        OpPets.creator = creator2;
+    }
+
+    public static UtilsInterface getUtils() {
+        return utils;
+    }
+
+    public static void setUtils(UtilsInterface utils) {
+        OpPets.utils = utils;
+    }
 
     @Override
     public void onEnable() {
         opPets = this;
         database = new MiniPetsDatabase();
-        creator = new BabyEntityCreator();
         inventoryManager = new InventoryManager();
         api = new OpPetsAPI();
         controller = new PetPluginController(opPets);
-
+        if (!getController().setupVersion()){
+            this.setEnabled(false);
+        }
     }
 
     @Override
@@ -46,7 +71,7 @@ public final class OpPets extends JavaPlugin {
         return database;
     }
 
-    public static BabyEntityCreator getCreator() {
+    public static BabyEntityCreatorInterface getCreator() {
         return creator;
     }
 
