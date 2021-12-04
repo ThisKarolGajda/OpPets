@@ -1,13 +1,23 @@
 package me.opkarol.oppets;
 
 import me.opkarol.oppets.commands.MainCommand;
-import me.opkarol.oppets.entities.v1_17_1R.EntityManager;
+import me.opkarol.oppets.entities.v1_16_1R.EntityManager;
+import me.opkarol.oppets.events.PacketPlayInSteerVehicleEvent;
+import me.opkarol.oppets.events.versions.PacketPlayInSteerVehicleEvent_v1_16_3;
+import me.opkarol.oppets.events.versions.PacketPlayInSteerVehicleEvent_v1_16_5;
+import me.opkarol.oppets.events.versions.PacketPlayInSteerVehicleEvent_v1_17_1;
 import me.opkarol.oppets.listeners.PlayerInteract;
 import me.opkarol.oppets.listeners.PlayerJoin;
 import me.opkarol.oppets.listeners.PlayerLeaves;
-import me.opkarol.oppets.listeners.PlayerSteerVehicle;
+import me.opkarol.oppets.listeners.packets.PlayerSteerVehicleEvent_v1_16_1;
+import me.opkarol.oppets.listeners.packets.PlayerSteerVehicleEvent_v1_16_3;
+import me.opkarol.oppets.listeners.packets.PlayerSteerVehicleEvent_v1_16_5;
+import me.opkarol.oppets.listeners.packets.PlayerSteerVehicleEvent_v1_17_1;
 import me.opkarol.oppets.misc.Metrics;
+import me.opkarol.oppets.packets.PacketManager;
 import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.pets.v1_16_1R.BabyEntityCreator;
+import me.opkarol.oppets.utils.versionUtils.v1_16_1R.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -113,43 +123,70 @@ public class PetPluginController {
         String version;
         try {
             version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        } catch (ArrayIndexOutOfBoundsException whatVersionAreYouUsingException) {
+            this.setVersion(version);
+        } catch (ArrayIndexOutOfBoundsException var5) {
             return false;
         }
 
-        instance.getLogger().info("Your server is running version " + version);
-        PluginManager manager = instance.getServer().getPluginManager();
+        this.instance.getLogger().info("Your server is running version " + version);
+        PluginManager manager = this.instance.getServer().getPluginManager();
+        new PacketManager();
 
-        switch (version){
+        switch(getVersion()) {
             case "v1_16_R1" -> {
-                OpPets.setEntityManager(new me.opkarol.oppets.entities.v1_16_1R.EntityManager());
-                OpPets.setCreator(new me.opkarol.oppets.pets.v1_16_1R.BabyEntityCreator());
-                OpPets.setUtils(new me.opkarol.oppets.utils.versionUtils.v1_16_1R.Utils());
+                OpPets.setEntityManager(new EntityManager());
+                OpPets.setCreator(new BabyEntityCreator());
+                OpPets.setUtils(new Utils());
+                this.setPacketEvent(new me.opkarol.oppets.events.packets.versions.PacketPlayInSteerVehicleEvent_v1_16_1());
+                manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_1(), this.instance);
                 return true;
             }
             case "v1_16_R2" -> {
                 OpPets.setEntityManager(new me.opkarol.oppets.entities.v1_16_3R.EntityManager());
                 OpPets.setCreator(new me.opkarol.oppets.pets.v1_16_3R.BabyEntityCreator());
                 OpPets.setUtils(new me.opkarol.oppets.utils.versionUtils.v1_16_3R.Utils());
+                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_16_3());
+                manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_3(), this.instance);
                 return true;
             }
             case "v1_16_R3" -> {
                 OpPets.setEntityManager(new me.opkarol.oppets.entities.v1_16_5R.EntityManager());
                 OpPets.setCreator(new me.opkarol.oppets.pets.v1_16_5R.BabyEntityCreator());
                 OpPets.setUtils(new me.opkarol.oppets.utils.versionUtils.v1_16_5R.Utils());
+                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_16_5());
+                manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_5(), this.instance);
                 return true;
             }
             case "v1_17_R1" -> {
                 OpPets.setEntityManager(new me.opkarol.oppets.entities.v1_17_1R.EntityManager());
                 OpPets.setCreator(new me.opkarol.oppets.pets.v1_17_1R.BabyEntityCreator());
                 OpPets.setUtils(new me.opkarol.oppets.utils.versionUtils.v1_17_1R.Utils());
-                manager.registerEvents(new PlayerSteerVehicle(), instance);
+                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_17_1());
+                manager.registerEvents(new PlayerSteerVehicleEvent_v1_17_1(), this.instance);
                 return true;
             }
             default -> {
                 return false;
             }
-
         }
     }
+
+    public PacketPlayInSteerVehicleEvent getPacketEvent() {
+        return this.packetEvent;
+    }
+
+    public void setPacketEvent(PacketPlayInSteerVehicleEvent packetEvent) {
+        this.packetEvent = packetEvent;
+    }
+
+    public String getVersion() {
+        return this.version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    private PacketPlayInSteerVehicleEvent packetEvent;
+    private String version;
 }

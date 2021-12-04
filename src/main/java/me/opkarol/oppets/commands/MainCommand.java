@@ -24,36 +24,33 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         commands.add(new CreateCommand());
         commands.add(new DeleteCommand());
         commands.add(new RideCommand());
+        commands.add(new HelpCommand());
     }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         Player player = (Player) sender;
+        List<String> result = new ArrayList<>();
 
         if (args.length == 1 || args[0].equalsIgnoreCase(" ")){
-            return Arrays.asList("ride", "delete", "create", "summon");
+            return Arrays.asList("ride", "delete", "create", "summon", "help");
         } else if (args.length == 2){
             switch (args[0]){
                 case "summon", "delete" -> {
-                    List<String> result = new ArrayList<>();
-                    if (OpPets.getDatabase().getPetList(player.getUniqueId()) == null) return List.of(noPetsString);
-                    OpPets.getDatabase().getPetList(player.getUniqueId()).forEach(pet -> result.add(ChatColor.stripColor(Objects.requireNonNull(pet.getPetName()))));
+                    UUID uuid = player.getUniqueId();
+                    if (OpPets.getDatabase().getPetList(uuid) == null) return List.of(noPetsString);
+                    List<String> completions = new ArrayList<>();
+                    OpPets.getDatabase().getPetList(uuid).forEach(pet -> completions.add(ChatColor.stripColor(pet.getPetName())));
+                    StringUtil.copyPartialMatches(args[1], completions, result);
+                    Collections.sort(result);
                     if (result.size() == 0) result.add(noPetsString);
                     return result;
                 }
                 case "create" -> {
                     List<String> completions = new ArrayList<>(OpPets.getEntityManager().getAllowedEntities());
-                    List<String> result = new ArrayList<>();
                     StringUtil.copyPartialMatches(args[1], completions, result);
                     Collections.sort(result);
                     return result;
-                    /*
-                    String arg = args.length > 1 ? args[args.length -1] : "";
-                    return OpPets.getEntityManager().getAllowedEntities().stream()
-                            .filter(s -> (arg.isEmpty() || s.startsWith(arg.toLowerCase(Locale.ENGLISH))))
-                            .collect(Collectors.toList());
-                                                 */
-
                 }
             }
         }

@@ -10,9 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
+import static me.opkarol.oppets.utils.FormatUtils.getStringFromFormattedMessage;
 
 public class RenameAnvilInventory {
     private final String thisNameIsBlocked = getMessage("AnvilInventories.RenameInventory.thisNameIsBlocked");
@@ -20,11 +19,13 @@ public class RenameAnvilInventory {
     private final String changedName = getMessage("AnvilInventories.RenameInventory.changedName");
     private final String incorrectValueName = getMessage("AnvilInventories.RenameInventory.incorrectValueName");
 
-    public RenameAnvilInventory(@NotNull Pet pet, Player playerOpened){
+    public RenameAnvilInventory(@NotNull Pet pet, @NotNull Player playerOpened){
         String title = getMessage("AnvilInventories.RenameInventory.title");
+        assert pet.getPetName() != null;
+        String stringFromFormattedMessage = getStringFromFormattedMessage(pet.getPetName());
+        playerOpened.sendMessage(stringFromFormattedMessage);
         new AnvilGUI.Builder()
                 .itemLeft(new ItemStack(Material.PAPER))
-                .preventClose()
                 .onComplete(((player, s) -> {
                     if(s != null) {
                         if (s.equals(MainCommand.noPetsString)){
@@ -49,7 +50,7 @@ public class RenameAnvilInventory {
                         return AnvilGUI.Response.text(incorrectValueName);
                     }
                 }))
-                .text(Objects.requireNonNull(pet.getPetName()))
+                .text(stringFromFormattedMessage)
                 .title(title)
                 .plugin(OpPets.getInstance())
                 .open(playerOpened);

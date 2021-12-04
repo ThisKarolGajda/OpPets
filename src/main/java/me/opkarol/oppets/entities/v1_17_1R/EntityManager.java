@@ -1,12 +1,14 @@
 package me.opkarol.oppets.entities.v1_17_1R;
 
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.entities.EntityManagerInterface;
-import me.opkarol.oppets.pathfinders.PathfinderGoalPet_1_17_1;
+import me.opkarol.oppets.pathfinders.versions.PathfinderGoalPet_1_17_1;
 import me.opkarol.oppets.pets.Pet;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalFloat;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalLookAtPlayer;
 import net.minecraft.world.entity.animal.EntityAnimal;
 import net.minecraft.world.entity.player.EntityHuman;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -31,6 +33,18 @@ public class EntityManager implements EntityManagerInterface {
         entity.setGoalTarget(((CraftPlayer) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
         pet.setOwnerUUID(player.getUniqueId());
         pet.setOwnUUID(entity.getUniqueID());
+        String version = Bukkit.getBukkitVersion().split("-")[0];
+
+        switch(version) {
+            case "1.17":
+                OpPets.getUtils().removePathfinders((Object)null, entity.bP);
+                break;
+            case "1.17.1":
+                OpPets.getUtils().removePathfinders(entity.bP, entity.bQ);
+                break;
+            default:
+                return;
+        }
         initPathfinder(entity);
     }
 

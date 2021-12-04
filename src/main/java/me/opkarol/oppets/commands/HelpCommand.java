@@ -1,8 +1,8 @@
 package me.opkarol.oppets.commands;
 
-import org.bukkit.command.Command;
+import me.opkarol.oppets.OpPets;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -11,7 +11,12 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 public class HelpCommand implements SubCommandInterface{
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        return returnMessage(sender, "help");
+        if (!(sender instanceof Player player)) {
+            return returnMessage(sender, "");
+        }
+
+        player.openInventory(OpPets.getInventoryManager().getInventoryByIndex(0));
+        return true;
     }
 
     @Override

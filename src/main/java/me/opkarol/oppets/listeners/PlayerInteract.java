@@ -9,8 +9,6 @@ import me.opkarol.oppets.inventories.holders.PetMainInventoryHolder;
 import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.versionUtils.UtilsInterface;
-import net.minecraft.world.entity.Entity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +19,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+
+import static me.opkarol.oppets.utils.PetsUtils.removePet;
 
 public class PlayerInteract implements Listener {
 
@@ -102,16 +102,7 @@ public class PlayerInteract implements Listener {
                 case 14 -> player.openInventory(new SettingsInventory(pet).getInventory());
                 case 16 -> {
                     player.closeInventory();
-                    Object version = utils.getVersion();
-                    if ("v1_17_1R".equals(version)) {
-                        Entity entity = (Entity) utils.getEntityByUniqueId(pet.getOwnUUID());
-                        assert entity != null;
-                        entity.setRemoved(Entity.RemovalReason.b);
-                    } else if ("v1_16_3R".equals(version)) {
-                        CraftEntity entity = (CraftEntity) utils.getEntityByUniqueId(pet.getOwnUUID());
-                        assert entity != null;
-                        entity.remove();
-                    }
+                    removePet(utils, pet);
                     OpPets.getCreator().spawnMiniPet(pet, player);
                 }
             }

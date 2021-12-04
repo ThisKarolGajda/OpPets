@@ -2,6 +2,7 @@ package me.opkarol.oppets.commands;
 
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.packets.PacketManager;
+import me.opkarol.oppets.pets.Pet;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -17,7 +18,8 @@ public class RideCommand implements SubCommandInterface{
             return returnMessage(sender, "");
         }
 
-        if (args.length != 0){
+        Pet pet = OpPets.getDatabase().getCurrentPet(player.getUniqueId());
+        if (!pet.isRideable()){
             return returnMessage(sender, "");
         }
 

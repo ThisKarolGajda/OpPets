@@ -4,6 +4,8 @@ import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.versionUtils.UtilsInterface;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -13,8 +15,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public class Utils implements UtilsInterface {
     @Override
@@ -71,5 +73,42 @@ public class Utils implements UtilsInterface {
     @Override
     public Object getVersion() {
         return "v1_17_1R";
+    }
+
+    public void removePathfinders(Object bP, Object bQ) {
+        PathfinderGoalSelector goalSelector = (PathfinderGoalSelector)bP;
+        PathfinderGoalSelector targetSelector = (PathfinderGoalSelector)bQ;
+
+        Field dField;
+        Field cField;
+        Field fField;
+        try {
+            dField = PathfinderGoalSelector.class.getDeclaredField("d");
+            dField.setAccessible(true);
+            dField.set(goalSelector, new LinkedHashSet());
+            cField = PathfinderGoalSelector.class.getDeclaredField("c");
+            cField.setAccessible(true);
+            cField.set(goalSelector, new EnumMap(PathfinderGoal.Type.class));
+            fField = PathfinderGoalSelector.class.getDeclaredField("f");
+            fField.setAccessible(true);
+            fField.set(goalSelector, EnumSet.noneOf(PathfinderGoal.Type.class));
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException var9) {
+            var9.printStackTrace();
+        }
+
+        try {
+            dField = PathfinderGoalSelector.class.getDeclaredField("d");
+            dField.setAccessible(true);
+            dField.set(targetSelector, new LinkedHashSet());
+            cField = PathfinderGoalSelector.class.getDeclaredField("c");
+            cField.setAccessible(true);
+            cField.set(targetSelector, new EnumMap(PathfinderGoal.Type.class));
+            fField = PathfinderGoalSelector.class.getDeclaredField("f");
+            fField.setAccessible(true);
+            fField.set(targetSelector, EnumSet.noneOf(PathfinderGoal.Type.class));
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException var8) {
+            var8.printStackTrace();
+        }
+
     }
 }

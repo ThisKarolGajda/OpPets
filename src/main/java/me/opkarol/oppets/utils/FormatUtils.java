@@ -1,5 +1,6 @@
 package me.opkarol.oppets.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
@@ -24,5 +25,17 @@ public class FormatUtils {
     public static boolean returnMessage(@NotNull CommandSender sender, String message){
         sender.sendMessage(message);
         return true;
+    }
+
+    @Contract(pure = true)
+    public static @NotNull String getStringFromFormattedMessage(@NotNull String message){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (char c : message.toCharArray()){
+            stringBuilder.append(ChatColor.stripColor(String.valueOf(c).strip()));
+
+            Bukkit.broadcastMessage(ChatColor.stripColor(String.valueOf(c).strip()));
+        }
+        Bukkit.broadcastMessage(stringBuilder + " " + message);
+        return stringBuilder.toString();
     }
 }

@@ -24,4 +24,6 @@ public interface UtilsInterface {
     void respawnPet(Pet pet, @NotNull Player player);
 
     Object getVersion();
+
+    void removePathfinders(Object var1, Object var2);
 }

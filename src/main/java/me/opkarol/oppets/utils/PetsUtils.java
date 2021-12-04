@@ -1,6 +1,9 @@
 package me.opkarol.oppets.utils;
 
+import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.utils.versionUtils.UtilsInterface;
 import org.bukkit.craftbukkit.libs.jline.internal.TestAccessible;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -52,6 +55,23 @@ public class PetsUtils {
             iI++;
         }
         return stringBuilder.toString();
+    }
+
+    public static void removePet(@NotNull UtilsInterface utils, Pet pet){
+        Object version = utils.getVersion();
+        if ("v1_17_1R".equals(version)) {
+            org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity entity = (org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity) utils.getEntityByUniqueId(pet.getOwnUUID());
+            if (entity != null) entity.remove();
+        } else if ("v1_16_3R".equals(version)) {
+            CraftEntity entity = (CraftEntity) utils.getEntityByUniqueId(pet.getOwnUUID());
+            if (entity != null) entity.remove();
+        } else if ("v1_16_2R".equals(version)) {
+            org.bukkit.craftbukkit.v1_16_R2.entity.CraftEntity entity = (org.bukkit.craftbukkit.v1_16_R2.entity.CraftEntity) utils.getEntityByUniqueId(pet.getOwnUUID());
+            if (entity != null) entity.remove();
+        } else if ("v1_16_1R".equals(version)) {
+            org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity entity = (org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity) utils.getEntityByUniqueId(pet.getOwnUUID());
+            if (entity != null) entity.remove();
+        }
     }
 
 
