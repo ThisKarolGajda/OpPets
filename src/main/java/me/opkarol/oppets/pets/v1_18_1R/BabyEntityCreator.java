@@ -1,13 +1,14 @@
-package me.opkarol.oppets.pets.v1_17_1R;
+package me.opkarol.oppets.pets.v1_18_1R;
+
 
 import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.entities.v1_17_1R.*;
+import me.opkarol.oppets.entities.v1_18_1R.*;
 import me.opkarol.oppets.pets.BabyEntityCreatorInterface;
 import me.opkarol.oppets.pets.Pet;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.entity.EntityAgeable;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

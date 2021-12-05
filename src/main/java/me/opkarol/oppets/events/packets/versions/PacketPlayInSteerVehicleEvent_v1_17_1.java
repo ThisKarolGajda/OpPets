@@ -1,4 +1,4 @@
-package me.opkarol.oppets.events.versions;
+package me.opkarol.oppets.events.packets.versions;
 
 import me.opkarol.oppets.events.PacketPlayInSteerVehicleEvent;
 import net.minecraft.network.protocol.game.PacketPlayInSteerVehicle;

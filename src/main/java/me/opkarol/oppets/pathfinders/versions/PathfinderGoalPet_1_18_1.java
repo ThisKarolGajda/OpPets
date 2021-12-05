@@ -1,4 +1,4 @@
-package me.opkarol.oppets.pathfinders;
+package me.opkarol.oppets.pathfinders.versions;
 
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.pets.Pet;
@@ -8,7 +8,7 @@ import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 
 import java.util.EnumSet;
 
-public class PathfinderGoalPet_1_17_1 extends PathfinderGoal{
+public class PathfinderGoalPet_1_18_1 extends PathfinderGoal {
 
     private final EntityInsentient a;
     private EntityLiving b;
@@ -16,11 +16,11 @@ public class PathfinderGoalPet_1_17_1 extends PathfinderGoal{
     private final double f;
     private final double g;
 
-    public PathfinderGoalPet_1_17_1(EntityInsentient a, double speed, float distance) {
+    public PathfinderGoalPet_1_18_1(EntityInsentient a, double speed, float distance) {
         this.a = a;
         this.f = speed;
         this.g = distance;
-        this.a(EnumSet.of(PathfinderGoal.Type.c));
+        this.a(EnumSet.of(Type.c));
         pet = null;
     }
 

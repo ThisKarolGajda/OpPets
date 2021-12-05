@@ -1,6 +1,6 @@
 package me.opkarol.oppets.listeners.packets;
 
-import me.opkarol.oppets.events.versions.PacketPlayInSteerVehicleEvent_v1_17_1;
+import me.opkarol.oppets.events.packets.versions.PacketPlayInSteerVehicleEvent_v1_17_1;
 import me.opkarol.oppets.packets.PacketManager;
 import net.minecraft.network.protocol.game.PacketPlayInSteerVehicle;
 import org.bukkit.entity.Entity;

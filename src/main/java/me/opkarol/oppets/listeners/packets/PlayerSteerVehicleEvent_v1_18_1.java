@@ -1,8 +1,8 @@
 package me.opkarol.oppets.listeners.packets;
 
-import me.opkarol.oppets.events.packets.versions.PacketPlayInSteerVehicleEvent_v1_16_3;
+import me.opkarol.oppets.events.packets.versions.PacketPlayInSteerVehicleEvent_v1_18_1;
 import me.opkarol.oppets.packets.PacketManager;
-import net.minecraft.server.v1_16_R2.PacketPlayInSteerVehicle;
+import net.minecraft.network.protocol.game.PacketPlayInSteerVehicle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,12 +10,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerSteerVehicleEvent_v1_16_3 implements Listener {
-    public PlayerSteerVehicleEvent_v1_16_3() {
+public class PlayerSteerVehicleEvent_v1_18_1 implements Listener {
+    public PlayerSteerVehicleEvent_v1_18_1() {
     }
 
     @EventHandler
-    public void playerSteerVehicle(PacketPlayInSteerVehicleEvent_v1_16_3 event) {
+    public void playerSteerVehicle(PacketPlayInSteerVehicleEvent_v1_18_1 event) {
         Player player = event.getPlayer();
         PacketPlayInSteerVehicle packet = event.getPacket();
         Entity vehicle = player.getVehicle();

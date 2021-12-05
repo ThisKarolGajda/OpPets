@@ -1,7 +1,7 @@
-package me.opkarol.oppets.events.versions;
+package me.opkarol.oppets.events.packets.versions;
 
 import me.opkarol.oppets.events.PacketPlayInSteerVehicleEvent;
-import net.minecraft.server.v1_16_R2.PacketPlayInSteerVehicle;
+import net.minecraft.server.v1_16_R3.PacketPlayInSteerVehicle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -11,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PacketPlayInSteerVehicleEvent_v1_16_3 extends Event implements PacketPlayInSteerVehicleEvent {
+public class PacketPlayInSteerVehicleEvent_v1_16_5 extends Event implements PacketPlayInSteerVehicleEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private PacketPlayInSteerVehicle packet;
     private Player player;
 
-    public PacketPlayInSteerVehicleEvent_v1_16_3() {
+    public PacketPlayInSteerVehicleEvent_v1_16_5() {
     }
 
     @NotNull
