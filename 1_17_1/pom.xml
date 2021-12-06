@@ -5,6 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>1_17_1</artifactId>
+    <properties>
+        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -18,22 +23,25 @@
             </plugin>
         </plugins>
     </build>
-    <groupId>me.opkarol.oppets</groupId>
-    <packaging>jar</packaging>
     <version>1.0.0</version>
+
+    <parent>
+        <artifactId>OpPets</artifactId>
+        <groupId>me.opkarol.oppets</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>1.17.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>OpPetsPlugin</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>

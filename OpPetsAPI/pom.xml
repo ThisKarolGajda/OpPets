@@ -18,8 +18,12 @@
             </plugin>
         </plugins>
     </build>
-    <groupId>me.opkarol.oppets</groupId>
-    <packaging>jar</packaging>
+    <parent>
+        <artifactId>OpPets</artifactId>
+        <groupId>me.opkarol.oppets</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <packaging>pom</packaging>
     <version>1.0.0</version>
 
     <dependencies>
