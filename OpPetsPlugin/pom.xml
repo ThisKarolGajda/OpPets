@@ -34,27 +34,32 @@
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>OpPetsAPI</artifactId>
-            <version>1.0.0</version>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>me.opkarol.oppets</groupId>
+            <artifactId>1_18</artifactId>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_17_1</artifactId>
-            <version>1.0.0</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_16_1</artifactId>
-            <version>1.0.0</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_16_2</artifactId>
-            <version>1.0.0</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_16_3</artifactId>
-            <version>1.0.0</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -79,10 +84,6 @@
             <artifactId>spigot-api</artifactId>
             <version>1.18-R0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>me.opkarol.oppets</groupId>
-            <artifactId>1_18</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+
     </dependencies>
 </project>
