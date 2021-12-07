@@ -12,6 +12,7 @@
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <packaging>jar</packaging>
 
     <artifactId>OpPetsPlugin</artifactId>
 
@@ -39,6 +40,11 @@
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_17_1</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>me.opkarol.oppets</groupId>
+            <artifactId>1_18</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
@@ -74,15 +80,17 @@
             <version>1.6.6</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>me.opkarol.oppets</groupId>
-            <artifactId>1_18</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.spigotmc</groupId>
+                <artifactId>spigot-api</artifactId>
+                <version>1.18-R0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>
