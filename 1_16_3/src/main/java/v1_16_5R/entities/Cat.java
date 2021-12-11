@@ -1,7 +1,6 @@
 package v1_16_5R.entities;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.pets.Pet;
+import dir.pets.Pet;
 import net.minecraft.server.v1_16_R3.EntityCat;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import org.bukkit.Location;
@@ -15,6 +14,6 @@ public class Cat extends EntityCat {
 
     public Cat(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.CAT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        OpPets.getEntityManager().spawnEntity(this, player, pet);
+        new EntityManager().spawnEntity(this, player, pet);
     }
 }

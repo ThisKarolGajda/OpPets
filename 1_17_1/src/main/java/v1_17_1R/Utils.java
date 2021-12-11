@@ -2,9 +2,9 @@ package v1_17_1R;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.interfaces.UtilsInterface;
+import dir.pets.Database;
+import dir.pets.Pet;
+import dir.interfaces.UtilsInterface;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
@@ -30,7 +30,7 @@ public class Utils implements UtilsInterface {
     public void hideEntityFromServer(Player owner, int entityId) {
         Bukkit.getOnlinePlayers().forEach(player1 -> {
             if (player1 != owner) {
-                ((CraftPlayer) player1).getHandle().b.sendPacket(new PacketPlayOutEntityDestroy(entityId));
+                ((CraftPlayer) player1).getHandle().connection.send(new PacketPlayOutEntityDestroy(entityId));
             }
         });
     }
@@ -40,9 +40,9 @@ public class Utils implements UtilsInterface {
         new BukkitRunnable() {
             @Override
             public void run() {
-                ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutEntityDestroy(entityId));
+                ((CraftPlayer) player).getHandle().connection.send(new PacketPlayOutEntityDestroy(entityId));
             }
-        }.runTask(OpPets.getInstance());
+        }.runTask(Database.getInstance());
     }
 
     @Override
@@ -55,21 +55,21 @@ public class Utils implements UtilsInterface {
 
     @Override
     public void killPetFromPlayerUUID(UUID playerUUID) {
-        if (OpPets.getDatabase().getCurrentPet(playerUUID) == null) {
+        if (Database.getDatabase().getCurrentPet(playerUUID) == null) {
             return;
         }
-        if (getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) == null) {
+        if (getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) == null) {
             return;
         }
-        Entity entity = Objects.requireNonNull(getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID()));
+        Entity entity = Objects.requireNonNull(getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()));
         entity.remove();
 
     }
 
     @Override
-    public void respawnPet(Pet pet, @NotNull Player player) {
+    public void respawnPet(Object pet, @NotNull Player player) {
         killPetFromPlayerUUID(player.getUniqueId());
-        OpPets.getCreator().spawnMiniPet(pet, player);
+        new BabyEntityCreator().spawnMiniPet((Pet) pet, player);
     }
 
     @Override
@@ -122,11 +122,11 @@ public class Utils implements UtilsInterface {
 
     @Override
     public Channel getPlayerChannel(Player player) {
-        return ((CraftPlayer) player).getHandle().b.a.k;
+        return ((CraftPlayer) player).getHandle().connection.connection.channel;
     }
 
     @Override
     public ChannelPipeline getPlayerPipeline(Player player) {
-        return ((CraftPlayer) player).getHandle().b.a.k.pipeline();
+        return ((CraftPlayer) player).getHandle().connection.connection.channel.pipeline();
     }
 }

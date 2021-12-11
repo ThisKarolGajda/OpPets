@@ -1,6 +1,6 @@
 package v1_16_3R;
 
-import me.opkarol.oppets.interfaces.PacketPlayInSteerVehicleEvent;
+import dir.interfaces.PacketPlayInSteerVehicleEvent;
 import net.minecraft.server.v1_16_R2.PacketPlayInSteerVehicle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

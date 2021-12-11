@@ -1,6 +1,6 @@
 package v1_16_5R;
 
-import me.opkarol.oppets.packets.PacketManager;
+import dir.packets.PacketManager;
 import net.minecraft.server.v1_16_R3.PacketPlayInSteerVehicle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,7 +14,7 @@ public class PlayerSteerVehicleEvent_v1_16_5 implements Listener {
     }
 
     @EventHandler
-    public void playerSteerVehicle(PacketPlayInSteerVehicleEvent_v1_16_5 event) {
+    public void playerSteerVehicle(@NotNull PacketPlayInSteerVehicleEvent_v1_16_5 event) {
         Player player = event.getPlayer();
         PacketPlayInSteerVehicle packet = event.getPacket();
         Entity vehicle = player.getVehicle();

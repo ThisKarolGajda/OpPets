@@ -1,10 +1,8 @@
 package v1_16_1R;
 
+import dir.interfaces.UtilsInterface;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.interfaces.UtilsInterface;
 import net.minecraft.server.v1_16_R1.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_16_R1.PathfinderGoal;
 import net.minecraft.server.v1_16_R1.PathfinderGoalSelector;
@@ -16,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import dir.pets.Database;
+import dir.pets.Pet;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -42,7 +42,7 @@ public class Utils implements UtilsInterface {
             public void run() {
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(entityId));
             }
-        }.runTask(OpPets.getInstance());
+        }.runTask(Database.getInstance());
     }
 
     @Override
@@ -55,21 +55,21 @@ public class Utils implements UtilsInterface {
 
     @Override
     public void killPetFromPlayerUUID(UUID playerUUID) {
-        if (OpPets.getDatabase().getCurrentPet(playerUUID) == null) {
+        if (Database.getDatabase().getCurrentPet(playerUUID) == null) {
             return;
         }
-        if (getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) == null) {
+        if (getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) == null) {
             return;
         }
-        CraftEntity entity = (CraftEntity) Objects.requireNonNull(getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID()));
+        CraftEntity entity = (CraftEntity) Objects.requireNonNull(getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()));
         entity.remove();
 
     }
 
     @Override
-    public void respawnPet(Pet pet, @NotNull Player player) {
+    public void respawnPet(Object pet, @NotNull Player player) {
         killPetFromPlayerUUID(player.getUniqueId());
-        OpPets.getCreator().spawnMiniPet(pet, player);
+        new BabyEntityCreator().spawnMiniPet((Pet) pet, player);
     }
 
     @Override

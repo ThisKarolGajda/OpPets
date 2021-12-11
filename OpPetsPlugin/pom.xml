@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -21,12 +20,8 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
         </repository>
     </repositories>
 
@@ -34,6 +29,11 @@
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>OpPetsAPI</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>me.opkarol.oppets</groupId>
+            <artifactId>1_18</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
@@ -56,33 +56,75 @@
             <artifactId>1_16_3</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>22.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.wesjd</groupId>
-            <artifactId>anvilgui</artifactId>
-            <version>1.5.3-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>xyz.xenondevs</groupId>
-            <artifactId>particle</artifactId>
-            <version>1.6.6</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.18-R0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>me.opkarol.oppets</groupId>
-            <artifactId>1_18</artifactId>
-            <version>1.0.0</version>
-        </dependency>
     </dependencies>
+
+    <build>
+        <defaultGoal>clean install javadoc:javadoc</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <outputDirectory>${project.basedir}/javadocs</outputDirectory>
+                    <reportOutputDirectory>${project.basedir}/javadocs</reportOutputDirectory>
+                    <destDir>${project.basedir}/javadocs</destDir>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <includes>
+                                        <include>v1_18_1R/**</include>
+                                        <include>v1_17_1R/**</include>
+                                        <include>v1_16_1R/**</include>
+                                        <include>v1_16_3R/**</include>
+                                        <include>v1_16_5R/**</include>
+                                        <include>dir/**</include>
+                                        <include>plugin.yml</include>
+                                        <include>config.yml</include>
+                                        <include>me/opkarol/oppets/**</include>
+                                        <include>net/wesjd/anvilgui/**</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <directory>../target</directory>
+        <finalName>OpPets</finalName>
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>config.yml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 </project>

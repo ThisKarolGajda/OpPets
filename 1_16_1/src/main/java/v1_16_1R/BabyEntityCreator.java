@@ -1,14 +1,14 @@
 package v1_16_1R;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.interfaces.BabyEntityCreatorInterface;
-import me.opkarol.oppets.pets.Pet;
+import dir.interfaces.BabyEntityCreatorInterface;
 import net.minecraft.server.v1_16_R1.ChatMessage;
 import net.minecraft.server.v1_16_R1.EntityAgeable;
 import net.minecraft.server.v1_16_R1.WorldServer;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import dir.pets.Database;
+import dir.pets.Pet;
 import v1_16_1R.entities.*;
 
 public class BabyEntityCreator implements BabyEntityCreatorInterface {
@@ -22,12 +22,12 @@ public class BabyEntityCreator implements BabyEntityCreatorInterface {
         entityAnimal.setCustomName(new ChatMessage(pet.getPetName()));
         entityAnimal.glowing = pet.isGlowing();
         pet.setOwnUUID(entityAnimal.getUniqueID());
-        OpPets.getDatabase().setCurrentPet(player.getUniqueId(), pet);
+        Database.getDatabase().setCurrentPet(player.getUniqueId(), pet);
         world.addEntity(entityAnimal);
         int id = entityAnimal.getId();
-        OpPets.getDatabase().addIdPet(pet.getOwnUUID(), id);
+        Database.getDatabase().addIdPet(pet.getOwnUUID(), id);
         if (pet.isVisibleToOthers()) return;
-        OpPets.getUtils().hideEntityFromServer(player, id);
+        new Utils().hideEntityFromServer(player, id);
     }
 
     public EntityAgeable getPet(@NotNull Pet pet, Player player){

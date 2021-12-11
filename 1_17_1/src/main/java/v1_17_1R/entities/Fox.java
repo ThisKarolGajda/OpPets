@@ -1,9 +1,7 @@
 package v1_17_1R.entities;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.pets.Pet;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.animal.EntityFox;
+import dir.pets.Pet;
+import net.minecraft.world.entity.EntityType;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.entity.Player;
@@ -11,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class Fox extends EntityFox {
+public class Fox extends net.minecraft.world.entity.animal.Fox {
 
     public Fox(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
-        super(EntityTypes.E, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        OpPets.getEntityManager().spawnEntity(this, player, pet);
+        super(EntityType.FOX, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
+        new EntityManager().spawnEntity(this, player, pet);
     }
 }

@@ -1,8 +1,8 @@
 package v1_16_3R;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.pets.Pet;
 import net.minecraft.server.v1_16_R2.*;
+import dir.pets.Database;
+import dir.pets.Pet;
 
 import java.util.EnumSet;
 
@@ -27,7 +27,7 @@ public class PathfinderGoalPet_1_16_2 extends PathfinderGoal {
     @Override
     public boolean a() {
         this.b = this.a.getGoalTarget();
-        if (pet == null && this.b != null) pet = OpPets.getDatabase().getCurrentPet(b.getUniqueID());
+        if (pet == null && this.b != null) pet = Database.getDatabase().getCurrentPet(b.getUniqueID());
         if (this.b == null) {
             return false;
         } else if (this.a.getDisplayName() == null || pet.getPetName() == null) {

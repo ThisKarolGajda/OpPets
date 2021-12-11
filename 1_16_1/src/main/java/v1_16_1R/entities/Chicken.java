@@ -1,7 +1,6 @@
 package v1_16_1R.entities;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.pets.Pet;
+import dir.pets.Pet;
 import net.minecraft.server.v1_16_R1.EntityChicken;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import org.bukkit.Location;
@@ -14,6 +13,6 @@ import java.util.Objects;
 public class Chicken extends EntityChicken {
     public Chicken(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.CHICKEN, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        OpPets.getEntityManager().spawnEntity(this, player, pet);
+        new EntityManager().spawnEntity(this, player, pet);
     }
 }

@@ -1,36 +1,52 @@
 package v1_18_1R;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.interfaces.BabyEntityCreatorInterface;
-import me.opkarol.oppets.pets.Pet;
-import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.world.entity.EntityAgeable;
+import dir.interfaces.BabyEntityCreatorInterface;
+import dir.pets.Database;
+import dir.pets.Pet;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.animal.Animal;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import v1_18_1R.entities.*;
+
+import java.util.Objects;
 
 public class BabyEntityCreator implements BabyEntityCreatorInterface {
 
     @Override
     public void spawnMiniPet(@NotNull Pet pet, @NotNull Player player){
         pet.setOwnerUUID(player.getUniqueId());
-        WorldServer world = ((CraftWorld) player.getWorld()).getHandle();
-        EntityAgeable entityAnimal = getPet(pet, player);
-        entityAnimal.a(IChatBaseComponent.a(pet.getPetName()));
-        entityAnimal.i(pet.isGlowing());
-        pet.setOwnUUID(entityAnimal.cm());
-        OpPets.getDatabase().setCurrentPet(player.getUniqueId(), pet);
-        world.c(entityAnimal);
-        int id = entityAnimal.ae();
-        OpPets.getDatabase().addIdPet(pet.getOwnUUID(), id);
+        Animal entityAnimal = getPet(pet, player);
+        entityAnimal.setCustomName(Component.nullToEmpty(pet.getPetName()));
+        entityAnimal.setGlowingTag(pet.isGlowing());
+        pet.setOwnUUID(entityAnimal.getUUID());
+        Database.getDatabase().setCurrentPet(player.getUniqueId(), pet);
+
+        //RESULT: Entity isn't found = Entity isn't created
+
+        ServerLevel world = ((CraftWorld) player.getWorld()).getHandle();
+        world.entityManager.addNewEntity(entityAnimal);
+
+
+        Bukkit.broadcastMessage(entityAnimal.getUUID() + " " + entityAnimal.getDisplayName().getString());
+        Bukkit.broadcastMessage(Objects.requireNonNull(world.getEntity(entityAnimal.getUUID())).getDisplayName().getString());
+        Bukkit.broadcastMessage(Objects.requireNonNull(Bukkit.getEntity(entityAnimal.getUUID())).getName());
+
+        /*
+        ID functions which tracks entities and display them to
+        players with different settings
+         */
+        int id = entityAnimal.getId();
+        Database.getDatabase().addIdPet(pet.getOwnUUID(), id);
         if (pet.isVisibleToOthers()) return;
-        OpPets.getUtils().hideEntityFromServer(player, id);
+        new Utils().hideEntityFromServer(player, id);
     }
 
-    public EntityAgeable getPet(@NotNull Pet pet, Player player){
-        EntityAgeable entityAnimal;
+    public Animal getPet(@NotNull Pet pet, Player player){
+        Animal entityAnimal;
         switch (pet.getPetType()){
             case AXOLOTL -> entityAnimal = new Axolotl(player.getLocation(), player, pet);
             case CAT -> entityAnimal = new Cat(player.getLocation(), player, pet);

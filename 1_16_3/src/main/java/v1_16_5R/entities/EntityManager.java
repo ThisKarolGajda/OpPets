@@ -1,8 +1,6 @@
 package v1_16_5R.entities;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.interfaces.EntityManagerInterface;
-import me.opkarol.oppets.pets.Pet;
+import dir.interfaces.EntityManagerInterface;
 import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.PathfinderGoalFloat;
 import net.minecraft.server.v1_16_R3.PathfinderGoalLookAtPlayer;
@@ -11,7 +9,9 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.jetbrains.annotations.NotNull;
+import dir.pets.Pet;
 import v1_16_5R.PathfinderGoalPet_1_16_3;
+import v1_16_5R.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class EntityManager implements EntityManagerInterface {
         entity.setGoalTarget(((CraftPlayer) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
         pet.setOwnerUUID(player.getUniqueId());
         pet.setOwnUUID(entity.getUniqueID());
-        OpPets.getUtils().removePathfinders(entity.goalSelector, entity.targetSelector);
+        new Utils().removePathfinders(entity.goalSelector, entity.targetSelector);
         initPathfinder(entity);
     }
 

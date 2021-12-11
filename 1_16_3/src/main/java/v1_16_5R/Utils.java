@@ -2,9 +2,9 @@ package v1_16_5R;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.interfaces.UtilsInterface;
+import dir.pets.Database;
+import dir.pets.Pet;
+import dir.interfaces.UtilsInterface;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
 import net.minecraft.server.v1_16_R3.PathfinderGoalSelector;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityDestroy;
@@ -42,7 +42,7 @@ public class Utils implements UtilsInterface {
             public void run() {
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(entityId));
             }
-        }.runTask(OpPets.getInstance());
+        }.runTask(Database.getInstance());
     }
 
     @Override
@@ -55,21 +55,21 @@ public class Utils implements UtilsInterface {
 
     @Override
     public void killPetFromPlayerUUID(UUID playerUUID) {
-        if (OpPets.getDatabase().getCurrentPet(playerUUID) == null) {
+        if (Database.getDatabase().getCurrentPet(playerUUID) == null) {
             return;
         }
-        if (getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) == null) {
+        if (getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) == null) {
             return;
         }
-        CraftEntity entity = (CraftEntity) Objects.requireNonNull(getEntityByUniqueId(OpPets.getDatabase().getCurrentPet(playerUUID).getOwnUUID()));
+        CraftEntity entity = (CraftEntity) Objects.requireNonNull(getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()));
         entity.remove();
 
     }
 
     @Override
-    public void respawnPet(Pet pet, @NotNull Player player) {
+    public void respawnPet(Object pet, @NotNull Player player) {
         killPetFromPlayerUUID(player.getUniqueId());
-        OpPets.getCreator().spawnMiniPet(pet, player);
+        new BabyEntityCreator().spawnMiniPet((Pet) pet, player);
     }
 
     @Override

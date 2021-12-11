@@ -1,9 +1,7 @@
 package v1_17_1R.entities;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.pets.Pet;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.animal.EntityWolf;
+import dir.pets.Pet;
+import net.minecraft.world.entity.EntityType;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.entity.Player;
@@ -11,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class Wolf extends EntityWolf {
+public class Wolf extends net.minecraft.world.entity.animal.Wolf {
     public Wolf(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
-        super(EntityTypes.bc, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        OpPets.getEntityManager().spawnEntity(this, player, pet);
+        super(EntityType.WOLF, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
+        new EntityManager().spawnEntity(this, player, pet);
     }
 }

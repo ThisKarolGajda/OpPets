@@ -1,11 +1,11 @@
 package v1_17_1R;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.interfaces.BabyEntityCreatorInterface;
-import me.opkarol.oppets.pets.Pet;
-import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.world.entity.EntityAgeable;
+import dir.interfaces.BabyEntityCreatorInterface;
+import dir.pets.Database;
+import dir.pets.Pet;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -16,21 +16,21 @@ public class BabyEntityCreator implements BabyEntityCreatorInterface {
     @Override
     public void spawnMiniPet(@NotNull Pet pet, @NotNull Player player){
         pet.setOwnerUUID(player.getUniqueId());
-        WorldServer world = ((CraftWorld) player.getWorld()).getHandle();
-        EntityAgeable entityAnimal = getPet(pet, player);
-        entityAnimal.setCustomName(IChatBaseComponent.a(pet.getPetName()));
+        ServerLevel world = ((CraftWorld) player.getWorld()).getHandle();
+        Animal entityAnimal = getPet(pet, player);
+        entityAnimal.setCustomName(Component.nullToEmpty(pet.getPetName()));
         entityAnimal.setGlowingTag(pet.isGlowing());
-        pet.setOwnUUID(entityAnimal.getUniqueID());
-        OpPets.getDatabase().setCurrentPet(player.getUniqueId(), pet);
-        world.addEntity(entityAnimal);
+        pet.setOwnUUID(entityAnimal.getUUID());
+        Database.getDatabase().setCurrentPet(player.getUniqueId(), pet);
+        world.addFreshEntity(entityAnimal);
         int id = entityAnimal.getId();
-        OpPets.getDatabase().addIdPet(pet.getOwnUUID(), id);
+        Database.getDatabase().addIdPet(pet.getOwnUUID(), id);
         if (pet.isVisibleToOthers()) return;
-        OpPets.getUtils().hideEntityFromServer(player, id);
+        new Utils().hideEntityFromServer(player, id);
     }
 
-    public EntityAgeable getPet(@NotNull Pet pet, Player player){
-        EntityAgeable entityAnimal;
+    public Animal getPet(@NotNull Pet pet, Player player){
+        Animal entityAnimal;
         switch (pet.getPetType()){
             case AXOLOTL -> entityAnimal = new Axolotl(player.getLocation(), player, pet);
             case CAT -> entityAnimal = new Cat(player.getLocation(), player, pet);
@@ -56,6 +56,5 @@ public class BabyEntityCreator implements BabyEntityCreatorInterface {
         }
         return entityAnimal;
     }
-
 
 }

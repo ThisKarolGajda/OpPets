@@ -1,6 +1,6 @@
 package v1_18_1R;
 
-import me.opkarol.oppets.packets.PacketManager;
+import dir.packets.PacketManager;
 import net.minecraft.network.protocol.game.PacketPlayInSteerVehicle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
