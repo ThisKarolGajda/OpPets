@@ -101,13 +101,13 @@
                                         <include>config.yml</include>
                                         <include>me/opkarol/oppets/**</include>
                                         <include>net/wesjd/anvilgui/**</include>
+                                        <include>api/**</include>
                                     </includes>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
-
                         </configuration>
                     </execution>
                 </executions>

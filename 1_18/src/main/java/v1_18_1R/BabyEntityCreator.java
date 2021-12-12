@@ -4,15 +4,13 @@ import dir.interfaces.BabyEntityCreatorInterface;
 import dir.pets.Database;
 import dir.pets.Pet;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import v1_18_1R.entities.*;
-
-import java.util.Objects;
 
 public class BabyEntityCreator implements BabyEntityCreatorInterface {
 
@@ -27,14 +25,11 @@ public class BabyEntityCreator implements BabyEntityCreatorInterface {
 
         //RESULT: Entity isn't found = Entity isn't created
 
-        ServerLevel world = ((CraftWorld) player.getWorld()).getHandle();
-        world.entityManager.addNewEntity(entityAnimal);
+        CraftWorld world = (CraftWorld) player.getWorld();
 
+        world.addEntity(entityAnimal, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
         Bukkit.broadcastMessage(entityAnimal.getUUID() + " " + entityAnimal.getDisplayName().getString());
-        Bukkit.broadcastMessage(Objects.requireNonNull(world.getEntity(entityAnimal.getUUID())).getDisplayName().getString());
-        Bukkit.broadcastMessage(Objects.requireNonNull(Bukkit.getEntity(entityAnimal.getUUID())).getName());
-
         /*
         ID functions which tracks entities and display them to
         players with different settings

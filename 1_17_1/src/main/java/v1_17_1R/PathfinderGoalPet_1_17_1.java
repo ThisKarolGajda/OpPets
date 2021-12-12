@@ -1,64 +1,67 @@
 package v1_17_1R;
 
-import net.minecraft.world.entity.EntityInsentient;
-import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import dir.pets.Database;
 import dir.pets.Pet;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.animal.Animal;
+import org.bukkit.Location;
 
 import java.util.EnumSet;
 
-public class PathfinderGoalPet_1_17_1 extends PathfinderGoal{
+public class PathfinderGoalPet_1_17_1 extends Goal {
 
-    private final EntityInsentient a;
-    private EntityLiving b;
+    private final Animal a;
+    private LivingEntity b;
 
     private final double f;
     private final double g;
 
-    public PathfinderGoalPet_1_17_1(EntityInsentient a, double speed, float distance) {
+    private Pet p = null;
+    private Location l;
+
+
+    public PathfinderGoalPet_1_17_1(Animal a, double speed, float distance) {
         this.a = a;
         this.f = speed;
         this.g = distance;
-        this.a(EnumSet.of(Type.c));
-        pet = null;
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
-    Pet pet;
 
     @Override
-    public boolean a() {
-        this.b = this.a.getGoalTarget();
-        if (pet == null && b != null) {
-            pet = Database.getDatabase().getCurrentPet(b.getUUID());
+    public boolean canUse() {
+        return this.a != null;
+    }
+
+    @Override
+    public void tick(){
+
+        this.b = this.a.getTarget();
+        if (p == null && b != null)
+            p = Database.getDatabase().getCurrentPet(b.getUUID());
+
+        if (b == null || this.a.getDisplayName() == null) {
+            return;
         }
-
-        if (this.b == null) {
-            return false;
-        } else if (this.a.getDisplayName() == null) {
-            return false;
-        } else if (!(this.a.getDisplayName().getString().equals(pet.getPetName()))){
-            return false;
-        } else if (this.b.distanceTo(this.a) > (this.g * this.g)){
-            if (pet.isTeleportingToPlayer()) this.a.setPos(this.b.getX(), b.getY(), b.getZ());
-            return false;
-        } else {
-            return pet.isFollowingPlayer();
+        // Last location (l) is a construction parameter which validates last owner's position with current
+        // which prevents using navigation for the same location.
+        else if (l != null && l == b.getBukkitEntity().getLocation()) {
+            return;
+        } else if (!(this.a.getName().getString().equals(p.getPetName()))){
+            return;
+        } else if (b.distanceTo(this.a) >= (this.g * this.g)){
+            if (p.isTeleportingToPlayer()) this.a.teleportTo(b.getX(), b.getY(), b.getZ());
+            return;
+        }
+        if (p.isFollowingPlayer()){
+            this.a.getNavigation().moveTo(b.getX(), b.getY(), b.getZ(), this.f);
+            l = b.getBukkitEntity().getLocation();
         }
     }
 
     @Override
-    public void c() {
-        this.a.getNavigation().a(this.b.getX(), b.getY(), b.getZ(), this.f);
-    }
-
-    @Override
-    public boolean b() {
-        return !this.a.getNavigation().m() && this.b.distanceTo(this.a) < (this.g * this.g);
-    }
-
-    @Override
-    public void d() {
-        this.b = null;
+    public boolean canContinueToUse() {
+        return this.b != null && this.a.getDisplayName() != null;
     }
 }

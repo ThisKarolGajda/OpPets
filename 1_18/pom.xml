@@ -30,7 +30,8 @@
                         <configuration>
                             <srgIn>org.spigotmc:minecraft-server:1.18-R0.1-SNAPSHOT:txt:maps-mojang</srgIn>
                             <reverse>true</reverse>
-                            <remappedDependencies>org.spigotmc:spigot:1.18-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>
+                            <remappedDependencies>org.spigotmc:spigot:1.18-R0.1-SNAPSHOT:jar:remapped-mojang
+                            </remappedDependencies>
                             <remappedArtifactAttached>true</remappedArtifactAttached>
                             <remappedClassifierName>remapped-obf</remappedClassifierName>
                         </configuration>
@@ -42,14 +43,40 @@
                         </goals>
                         <id>remap-spigot</id>
                         <configuration>
-                            <inputFile>${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar</inputFile>
+                            <inputFile>
+                                ${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar
+                            </inputFile>
                             <srgIn>org.spigotmc:minecraft-server:1.18-R0.1-SNAPSHOT:csrg:maps-spigot</srgIn>
-                            <remappedDependencies>org.spigotmc:spigot:1.18-R0.1-SNAPSHOT:jar:remapped-obf</remappedDependencies>
+                            <remappedDependencies>org.spigotmc:spigot:1.18-R0.1-SNAPSHOT:jar:remapped-obf
+                            </remappedDependencies>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-toolchains-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>toolchain</goal>
+                            </goals>
+                            <configuration>
+                                <toolchains>
+                                    <jdk>
+                                        <version>17</version>
+                                    </jdk>
+                                </toolchains>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
     <groupId>me.opkarol.oppets</groupId>
     <packaging>jar</packaging>
@@ -75,5 +102,5 @@
             <version>1.0.0</version>
         </dependency>
     </dependencies>
-    
+
 </project>

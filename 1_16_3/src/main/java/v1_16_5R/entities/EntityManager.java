@@ -1,6 +1,8 @@
 package v1_16_5R.entities;
 
 import dir.interfaces.EntityManagerInterface;
+import dir.pets.Pet;
+import net.minecraft.server.v1_16_R3.EntityAnimal;
 import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.PathfinderGoalFloat;
 import net.minecraft.server.v1_16_R3.PathfinderGoalLookAtPlayer;
@@ -9,7 +11,6 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.jetbrains.annotations.NotNull;
-import dir.pets.Pet;
 import v1_16_5R.PathfinderGoalPet_1_16_3;
 import v1_16_5R.Utils;
 
@@ -19,7 +20,8 @@ import java.util.List;
 
 public class EntityManager implements EntityManagerInterface {
 
-    public void initPathfinder(net.minecraft.server.v1_16_R3.@NotNull EntityAnimal e) {
+    public void initPathfinder(@NotNull Object entity) {
+        EntityAnimal e = (EntityAnimal) entity;
         e.goalSelector.d().close();
         e.goalSelector.a(1, new PathfinderGoalPet_1_16_3(e, 1.9, 15));
         e.goalSelector.a(2, new PathfinderGoalLookAtPlayer(e, EntityHuman.class, 4.0F));

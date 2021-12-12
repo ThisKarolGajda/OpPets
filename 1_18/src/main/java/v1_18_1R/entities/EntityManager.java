@@ -8,6 +8,7 @@ import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.jetbrains.annotations.NotNull;
 import v1_18_1R.PathfinderGoalPet_1_18_1;
 import v1_18_1R.Utils;
@@ -18,7 +19,8 @@ import java.util.List;
 
 public class EntityManager implements EntityManagerInterface {
 
-    public void initPathfinder(@NotNull Animal e) {
+    public void initPathfinder(@NotNull Object entity) {
+        Animal e = (Animal) entity;
         e.goalSelector.getAvailableGoals().clear();
         e.goalSelector.addGoal(1, new PathfinderGoalPet_1_18_1(e, 1.9, 15));
         e.goalSelector.addGoal(0, new FloatGoal(e));
@@ -36,12 +38,12 @@ public class EntityManager implements EntityManagerInterface {
         entity.ageLocked = true;
         entity.setBaby(true);
         entity.setCustomNameVisible(true);
-        entity.setInvulnerable(true);
-        entity.setTarget(((CraftPlayer) player).getHandle());
+        entity.setTarget(((CraftPlayer) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
         pet.setOwnerUUID(player.getUniqueId());
         pet.setOwnUUID(entity.getUUID());
         new Utils().removePathfinders(entity.goalSelector, entity.targetSelector);
         initPathfinder(entity);
+
     }
 
     @Override

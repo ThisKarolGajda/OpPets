@@ -19,7 +19,9 @@ import java.util.List;
 
 public class EntityManager implements EntityManagerInterface {
 
-    public void initPathfinder(@NotNull EntityAnimal e) {
+    @Override
+    public void initPathfinder(@NotNull Object entity) {
+        EntityAnimal e = (EntityAnimal) entity;
         e.goalSelector.d().close();
         e.goalSelector.a(1, new PathfinderGoalPet_1_16_1(e, 1.9, 15));
         e.goalSelector.a(2, new PathfinderGoalLookAtPlayer(e, EntityHuman.class, 4.0F));
