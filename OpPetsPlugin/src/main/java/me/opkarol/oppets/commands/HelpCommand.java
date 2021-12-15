@@ -12,9 +12,10 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 public class HelpCommand implements SubCommandInterface{
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)){
             return returnMessage(sender, "");
         }
+        Player player = (Player) sender;
 
         if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null){
             return returnMessage(sender, "");

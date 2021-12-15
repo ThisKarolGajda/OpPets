@@ -136,7 +136,7 @@ public class PetPluginController {
         PluginManager manager = this.instance.getServer().getPluginManager();
 
         switch (getVersion()) {
-            case "v1_16_R1" -> {
+            case "v1_16_R1": {
                 OpPets.setEntityManager(new EntityManager());
                 OpPets.setCreator(new BabyEntityCreator());
                 OpPets.setUtils(new Utils());
@@ -146,7 +146,7 @@ public class PetPluginController {
                 PacketManager.setUtils(new v1_16_1R.Utils());
                 return true;
             }
-            case "v1_16_R2" -> {
+            case "v1_16_R2": {
                 OpPets.setEntityManager(new v1_16_3R.entities.EntityManager());
                 OpPets.setCreator(new v1_16_3R.BabyEntityCreator());
                 OpPets.setUtils(new v1_16_3R.Utils());
@@ -156,7 +156,7 @@ public class PetPluginController {
                 PacketManager.setUtils(new v1_16_3R.Utils());
                 return true;
             }
-            case "v1_16_R3" -> {
+            case "v1_16_R3": {
                 OpPets.setEntityManager(new v1_16_5R.entities.EntityManager());
                 OpPets.setCreator(new v1_16_5R.BabyEntityCreator());
                 OpPets.setUtils(new v1_16_5R.Utils());
@@ -166,7 +166,7 @@ public class PetPluginController {
                 PacketManager.setUtils(new v1_16_5R.Utils());
                 return true;
             }
-            case "v1_17_R1" -> {
+            case "v1_17_R1": {
                 OpPets.setEntityManager(new v1_17_1R.entities.EntityManager());
                 OpPets.setCreator(new v1_17_1R.BabyEntityCreator());
                 OpPets.setUtils(new v1_17_1R.Utils());
@@ -176,7 +176,7 @@ public class PetPluginController {
                 PacketManager.setUtils(new v1_17_1R.Utils());
                 return true;
             }
-            case "v1_18_R1" -> {
+            case "v1_18_R1": {
                 OpPets.setEntityManager(new v1_18_1R.entities.EntityManager());
                 OpPets.setCreator(new v1_18_1R.BabyEntityCreator());
                 OpPets.setUtils(new v1_18_1R.Utils());
@@ -186,7 +186,7 @@ public class PetPluginController {
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_18_1) OpPets.getController().getPacketEvent());
                 return true;
             }
-            default -> {
+            default: {
                 return false;
             }
         }

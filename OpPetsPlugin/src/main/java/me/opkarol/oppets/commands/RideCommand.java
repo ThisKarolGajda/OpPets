@@ -14,9 +14,10 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 public class RideCommand implements SubCommandInterface{
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player player)){
+        if (!(sender instanceof Player)){
             return returnMessage(sender, "");
         }
+        Player player = (Player) sender;
 
         Pet pet = OpPets.getDatabase().getCurrentPet(player.getUniqueId());
         if (!pet.isRideable()){

@@ -48,7 +48,7 @@ public class Utils implements UtilsInterface {
     @Override
     public String getVanillaPetName(@NotNull EntityType entityType) {
         if (entityType.getEntityClass() != null) {
-            return entityType.getEntityClass().getClassLoader().getName();
+            return entityType.getEntityClass().getClassLoader().toString();
         }
         return "";
     }
@@ -74,7 +74,7 @@ public class Utils implements UtilsInterface {
 
     @Override
     public Object getVersion() {
-        return "src/main/v1_17_1R";
+        return "v1_17_1R";
     }
 
     public void removePathfinders(Object bP, Object bQ) {

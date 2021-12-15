@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -91,21 +91,19 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <includes>
+                                        <include>META-INF/**</include>
+                                        <include>dir/**</include>
                                         <include>v1_18_1R/**</include>
                                         <include>v1_17_1R/**</include>
                                         <include>v1_16_1R/**</include>
                                         <include>v1_16_3R/**</include>
                                         <include>v1_16_5R/**</include>
-                                        <include>dir/**</include>
                                         <include>plugin.yml</include>
                                         <include>config.yml</include>
                                         <include>me/opkarol/oppets/**</include>
                                         <include>net/wesjd/anvilgui/**</include>
                                         <include>api/**</include>
                                     </includes>
-                                    <excludes>
-                                        <exclude>META-INF/**</exclude>
-                                    </excludes>
                                 </filter>
                             </filters>
                         </configuration>
@@ -127,4 +125,5 @@
             </resource>
         </resources>
     </build>
+
 </project>

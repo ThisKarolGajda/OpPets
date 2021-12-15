@@ -1,5 +1,6 @@
 package me.opkarol.oppets;
 
+import api.OpPetsAPI;
 import dir.interfaces.BabyEntityCreatorInterface;
 import dir.interfaces.EntityManagerInterface;
 import dir.interfaces.UtilsInterface;
@@ -15,6 +16,7 @@ public final class OpPets extends JavaPlugin {
     private static BabyEntityCreatorInterface creator;
     private static EntityManagerInterface entityManager;
     private static UtilsInterface utils;
+    private static OpPetsAPI api;
 
     public static EntityManagerInterface getEntityManager() {
         return entityManager;
@@ -36,6 +38,10 @@ public final class OpPets extends JavaPlugin {
         OpPets.utils = utils;
     }
 
+    public static OpPetsAPI getApi() {
+        return api;
+    }
+
     @Override
     public void onEnable() {
         opPets = this;
@@ -45,6 +51,7 @@ public final class OpPets extends JavaPlugin {
         if (!getController().setupVersion()){
             this.setEnabled(false);
         }
+        api = new OpPetsAPI();
     }
 
     @Override

@@ -18,9 +18,10 @@ public class SummonCommand implements SubCommandInterface {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player player)){
+        if (!(sender instanceof Player)){
             return returnMessage(sender, "");
         }
+        Player player = (Player) sender;
 
         if (args.length != 2){
             return returnMessage(sender, "");

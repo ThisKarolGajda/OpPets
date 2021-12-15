@@ -33,25 +33,80 @@ public class BabyEntityCreator implements BabyEntityCreatorInterface {
     public net.minecraft.server.v1_16_R3.EntityAgeable getPet(@NotNull Pet pet, Player player){
         EntityAgeable entityAnimal;
         switch (pet.getPetType()){
-            case CAT -> entityAnimal = new Cat(player.getLocation(), player, pet);
-            case CHICKEN -> entityAnimal = new Chicken(player.getLocation(), player, pet);
-            case COW -> entityAnimal = new Cow(player.getLocation(), player, pet);
-            case DONKEY -> entityAnimal = new Donkey(player.getLocation(), player, pet);
-            case FOX -> entityAnimal = new Fox(player.getLocation(), player, pet);
-            case HORSE -> entityAnimal = new Horse(player.getLocation(), player, pet);
-            case LLAMA -> entityAnimal = new Llama(player.getLocation(), player, pet);
-            case MULE ->  entityAnimal = new Mule(player.getLocation(), player, pet);
-            case MUSHROOM_COW -> entityAnimal = new MushroomCow(player.getLocation(), player, pet);
-            case OCELOT -> entityAnimal = new Ocelot(player.getLocation(), player, pet);
-            case PANDA -> entityAnimal = new Panda(player.getLocation(), player, pet);
-            case PARROT -> entityAnimal = new Parrot(player.getLocation(), player, pet);
-            case PIG -> entityAnimal = new Pig(player.getLocation(), player, pet);
-            case POLAR_BEAR -> entityAnimal = new PolarBear(player.getLocation(), player, pet);
-            case RABBIT -> entityAnimal = new Rabbit(player.getLocation(), player, pet);
-            case SHEEP -> entityAnimal = new Sheep(player.getLocation(), player, pet);
-            case TURTLE -> entityAnimal = new Turtle(player.getLocation(), player, pet);
-            case WOLF -> entityAnimal = new Wolf(player.getLocation(), player, pet);
-            default -> throw new IllegalStateException("Unexpected value: " + pet.getPetType());
+            case CAT : {
+                entityAnimal = new Cat(player.getLocation(), player, pet);
+                break;
+            }
+            case CHICKEN : {
+                entityAnimal = new Chicken(player.getLocation(), player, pet);
+                break;
+            }
+            case COW : {
+                entityAnimal = new Cow(player.getLocation(), player, pet);
+                break;
+            }
+            case DONKEY : {
+                entityAnimal = new Donkey(player.getLocation(), player, pet);
+                break;
+            }
+            case FOX : {
+                entityAnimal = new Fox(player.getLocation(), player, pet);
+                break;
+            }
+            case HORSE : {
+                entityAnimal = new Horse(player.getLocation(), player, pet);
+                break;
+            }
+            case LLAMA : {
+                entityAnimal = new Llama(player.getLocation(), player, pet);
+                break;
+            }
+            case MULE :  {
+                entityAnimal = new Mule(player.getLocation(), player, pet);
+                break;
+            }
+            case MUSHROOM_COW : {
+                entityAnimal = new MushroomCow(player.getLocation(), player, pet);
+                break;
+            }
+            case OCELOT : {
+                entityAnimal = new Ocelot(player.getLocation(), player, pet);
+                break;
+            }
+            case PANDA : {
+                entityAnimal = new Panda(player.getLocation(), player, pet);
+                break;
+            }
+            case PARROT : {
+                entityAnimal = new Parrot(player.getLocation(), player, pet);
+                break;
+            }
+            case PIG : {
+                entityAnimal = new Pig(player.getLocation(), player, pet);
+                break;
+            }
+            case POLAR_BEAR : {
+                entityAnimal = new PolarBear(player.getLocation(), player, pet);
+                break;
+            }
+            case RABBIT : {
+                entityAnimal = new Rabbit(player.getLocation(), player, pet);
+                break;
+            }
+            case SHEEP : {
+                entityAnimal = new Sheep(player.getLocation(), player, pet);
+                break;
+            }
+            case TURTLE : {
+                entityAnimal = new Turtle(player.getLocation(), player, pet);
+                break;
+            }
+            case WOLF : {
+                entityAnimal = new Wolf(player.getLocation(), player, pet);
+                break;
+            }
+            default:
+                throw new IllegalStateException("Unexpected value: " + pet.getPetType());
         }
         return entityAnimal;
     }

@@ -83,20 +83,6 @@ public class PacketPlayInSteerVehicleEvent_v1_16_3 extends Event implements Pack
         return this.player.getVehicle();
     }
 
-    public boolean isKeyPressed(VehicleKey key) {
-        boolean b;
-        PacketPlayInSteerVehicle p = this.packet;
-        b = switch (key) {
-            case FORWARDS -> p.c() > 0;
-            case BACKWARDS -> p.c() < 0;
-            case LEFT -> p.b() > 0;
-            case RIGHT -> p.b() < 0;
-            case JUMPING -> p.d();
-            case SHIFTING -> p.e();
-        };
-        return b;
-    }
-
     public enum VehicleKey {
         FORWARDS,
         BACKWARDS,

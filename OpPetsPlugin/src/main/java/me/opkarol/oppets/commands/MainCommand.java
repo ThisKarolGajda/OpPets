@@ -36,9 +36,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return Arrays.asList("ride", "delete", "create", "summon", "help");
         } else if (args.length == 2){
             switch (args[0]){
-                case "summon", "delete" -> {
+                case "delete":
+                case "summon": {
                     UUID uuid = player.getUniqueId();
-                    if (OpPets.getDatabase().getPetList(uuid) == null) return List.of(noPetsString);
+                    if (OpPets.getDatabase().getPetList(uuid) == null) return Collections.singletonList(noPetsString);
                     List<String> completions = new ArrayList<>();
                     OpPets.getDatabase().getPetList(uuid).forEach(pet -> completions.add(ChatColor.stripColor(pet.getPetName())));
                     StringUtil.copyPartialMatches(args[1], completions, result);
@@ -46,7 +47,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                     if (result.size() == 0) result.add(noPetsString);
                     return result;
                 }
-                case "create" -> {
+                case "create": {
                     List<String> completions = new ArrayList<>(OpPets.getEntityManager().getAllowedEntities());
                     StringUtil.copyPartialMatches(args[1], completions, result);
                     Collections.sort(result);

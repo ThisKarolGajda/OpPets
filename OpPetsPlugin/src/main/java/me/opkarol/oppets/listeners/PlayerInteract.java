@@ -53,27 +53,27 @@ public class PlayerInteract implements Listener {
             Player player = (Player) event.getWhoClicked();
             Pet pet = OpPets.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
             switch (event.getSlot()) {
-                case 9 -> {
+                case 9: {
                     pet.setVisibleToOthers(getOppositeBoolean(pet.isVisibleToOthers()));
                     utils.respawnPet(pet, player);
                 }
-                case 10 -> pet.setGiftable(getOppositeBoolean(pet.isGiftable()));
-                case 11 -> {
+                case 10: pet.setGiftable(getOppositeBoolean(pet.isGiftable()));
+                case 11: {
                     pet.setGlow(getOppositeBoolean(pet.isGlowing()));
                     utils.respawnPet(pet, player);
                 }
-                case 12 -> {
+                case 12: {
                     pet.setFollowPlayer(getOppositeBoolean(pet.isFollowingPlayer()));
                     utils.respawnPet(pet, player);
                 }
-                case 13 -> {
+                case 13: {
                     pet.setTeleportingToPlayer(getOppositeBoolean(pet.isTeleportingToPlayer()));
                     utils.respawnPet(pet, player);
                 }
-                case 14 -> pet.setRideable(getOppositeBoolean(pet.isRideable()));
-                case 15 -> pet.setOtherRideable(getOppositeBoolean(pet.isOtherRideable()));
-                case 16 -> pet.setParticlesEnabled(getOppositeBoolean(pet.areParticlesEnabled()));
-                case 17 -> {
+                case 14: pet.setRideable(getOppositeBoolean(pet.isRideable()));
+                case 15: pet.setOtherRideable(getOppositeBoolean(pet.isOtherRideable()));
+                case 16: pet.setParticlesEnabled(getOppositeBoolean(pet.areParticlesEnabled()));
+                case 17: {
                     pet.setVisibleToOthers(true);
                     pet.setGiftable(false);
                     pet.setGlow(false);
@@ -97,10 +97,10 @@ public class PlayerInteract implements Listener {
             Player player = (Player) event.getWhoClicked();
             Pet pet = OpPets.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
             switch (event.getSlot()) {
-                case 10 -> player.openInventory(new LevelInventory(pet).getInventory());
-                case 12 -> new RenameAnvilInventory(pet, player);
-                case 14 -> player.openInventory(new SettingsInventory(pet).getInventory());
-                case 16 -> {
+                case 10: player.openInventory(new LevelInventory(pet).getInventory());
+                case 12: new RenameAnvilInventory(pet, player);
+                case 14: player.openInventory(new SettingsInventory(pet).getInventory());
+                case 16: {
                     player.closeInventory();
                     removePet(utils, pet);
                     OpPets.getCreator().spawnMiniPet(pet, player);
