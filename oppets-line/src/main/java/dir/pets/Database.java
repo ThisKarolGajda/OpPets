@@ -6,7 +6,7 @@ public class Database {
     private static Plugin instance;
     private static MiniPetsDatabase database;
 
-    public Database(){
+    public Database() {
         setDatabase(new MiniPetsDatabase());
     }
 

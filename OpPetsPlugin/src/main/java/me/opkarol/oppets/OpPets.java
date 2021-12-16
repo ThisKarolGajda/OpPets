@@ -1,13 +1,12 @@
 package me.opkarol.oppets;
 
-import api.OpPetsAPI;
 import dir.interfaces.BabyEntityCreatorInterface;
 import dir.interfaces.EntityManagerInterface;
 import dir.interfaces.UtilsInterface;
-import me.opkarol.oppets.inventories.InventoryManager;
-import org.bukkit.plugin.java.JavaPlugin;
 import dir.pets.Database;
 import dir.pets.MiniPetsDatabase;
+import me.opkarol.oppets.inventories.InventoryManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public final class OpPets extends JavaPlugin {
     private static OpPets opPets;
@@ -16,7 +15,7 @@ public final class OpPets extends JavaPlugin {
     private static BabyEntityCreatorInterface creator;
     private static EntityManagerInterface entityManager;
     private static UtilsInterface utils;
-    private static OpPetsAPI api;
+    //private static OpPetsAPI api;
 
     public static EntityManagerInterface getEntityManager() {
         return entityManager;
@@ -24,10 +23,6 @@ public final class OpPets extends JavaPlugin {
 
     public static void setEntityManager(EntityManagerInterface entityManager2) {
         OpPets.entityManager = entityManager2;
-    }
-
-    public static void setCreator(BabyEntityCreatorInterface creator2) {
-        OpPets.creator = creator2;
     }
 
     public static UtilsInterface getUtils() {
@@ -38,29 +33,9 @@ public final class OpPets extends JavaPlugin {
         OpPets.utils = utils;
     }
 
-    public static OpPetsAPI getApi() {
-        return api;
-    }
-
-    @Override
-    public void onEnable() {
-        opPets = this;
-        Database.setInstance(opPets);
-        inventoryManager = new InventoryManager();
-        controller = new PetPluginController(opPets);
-        if (!getController().setupVersion()){
-            this.setEnabled(false);
-        }
-        api = new OpPetsAPI();
-    }
-
-    @Override
-    public void onDisable() {
-        getController().saveFiles();
-        opPets = null;
-        creator = null;
-        controller = null;
-    }
+    //public static OpPetsAPI getApi() {
+        //return api;
+    //}
 
     public static PetPluginController getController() {
         return controller;
@@ -74,12 +49,36 @@ public final class OpPets extends JavaPlugin {
         return creator;
     }
 
+    public static void setCreator(BabyEntityCreatorInterface creator2) {
+        OpPets.creator = creator2;
+    }
+
     public static InventoryManager getInventoryManager() {
         return inventoryManager;
     }
 
-    public static MiniPetsDatabase getDatabase(){
+    public static MiniPetsDatabase getDatabase() {
         return Database.getDatabase();
+    }
+
+    @Override
+    public void onEnable() {
+        opPets = this;
+        Database.setInstance(opPets);
+        inventoryManager = new InventoryManager();
+        controller = new PetPluginController(opPets);
+        if (!getController().setupVersion()) {
+            this.setEnabled(false);
+        }
+        //api = new OpPetsAPI();
+    }
+
+    @Override
+    public void onDisable() {
+        getController().saveFiles();
+        opPets = null;
+        creator = null;
+        controller = null;
     }
 
 

@@ -15,7 +15,7 @@ public class Goat extends net.minecraft.world.entity.animal.goat.Goat {
         super(EntityType.GOAT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -32,5 +32,5 @@ public class Goat extends net.minecraft.world.entity.animal.goat.Goat {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

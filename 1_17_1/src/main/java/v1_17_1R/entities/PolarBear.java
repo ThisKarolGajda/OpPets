@@ -15,7 +15,7 @@ public class PolarBear extends net.minecraft.world.entity.animal.PolarBear {
         super(EntityType.POLAR_BEAR, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -32,5 +32,5 @@ public class PolarBear extends net.minecraft.world.entity.animal.PolarBear {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

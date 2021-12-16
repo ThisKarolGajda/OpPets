@@ -15,7 +15,7 @@ public class Wolf extends net.minecraft.world.entity.animal.Wolf {
         super(EntityType.WOLF, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -32,5 +32,5 @@ public class Wolf extends net.minecraft.world.entity.animal.Wolf {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

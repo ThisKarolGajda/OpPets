@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PacketManager implements Listener {
     private static UtilsInterface utils;
+    private static Object event;
 
     public static void removePlayer(Player player) {
         Channel channel = (Channel) utils.getPlayerChannel(player);
@@ -31,9 +32,6 @@ public class PacketManager implements Listener {
         pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
 
     }
-
-    private static Object event;
-
 
     public static Object getEvent() {
         return event;

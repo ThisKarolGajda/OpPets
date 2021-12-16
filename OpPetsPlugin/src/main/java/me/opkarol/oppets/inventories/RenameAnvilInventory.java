@@ -1,8 +1,8 @@
 package me.opkarol.oppets.inventories;
 
+import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.commands.MainCommand;
-import dir.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -19,7 +19,7 @@ public class RenameAnvilInventory {
     private final String changedName = getMessage("AnvilInventories.RenameInventory.changedName");
     private final String incorrectValueName = getMessage("AnvilInventories.RenameInventory.incorrectValueName");
 
-    public RenameAnvilInventory(@NotNull Pet pet, @NotNull Player playerOpened){
+    public RenameAnvilInventory(@NotNull Pet pet, @NotNull Player playerOpened) {
         String title = getMessage("AnvilInventories.RenameInventory.title");
         assert pet.getPetName() != null;
         String stringFromFormattedMessage = getStringFromFormattedMessage(pet.getPetName());
@@ -27,12 +27,12 @@ public class RenameAnvilInventory {
         new AnvilGUI.Builder()
                 .itemLeft(new ItemStack(Material.PAPER))
                 .onComplete(((player, s) -> {
-                    if(s != null) {
-                        if (s.equals(MainCommand.noPetsString)){
+                    if (s != null) {
+                        if (s.equals(MainCommand.noPetsString)) {
                             return AnvilGUI.Response.text(thisNameIsBlocked);
                         }
-                        for (char character : s.toCharArray()){
-                            if (String.valueOf(character).equals(" ")){
+                        for (char character : s.toCharArray()) {
+                            if (String.valueOf(character).equals(" ")) {
                                 return AnvilGUI.Response.text(nameWithSpaces);
                             }
                         }
@@ -55,7 +55,6 @@ public class RenameAnvilInventory {
                 .plugin(OpPets.getInstance())
                 .open(playerOpened);
     }
-
 
 
 }

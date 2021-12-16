@@ -1,7 +1,7 @@
 package me.opkarol.oppets.inventories;
 
-import me.opkarol.oppets.OpPets;
 import dir.pets.Pet;
+import me.opkarol.oppets.OpPets;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

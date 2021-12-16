@@ -1,7 +1,7 @@
 package me.opkarol.oppets.listeners;
 
-import me.opkarol.oppets.OpPets;
 import dir.pets.Pet;
+import me.opkarol.oppets.OpPets;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +16,7 @@ import java.util.UUID;
 public class PlayerJoin implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void playerJoin(@NotNull PlayerJoinEvent event){
+    public void playerJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
         if (OpPets.getDatabase().getPetList(uuid) == null) {
@@ -24,17 +24,17 @@ public class PlayerJoin implements Listener {
             return;
         }
         Pet currentPet = OpPets.getDatabase().getCurrentPet(uuid);
-        if (currentPet != null){
+        if (currentPet != null) {
             OpPets.getCreator().spawnMiniPet(currentPet, player);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void playerJoin2(@NotNull PlayerJoinEvent event){
+    public void playerJoin2(@NotNull PlayerJoinEvent event) {
         OpPets.getDatabase().getActivePetMap().keySet().forEach(uuid -> {
             if (Bukkit.getPlayer(uuid) == null) return;
             if (OpPets.getDatabase().getCurrentPet(uuid) == null) return;
-            if (!OpPets.getDatabase().getCurrentPet(uuid).isVisibleToOthers()){
+            if (!OpPets.getDatabase().getCurrentPet(uuid).isVisibleToOthers()) {
                 if (OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID() == null) return;
                 OpPets.getUtils().hideEntityFromPlayer(event.getPlayer(), OpPets.getDatabase().getIdPet(OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID()));
                 Bukkit.broadcastMessage(OpPets.getDatabase().getIdPet(OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID()) + " " + OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID());

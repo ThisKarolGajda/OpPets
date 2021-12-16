@@ -9,11 +9,11 @@ public class InventoryManager {
 
     private final List<Inventory> list = new ArrayList<>();
 
-    public Inventory getInventoryByIndex(int index){
+    public Inventory getInventoryByIndex(int index) {
         return list.get(index);
     }
 
-    public void setupList(){
+    public void setupList() {
         list.add(new PetMainInventory().getInventory());
         /*
         list.add(1, new LevelInventory().getInventory());

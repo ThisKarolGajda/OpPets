@@ -12,7 +12,7 @@ import java.util.UUID;
 public class PlayerLeaves implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void playerLeaves(PlayerQuitEvent event){
+    public void playerLeaves(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
         OpPets.getUtils().killPetFromPlayerUUID(playerUUID);

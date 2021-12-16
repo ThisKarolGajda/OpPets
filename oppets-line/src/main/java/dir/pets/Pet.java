@@ -2,6 +2,7 @@ package dir.pets;
 
 import org.bukkit.Warning;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
@@ -19,7 +20,7 @@ public class Pet implements Serializable {
     private UUID e2;      //ownerUUID
     private String sS = "10011101";
 
-    public Pet(String petName, EntityType petType, UUID ownUUID, UUID ownerUUID){
+    public Pet(String petName, EntityType petType, UUID ownUUID, UUID ownerUUID) {
         setPetName(petName);
         setPetExperience(0);
         setPetType(petType);
@@ -28,7 +29,8 @@ public class Pet implements Serializable {
         setOwnerUUID(ownerUUID);
     }
 
-    public Pet(){}
+    public Pet() {
+    }
 
     public @Nullable String getPetName() {
         return a;
@@ -152,13 +154,13 @@ public class Pet implements Serializable {
 
     @Warning
     @TestOnly
-    public boolean[] gDR(){
+    public boolean @NotNull [] gDR() {
         return deserializeSettingsOfPet(getSettingsSerialized());
     }
 
     @Warning
     @TestOnly
-    public void rS(){
+    public void rS() {
         this.sS = "10011101";
     }
 }

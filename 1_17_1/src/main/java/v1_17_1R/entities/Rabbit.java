@@ -15,7 +15,7 @@ public class Rabbit extends net.minecraft.world.entity.animal.Rabbit {
         super(EntityType.RABBIT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -32,5 +32,5 @@ public class Rabbit extends net.minecraft.world.entity.animal.Rabbit {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

@@ -15,7 +15,7 @@ public class Parrot extends net.minecraft.world.entity.animal.Parrot {
         super(EntityType.PARROT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -32,5 +32,5 @@ public class Parrot extends net.minecraft.world.entity.animal.Parrot {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

@@ -12,11 +12,9 @@ import java.util.EnumSet;
 public class PathfinderGoalPet_1_18_1 extends Goal {
 
     private final Animal a;
-    private LivingEntity b;
-
     private final double f;
     private final double g;
-
+    private LivingEntity b;
     private Pet p = null;
     private Location l;
 
@@ -35,7 +33,7 @@ public class PathfinderGoalPet_1_18_1 extends Goal {
     }
 
     @Override
-    public void tick(){
+    public void tick() {
 
         this.b = this.a.getTarget();
         if (p == null && b != null)
@@ -48,13 +46,13 @@ public class PathfinderGoalPet_1_18_1 extends Goal {
         // which prevents using navigation for the same location.
         else if (l != null && l == b.getBukkitEntity().getLocation()) {
             return;
-        } else if (!(this.a.getName().getString().equals(p.getPetName()))){
+        } else if (!(this.a.getName().getString().equals(p.getPetName()))) {
             return;
-        } else if (b.distanceTo(this.a) >= (this.g * this.g)){
+        } else if (b.distanceTo(this.a) >= (this.g * this.g)) {
             if (p.isTeleportingToPlayer()) this.a.teleportTo(b.getX(), b.getY(), b.getZ());
             return;
         }
-        if (p.isFollowingPlayer()){
+        if (p.isFollowingPlayer()) {
             this.a.getNavigation().moveTo(b.getX(), b.getY(), b.getZ(), this.f);
             l = b.getBukkitEntity().getLocation();
         }

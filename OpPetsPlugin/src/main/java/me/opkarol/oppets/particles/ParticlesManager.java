@@ -1,22 +1,11 @@
 package me.opkarol.oppets.particles;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import xyz.xenondevs.particle.ParticleBuilder;
-import xyz.xenondevs.particle.ParticleEffect;
-import xyz.xenondevs.particle.data.color.RegularColor;
-import xyz.xenondevs.particle.task.TaskManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class ParticlesManager {
 
-    public static void getParticleDisplayed(@NotNull Player player){
+    /*
+    public static void getParticleDisplayed(@NotNull Player player) {
         new ParticleBuilder(ParticleEffect.REDSTONE, player.getLocation())
-                .setParticleData(new RegularColor(255,255,0))
+                .setParticleData(new RegularColor(255, 255, 0))
                 .display(player);
     }
 
@@ -32,4 +21,6 @@ public class ParticlesManager {
         }
         return TaskManager.startWorldTask(packets, 5, world); // Start a new task and return the id
     }
+
+     */
 }

@@ -1,6 +1,9 @@
 package me.opkarol.oppets;
 
 import dir.interfaces.PacketPlayInSteerVehicleEvent;
+import dir.packets.PacketManager;
+import dir.pets.Database;
+import dir.pets.Pet;
 import me.opkarol.oppets.commands.MainCommand;
 import me.opkarol.oppets.listeners.PlayerInteract;
 import me.opkarol.oppets.listeners.PlayerJoin;
@@ -10,9 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.PluginManager;
-import dir.packets.PacketManager;
-import dir.pets.Database;
-import dir.pets.Pet;
 import v1_16_1R.BabyEntityCreator;
 import v1_16_1R.PacketPlayInSteerVehicleEvent_v1_16_1;
 import v1_16_1R.PlayerSteerVehicleEvent_v1_16_1;
@@ -38,8 +38,10 @@ import java.util.concurrent.Callable;
 public class PetPluginController {
     private final OpPets instance;
     private final String localPath = OpPets.getInstance().getDataFolder().getAbsolutePath();
+    private PacketPlayInSteerVehicleEvent packetEvent;
+    private String version;
 
-    public PetPluginController(OpPets opPets){
+    public PetPluginController(OpPets opPets) {
         this.instance = opPets;
         init();
     }
@@ -48,7 +50,7 @@ public class PetPluginController {
         return instance;
     }
 
-    public void init(){
+    public void init() {
         getInstance().saveDefaultConfig();
         loadFiles();
         Database.getDatabase().startLogic();
@@ -58,7 +60,7 @@ public class PetPluginController {
         bStatsActivation();
     }
 
-    public void bStatsActivation(){
+    public void bStatsActivation() {
         int pluginId = 13211;
         Metrics metrics = new Metrics(getInstance(), pluginId);
 
@@ -73,7 +75,7 @@ public class PetPluginController {
 
     }
 
-    public void saveFiles(){
+    public void saveFiles() {
         File file = new File(localPath + "/PetsMap.db");
         File secondFile = new File(localPath + "/ActivePetMap.db");
         try {
@@ -88,13 +90,13 @@ public class PetPluginController {
 
     }
 
-    public void loadFiles(){
+    public void loadFiles() {
         Database.getDatabase().setPetsMap((HashMap<UUID, List<Pet>>) FileManager.loadObject(localPath + "/PetsMap.db"));
         Database.getDatabase().setActivePetMap((HashMap<UUID, Pet>) FileManager.loadObject(localPath + "/ActivePetMap.db"));
 
     }
 
-    public void registerEvents(){
+    public void registerEvents() {
         PluginManager manager = instance.getServer().getPluginManager();
         manager.registerEvents(new PlayerJoin(), instance);
         manager.registerEvents(new PlayerLeaves(), instance);
@@ -102,13 +104,13 @@ public class PetPluginController {
 
     }
 
-    public void registerCommands(){
+    public void registerCommands() {
         Objects.requireNonNull(getInstance().getCommand("oppets")).setExecutor(new MainCommand());
         Objects.requireNonNull(getInstance().getCommand("oppets")).setTabCompleter(new MainCommand());
     }
 
-    public void removeAllPets(){
-        for (UUID uuid : Database.getDatabase().getActivePetMap().keySet()){
+    public void removeAllPets() {
+        for (UUID uuid : Database.getDatabase().getActivePetMap().keySet()) {
             if (Database.getDatabase().getCurrentPet(uuid).getOwnUUID() != null) {
                 Entity entity = OpPets.getUtils().getEntityByUniqueId(Database.getDatabase().getCurrentPet(uuid).getOwnUUID());
                 if (entity != null) {
@@ -118,7 +120,7 @@ public class PetPluginController {
         }
     }
 
-    public void setupInventories(){
+    public void setupInventories() {
         OpPets.getInventoryManager().setupList();
 
     }
@@ -207,7 +209,4 @@ public class PetPluginController {
     public void setVersion(String version) {
         this.version = version;
     }
-
-    private PacketPlayInSteerVehicleEvent packetEvent;
-    private String version;
 }

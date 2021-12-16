@@ -30,8 +30,8 @@ public class EntityManager implements EntityManagerInterface {
 
     @Override
     public void spawnEntity(@NotNull Object obj1, @NotNull Object obj2, @NotNull Object obj3) {
-        Player player = (Player) obj1;
-        net.minecraft.server.v1_16_R3.EntityAnimal entity = (net.minecraft.server.v1_16_R3.EntityAnimal) obj2;
+        Player player = (Player) obj2;
+        net.minecraft.server.v1_16_R3.EntityAnimal entity = (net.minecraft.server.v1_16_R3.EntityAnimal) obj1;
         Pet pet = (Pet) obj3;
         Location location = player.getLocation();
         entity.setPosition(location.getX(), location.getY(), location.getZ());

@@ -15,7 +15,7 @@ public class Mule extends net.minecraft.world.entity.animal.horse.Mule {
         super(EntityType.MULE, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -32,5 +32,5 @@ public class Mule extends net.minecraft.world.entity.animal.horse.Mule {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

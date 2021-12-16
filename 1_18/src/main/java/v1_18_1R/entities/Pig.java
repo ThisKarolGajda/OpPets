@@ -8,7 +8,6 @@ import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-
 import java.util.Objects;
 
 public class Pig extends net.minecraft.world.entity.animal.Pig {

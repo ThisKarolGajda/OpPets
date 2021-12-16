@@ -9,15 +9,15 @@ import java.util.List;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-public class HelpCommand implements SubCommandInterface{
+public class HelpCommand implements SubCommandInterface {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             return returnMessage(sender, "");
         }
         Player player = (Player) sender;
 
-        if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null){
+        if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
             return returnMessage(sender, "");
         }
 

@@ -15,7 +15,7 @@ public class Donkey extends net.minecraft.world.entity.animal.horse.Donkey {
         super(EntityType.DONKEY, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -32,5 +32,5 @@ public class Donkey extends net.minecraft.world.entity.animal.horse.Donkey {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

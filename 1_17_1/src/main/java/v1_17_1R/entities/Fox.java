@@ -16,7 +16,7 @@ public class Fox extends net.minecraft.world.entity.animal.Fox {
         super(EntityType.FOX, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -33,5 +33,5 @@ public class Fox extends net.minecraft.world.entity.animal.Fox {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

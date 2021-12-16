@@ -1,7 +1,7 @@
 package me.opkarol.oppets.commands;
 
-import me.opkarol.oppets.OpPets;
 import dir.pets.Pet;
+import me.opkarol.oppets.OpPets;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -12,37 +12,36 @@ import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-public class CreateCommand implements SubCommandInterface{
+public class CreateCommand implements SubCommandInterface {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             return returnMessage(sender, "");
         }
         Player player = (Player) sender;
 
-        if (args.length != 3){
+        if (args.length != 3) {
             return returnMessage(sender, "");
         }
 
         UUID playerUUID = player.getUniqueId();
         String petType = args[1];
-        if (petType.equals("PolarBear")){
+        if (petType.equals("PolarBear")) {
             petType = "Polar_Bear";
-        } else if (petType.equals("Mushroom")){
+        } else if (petType.equals("Mushroom")) {
             petType = "Mushroom_Cow";
         } else if (!(OpPets.getEntityManager().getAllowedEntities()
                 .stream()
                 .map(String::toLowerCase)
-                .collect(Collectors.toList()).contains(petType.toLowerCase())))
-        {
+                .collect(Collectors.toList()).contains(petType.toLowerCase()))) {
             return returnMessage(sender, "invalid");
         }
 
         String petName = args[2];
-        if (OpPets.getDatabase().getPetList(playerUUID) != null){
-            for (Pet pet : OpPets.getDatabase().getPetList(playerUUID)){
+        if (OpPets.getDatabase().getPetList(playerUUID) != null) {
+            for (Pet pet : OpPets.getDatabase().getPetList(playerUUID)) {
                 assert pet.getPetName() != null;
-                if (pet.getPetName().equals(petName)){
+                if (pet.getPetName().equals(petName)) {
                     return returnMessage(sender, "");
                 }
             }

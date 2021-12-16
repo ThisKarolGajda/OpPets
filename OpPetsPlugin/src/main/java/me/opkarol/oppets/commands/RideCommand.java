@@ -1,8 +1,8 @@
 package me.opkarol.oppets.commands;
 
-import me.opkarol.oppets.OpPets;
 import dir.packets.PacketManager;
 import dir.pets.Pet;
+import me.opkarol.oppets.OpPets;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,16 +11,16 @@ import java.util.List;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-public class RideCommand implements SubCommandInterface{
+public class RideCommand implements SubCommandInterface {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             return returnMessage(sender, "");
         }
         Player player = (Player) sender;
 
         Pet pet = OpPets.getDatabase().getCurrentPet(player.getUniqueId());
-        if (!pet.isRideable()){
+        if (!pet.isRideable()) {
             return returnMessage(sender, "");
         }
 

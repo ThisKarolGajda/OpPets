@@ -15,7 +15,7 @@ public class Llama extends net.minecraft.world.entity.animal.horse.Llama {
         super(EntityType.LLAMA, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -32,5 +32,5 @@ public class Llama extends net.minecraft.world.entity.animal.horse.Llama {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

@@ -16,7 +16,7 @@ public class Pig extends net.minecraft.world.entity.animal.Pig {
         super(EntityType.PIG, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -33,5 +33,5 @@ public class Pig extends net.minecraft.world.entity.animal.Pig {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

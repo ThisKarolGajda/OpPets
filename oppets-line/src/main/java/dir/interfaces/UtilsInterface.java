@@ -31,11 +31,13 @@ public interface UtilsInterface {
     void removePathfinders(Object var1, Object var2);
 
     void removeEntity(Object obj1);
+
     /*
     Channel getPlayerChannel(Player player)
     - used for getting player's channel from player connection
      */
     Object getPlayerChannel(Player player);
+
     /*
     ChannelPipeline getPlayerPipeline(Player player)
     - used for getting player's pipeline from player connection and player channel

@@ -1,6 +1,8 @@
 package v1_16_1R;
 
 import dir.interfaces.UtilsInterface;
+import dir.pets.Database;
+import dir.pets.Pet;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import net.minecraft.server.v1_16_R1.PacketPlayOutEntityDestroy;
@@ -14,8 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import dir.pets.Database;
-import dir.pets.Pet;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -48,7 +48,7 @@ public class Utils implements UtilsInterface {
     @Override
     public String getVanillaPetName(@NotNull EntityType entityType) {
         if (entityType.getEntityClass() != null) {
-            return entityType.getEntityClass().getClassLoader().getName();
+            return entityType.getEntityClass().getClassLoader().toString();
         }
         return "";
     }
@@ -78,8 +78,8 @@ public class Utils implements UtilsInterface {
     }
 
     public void removePathfinders(Object bP, Object bQ) {
-        PathfinderGoalSelector goalSelector = (PathfinderGoalSelector)bP;
-        PathfinderGoalSelector targetSelector = (PathfinderGoalSelector)bQ;
+        PathfinderGoalSelector goalSelector = (PathfinderGoalSelector) bP;
+        PathfinderGoalSelector targetSelector = (PathfinderGoalSelector) bQ;
 
         Field dField;
         Field cField;

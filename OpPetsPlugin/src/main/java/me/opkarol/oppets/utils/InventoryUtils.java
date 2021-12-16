@@ -14,11 +14,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-import static me.opkarol.oppets.utils.FormatUtils.*;
+import static me.opkarol.oppets.utils.FormatUtils.formatList;
+import static me.opkarol.oppets.utils.FormatUtils.formatMessage;
 
 public class InventoryUtils {
 
-    public static @NotNull ItemStack itemCreator(Material material, String displayName, List<String> lore, Multimap<Attribute, AttributeModifier> attributeModifierMultiMap, boolean unbreakable, boolean glow, Map<Enchantment, Integer> enchantmentIntegerMap, ItemFlag... itemFlags){
+    public static @NotNull ItemStack itemCreator(Material material, String displayName, List<String> lore, Multimap<Attribute, AttributeModifier> attributeModifierMultiMap, boolean unbreakable, boolean glow, Map<Enchantment, Integer> enchantmentIntegerMap, ItemFlag... itemFlags) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
@@ -33,9 +34,10 @@ public class InventoryUtils {
         return item;
     }
 
-    public static @NotNull ItemStack itemCreatorLamp(String displayName, List<String> lore, Multimap<Attribute, AttributeModifier> attributeModifierMultiMap, boolean unbreakable, boolean glow, Map<Enchantment, Integer> enchantmentIntegerMap, boolean lights, ItemFlag... itemFlags){
+    public static @NotNull ItemStack itemCreatorLamp(String displayName, List<String> lore, Multimap<Attribute, AttributeModifier> attributeModifierMultiMap, boolean unbreakable, boolean glow, Map<Enchantment, Integer> enchantmentIntegerMap, boolean lights, ItemFlag... itemFlags) {
         Material material;
-        if (lights) material = Material.RED_CONCRETE; else material = Material.BLACK_CONCRETE;
+        if (lights) material = Material.RED_CONCRETE;
+        else material = Material.BLACK_CONCRETE;
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
@@ -61,10 +63,10 @@ public class InventoryUtils {
         return item;
     }
 
-    public static void setupEmptyGlassPanes(Material material, @NotNull Inventory inventory){
+    public static void setupEmptyGlassPanes(Material material, @NotNull Inventory inventory) {
         ItemStack glass = getBlankGlassPanes(material);
-        for (int i = 0; i < inventory.getSize(); i++){
-            if (inventory.getItem(i) == null){
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (inventory.getItem(i) == null) {
                 inventory.setItem(i, glass);
             }
         }

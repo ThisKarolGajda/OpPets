@@ -1,10 +1,10 @@
 package v1_17_1R;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelPipeline;
+import dir.interfaces.UtilsInterface;
 import dir.pets.Database;
 import dir.pets.Pet;
-import dir.interfaces.UtilsInterface;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipeline;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
@@ -78,8 +78,8 @@ public class Utils implements UtilsInterface {
     }
 
     public void removePathfinders(Object bP, Object bQ) {
-        PathfinderGoalSelector goalSelector = (PathfinderGoalSelector)bP;
-        PathfinderGoalSelector targetSelector = (PathfinderGoalSelector)bQ;
+        PathfinderGoalSelector goalSelector = (PathfinderGoalSelector) bP;
+        PathfinderGoalSelector targetSelector = (PathfinderGoalSelector) bQ;
 
         Field dField;
         Field cField;

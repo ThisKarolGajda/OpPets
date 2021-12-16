@@ -1,7 +1,7 @@
 package me.opkarol.oppets.commands;
 
-import me.opkarol.oppets.OpPets;
 import dir.pets.Pet;
+import me.opkarol.oppets.OpPets;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,12 +18,12 @@ public class SummonCommand implements SubCommandInterface {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             return returnMessage(sender, "");
         }
         Player player = (Player) sender;
 
-        if (args.length != 2){
+        if (args.length != 2) {
             return returnMessage(sender, "");
         }
 

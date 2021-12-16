@@ -1,6 +1,7 @@
 package v1_16_3R.entities;
 
 import dir.interfaces.EntityManagerInterface;
+import dir.pets.Pet;
 import net.minecraft.server.v1_16_R2.EntityAnimal;
 import net.minecraft.server.v1_16_R2.EntityHuman;
 import net.minecraft.server.v1_16_R2.PathfinderGoalFloat;
@@ -10,7 +11,6 @@ import org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.jetbrains.annotations.NotNull;
-import dir.pets.Pet;
 import v1_16_3R.PathfinderGoalPet_1_16_2;
 import v1_16_3R.Utils;
 

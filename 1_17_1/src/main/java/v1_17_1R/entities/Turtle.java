@@ -15,7 +15,7 @@ public class Turtle extends net.minecraft.world.entity.animal.Turtle {
         super(EntityType.TURTLE, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -32,5 +32,5 @@ public class Turtle extends net.minecraft.world.entity.animal.Turtle {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

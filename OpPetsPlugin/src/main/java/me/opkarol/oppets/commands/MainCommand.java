@@ -18,7 +18,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public static String noPetsString = "<NO-PETS>";
 
     List<SubCommandInterface> commands;
-    public MainCommand(){
+
+    public MainCommand() {
         commands = new ArrayList<>();
         commands.add(new SummonCommand());
         commands.add(new CreateCommand());
@@ -32,10 +33,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
         List<String> result = new ArrayList<>();
 
-        if (args.length == 1 || args[0].equalsIgnoreCase(" ")){
+        if (args.length == 1 || args[0].equalsIgnoreCase(" ")) {
             return Arrays.asList("ride", "delete", "create", "summon", "help");
-        } else if (args.length == 2){
-            switch (args[0]){
+        } else if (args.length == 2) {
+            switch (args[0]) {
                 case "delete":
                 case "summon": {
                     UUID uuid = player.getUniqueId();

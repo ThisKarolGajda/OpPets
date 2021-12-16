@@ -16,7 +16,7 @@ public class Ocelot extends net.minecraft.world.entity.animal.Ocelot {
         super(EntityType.OCELOT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
-    
+
     @Override
     public void registerGoals() {
     }
@@ -33,5 +33,5 @@ public class Ocelot extends net.minecraft.world.entity.animal.Ocelot {
     public boolean hurt(DamageSource damagesource, float f) {
         return false;
     }
-    
+
 }

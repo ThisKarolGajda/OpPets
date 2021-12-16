@@ -45,7 +45,7 @@ public class EntityManager implements EntityManagerInterface {
         String version = Bukkit.getBukkitVersion().split("-")[0];
 
         Utils utils = new Utils();
-        switch(version) {
+        switch (version) {
             case "1.17":
                 utils.removePathfinders(null, entity.targetSelector);
                 break;

@@ -8,9 +8,9 @@ import org.jetbrains.annotations.TestOnly;
 public class PetsUtils {
 
     @TestOnly
-    public static @NotNull String serializeSettingsOfPet(boolean @NotNull... settings){
+    public static @NotNull String serializeSettingsOfPet(boolean @NotNull ... settings) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (boolean b : settings){
+        for (boolean b : settings) {
             if (b) {
                 stringBuilder.append("1");
             } else stringBuilder.append("0");
@@ -19,10 +19,10 @@ public class PetsUtils {
     }
 
     @Contract(pure = true)
-    public static boolean @NotNull[] deserializeSettingsOfPet(@NotNull String serializedSettings){
+    public static boolean @NotNull [] deserializeSettingsOfPet(@NotNull String serializedSettings) {
         boolean[] booleans = new boolean[serializedSettings.length()];
         int i = 0;
-        for (char c : serializedSettings.toCharArray()){
+        for (char c : serializedSettings.toCharArray()) {
             booleans[i] = String.valueOf(c).equals("1");
             i++;
         }
@@ -30,18 +30,18 @@ public class PetsUtils {
     }
 
     @Contract(pure = true)
-    public static boolean getDeserializedValueOfSettingsPetFromIndex(@NotNull String serializedSettings, int i){
+    public static boolean getDeserializedValueOfSettingsPetFromIndex(@NotNull String serializedSettings, int i) {
         if (i > serializedSettings.length()) return false;
         char c = serializedSettings.charAt(i);
         return String.valueOf(c).equals("1");
     }
 
-    public static @NotNull String setDeserializedSettings(@NotNull String serializedSettings, int i, boolean b){
+    public static @NotNull String setDeserializedSettings(@NotNull String serializedSettings, int i, boolean b) {
         if (i > serializedSettings.length()) return serializedSettings;
         StringBuilder stringBuilder = new StringBuilder();
         int iI = 0;
-        for (char c : serializedSettings.toCharArray()){
-            if (iI == i){
+        for (char c : serializedSettings.toCharArray()) {
+            if (iI == i) {
                 if (b) {
                     stringBuilder.append("1");
                 } else stringBuilder.append("0");
@@ -53,7 +53,7 @@ public class PetsUtils {
         return stringBuilder.toString();
     }
 
-    public static void removePet(@NotNull UtilsInterface utils, @NotNull Pet pet){
+    public static void removePet(@NotNull UtilsInterface utils, @NotNull Pet pet) {
         utils.removeEntity(utils.getEntityByUniqueId(pet.getOwnUUID()));
     }
 

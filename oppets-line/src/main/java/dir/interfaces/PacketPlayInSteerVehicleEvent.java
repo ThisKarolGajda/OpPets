@@ -7,13 +7,13 @@ import org.jetbrains.annotations.Nullable;
 
 public interface PacketPlayInSteerVehicleEvent {
 
-    @NotNull
-    HandlerList getHandlers();
-
     @Contract(pure = true)
     static @Nullable HandlerList getHandlerList() {
         return null;
     }
+
+    @NotNull
+    HandlerList getHandlers();
 
     PacketPlayInSteerVehicleEvent initialize(Object var1, Object var2);
 

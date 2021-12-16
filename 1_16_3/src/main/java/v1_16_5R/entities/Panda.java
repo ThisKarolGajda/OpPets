@@ -1,12 +1,12 @@
 package v1_16_5R.entities;
 
+import dir.pets.Pet;
 import net.minecraft.server.v1_16_R3.EntityPanda;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import dir.pets.Pet;
 
 import java.util.Objects;
 

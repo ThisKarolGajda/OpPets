@@ -25,7 +25,7 @@ public class FileManager {
         return null;
     }
 
-    public static void saveObject(String path, Object objectToSave){
+    public static void saveObject(String path, Object objectToSave) {
         try {
             saveFile(objectToSave, path);
         } catch (IOException e) {
@@ -35,16 +35,14 @@ public class FileManager {
 
 
     private static void saveFile(Object object, String path)
-            throws IOException
-    {
+            throws IOException {
         try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(path))) {
             os.writeObject(object);
         }
     }
 
     private static Object readFile(String path)
-            throws ClassNotFoundException, IOException
-    {
+            throws ClassNotFoundException, IOException {
         try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(path))) {
             return is.readObject();
         }
