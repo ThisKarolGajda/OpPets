@@ -47,12 +47,13 @@ public class PlayerInteract implements Listener {
         InventoryHolder holder = event.getInventory().getHolder();
         if (event.getSlot() == -999) return;
         UtilsInterface utils = OpPets.getUtils();
+        Player player = (Player) event.getWhoClicked();
+        Pet pet = OpPets.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
+        int slot = event.getSlot();
 
         if (holder instanceof SettingsInventoryHolder) {
             event.setCancelled(true);
-            Player player = (Player) event.getWhoClicked();
-            Pet pet = OpPets.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
-            switch (event.getSlot()) {
+            switch (slot) {
                 case 9: {
                     pet.setVisibleToOthers(getOppositeBoolean(pet.isVisibleToOthers()));
                     utils.respawnPet(pet, player);
@@ -91,16 +92,12 @@ public class PlayerInteract implements Listener {
 
             }
             openSettingsInventory(player, pet);
-            player.sendMessage("");
-
         } else if (holder instanceof LevelInventoryHolder) {
             event.setCancelled(true);
 
         } else if (holder instanceof PetMainInventoryHolder) {
             event.setCancelled(true);
-            Player player = (Player) event.getWhoClicked();
-            Pet pet = OpPets.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
-            switch (event.getSlot()) {
+            switch (slot) {
                 case 10:
                     player.openInventory(new LevelInventory(pet).getInventory());
                 case 12:

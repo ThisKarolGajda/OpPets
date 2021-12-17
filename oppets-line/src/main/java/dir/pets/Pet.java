@@ -1,7 +1,6 @@
 package dir.pets;
 
 import org.bukkit.Warning;
-import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -14,13 +13,13 @@ import static dir.pets.PetsUtils.*;
 public class Pet implements Serializable {
     private String a;     //petName
     private float b;      //petExperience
-    private EntityType c; //petType
+    private OpPetsEntityTypes.TypeOfEntity c; //petType
     private boolean d;    //isActive
     private UUID e1;      //ownUUID
     private UUID e2;      //ownerUUID
     private String sS = "10011101";
 
-    public Pet(String petName, EntityType petType, UUID ownUUID, UUID ownerUUID) {
+    public Pet(String petName, OpPetsEntityTypes.TypeOfEntity petType, UUID ownUUID, UUID ownerUUID) {
         setPetName(petName);
         setPetExperience(0);
         setPetType(petType);
@@ -48,11 +47,11 @@ public class Pet implements Serializable {
         this.b = petExperience;
     }
 
-    public EntityType getPetType() {
+    public OpPetsEntityTypes.TypeOfEntity getPetType() {
         return c;
     }
 
-    public void setPetType(EntityType petType) {
+    public void setPetType(OpPetsEntityTypes.TypeOfEntity petType) {
         this.c = petType;
     }
 

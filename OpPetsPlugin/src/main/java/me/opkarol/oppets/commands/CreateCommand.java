@@ -1,9 +1,9 @@
 package me.opkarol.oppets.commands;
 
+import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -46,10 +46,10 @@ public class CreateCommand implements SubCommandInterface {
                 }
             }
         }
-        EntityType type;
+        OpPetsEntityTypes.TypeOfEntity type;
 
         try {
-            type = EntityType.valueOf(petType.toUpperCase());
+            type = OpPetsEntityTypes.TypeOfEntity.valueOf(petType.toUpperCase());
         } catch (IllegalArgumentException e) {
             return returnMessage(sender, "zly typ");
         }

@@ -19,7 +19,7 @@ import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
 public class LevelInventory {
     private final Inventory inventory;
-    Pet pet;
+    final Pet pet;
 
     public LevelInventory(@NotNull Pet pet) {
         this.pet = pet;

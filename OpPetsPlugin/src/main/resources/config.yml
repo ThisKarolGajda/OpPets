@@ -16,6 +16,11 @@ configVersion: 1.0
 # Settings section:         #
 # ------------------------- #
 
+Skills:
+  example_skill:
+    name: "Example skill"
+    available_pets: "ALL"
+
 # ------------------------- #
 # Inventories section:      #
 # ------------------------- #
