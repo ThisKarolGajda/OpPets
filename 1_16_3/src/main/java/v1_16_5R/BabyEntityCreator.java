@@ -32,13 +32,13 @@ public class BabyEntityCreator implements BabyEntityCreatorInterface {
 
     public net.minecraft.server.v1_16_R3.EntityAgeable getPet(@NotNull Pet pet, Player player) {
         switch (pet.getPetType()) {
-            case CAT: new Cat(player.getLocation(), player, pet);
-            case CHICKEN: new Chicken(player.getLocation(), player, pet);
+            case CAT: return new Cat(player.getLocation(), player, pet);
+            case CHICKEN: return new Chicken(player.getLocation(), player, pet);
             case COW: return new Cow(player.getLocation(), player, pet);
             case DONKEY: return new Donkey(player.getLocation(), player, pet);
             case FOX: return new Fox(player.getLocation(), player, pet);
             case HORSE: return new Horse(player.getLocation(), player, pet);
-            case LLAMA: new Llama(player.getLocation(), player, pet);
+            case LLAMA: return new Llama(player.getLocation(), player, pet);
             case MULE: return new Mule(player.getLocation(), player, pet);
             case MUSHROOM_COW: return new MushroomCow(player.getLocation(), player, pet);
             case OCELOT: return new Ocelot(player.getLocation(), player, pet);

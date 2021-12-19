@@ -2,7 +2,6 @@
 # OpPets by OpKarol.        #
 # ------------------------- #
 
-
 # Editing these values may damage all databases, config file and even server.
 # DON'T TOUCH THEM!
 version: 1.0
@@ -10,16 +9,29 @@ configVersion: 1.0
 # Please.
 # No help will be given to servers with changed versions values.
 
-
-# You can touch these values now:
+# You can touch these values ->:
 # ------------------------- #
 # Settings section:         #
 # ------------------------- #
 
 Skills:
   example_skill:
-    name: "Example skill"
-    available_pets: "ALL"
+    available_pets: "[ALL]"      # [AXOLOTL, COW,]
+    abilities:
+      abilitity1:
+        type: "CUSTOM_COMMAND"
+        command: "/some-command"
+    requirements:
+      requirement1:
+        type: "PET_LEVEL"
+    boosters:
+
+    adders:
+      adder1:
+        type: "MINING"
+        level:
+          points: 1
+          every_action: 5
 
 # ------------------------- #
 # Inventories section:      #

@@ -28,33 +28,45 @@
     <dependencies>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
+            <artifactId>oppets-line</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.opkarol.oppets</groupId>
             <artifactId>OpPetsAPI</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_18</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_17_1</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_16_1</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_16_2</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_16_3</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -109,6 +121,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
             </plugin>
         </plugins>
         <directory>../target</directory>

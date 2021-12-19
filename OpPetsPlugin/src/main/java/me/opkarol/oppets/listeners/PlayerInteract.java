@@ -45,6 +45,11 @@ public class PlayerInteract implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerInteract2(@NotNull InventoryClickEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
+
+        if (holder == null){
+            return;
+        }
+
         if (event.getSlot() == -999) return;
         UtilsInterface utils = OpPets.getUtils();
         Player player = (Player) event.getWhoClicked();
@@ -89,23 +94,26 @@ public class PlayerInteract implements Listener {
                     pet.setParticlesEnabled(true);
                     utils.respawnPet(pet, player);
                 }
-
             }
             openSettingsInventory(player, pet);
         } else if (holder instanceof LevelInventoryHolder) {
             event.setCancelled(true);
 
+            switch (slot) {
+                case 16 ->
+                    OpPets.getSkillDatabase().getAccessibleSkillsToPetType(pet.getPetType()).forEach(skill -> player.sendMessage(skill.getA()));
+                default -> {
+                }
+
+            }
+
         } else if (holder instanceof PetMainInventoryHolder) {
             event.setCancelled(true);
             switch (slot) {
-                case 10:
-                    player.openInventory(new LevelInventory(pet).getInventory());
-                case 12:
-                    new RenameAnvilInventory(pet, player);
-                case 14:
-                    player.openInventory(new SettingsInventory(pet).getInventory());
-                case 16: {
-                    player.closeInventory();
+                case 10 -> player.openInventory(new LevelInventory(pet).getInventory());
+                case 12 -> new RenameAnvilInventory(pet, player);
+                case 14 -> player.openInventory(new SettingsInventory(pet).getInventory());
+                case 16 -> {
                     removePet(utils, pet);
                     OpPets.getCreator().spawnMiniPet(pet, player);
                 }

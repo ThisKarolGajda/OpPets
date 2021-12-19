@@ -2,6 +2,9 @@ package me.opkarol.oppets.skills;
 
 import dir.pets.OpPetsEntityTypes;
 
+import java.util.List;
+import java.util.UUID;
+
 public class Skill extends SkillEnums {
 
     /*
@@ -10,18 +13,81 @@ public class Skill extends SkillEnums {
     SkillsRequirements c = -"-
     SkillsBoosters d = -"-
     SkillsAdders e = -"-
-    OpPetsEntityTypes.TypeOfEntity[] f = allowed entities to have selected skill;
+    OpPetsEntityTypes.TypeOfEntity[] f = allowed entities to have selected skill
+    UUID g = skill UUID;
      */
 
     private String a;
-    private SkillsAbilities[] b;
-    private SkillsRequirements[] c;
-    private SkillsBoosters[] d;
-    private SkillsAdders[] e;
-    private OpPetsEntityTypes.TypeOfEntity[] f;
+    private List<Ability> b;
+    private List<Requirement> c;
+    private List<Booster> d;
+    private List<Adder> e;
+    private List<OpPetsEntityTypes.TypeOfEntity> f;
+    private UUID g;
 
-    public Skill(){
-
+    public Skill(String name, List<Ability> b, List<Requirement> c, List<Booster> d, List<Adder> e, List<OpPetsEntityTypes.TypeOfEntity> f, UUID g){
+        setA(name);
+        setB(b);
+        setC(c);
+        setD(d);
+        setE(e);
+        setF(f);
+        setG(g);
     }
 
+    public String getA() {
+        return a;
+    }
+
+    public void setA(String a) {
+        this.a = a;
+    }
+
+    public List<Ability> getB() {
+        return b;
+    }
+
+    public void setB(List<Ability> b) {
+        this.b = b;
+    }
+
+    public List<Requirement> getC() {
+        return c;
+    }
+
+    public void setC(List<Requirement> c) {
+        this.c = c;
+    }
+
+    public List<Booster> getD() {
+        return d;
+    }
+
+    public void setD(List<Booster> d) {
+        this.d = d;
+    }
+
+    public List<Adder> getE() {
+        return e;
+    }
+
+    public void setE(List<Adder> e) {
+        this.e = e;
+    }
+
+    public List<OpPetsEntityTypes.TypeOfEntity> getF() {
+        return f;
+    }
+
+    public void setF(List<OpPetsEntityTypes.TypeOfEntity> f) {
+        this.f = f;
+    }
+
+    public UUID getG() {
+        return g;
+    }
+
+    public void setG(UUID g) {
+        this.g = g;
+    }
 }

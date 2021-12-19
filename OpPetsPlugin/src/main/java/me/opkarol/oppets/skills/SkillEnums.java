@@ -1,6 +1,6 @@
 package me.opkarol.oppets.skills;
 
-public class SkillEnums extends SkillDatabase {
+public class SkillEnums {
 
     /*
         SkillsAbilities are abilities that are given to a player         ->
