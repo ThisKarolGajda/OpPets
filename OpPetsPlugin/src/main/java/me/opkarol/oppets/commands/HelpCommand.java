@@ -1,6 +1,6 @@
 package me.opkarol.oppets.commands;
 
-import dir.pets.Database;
+import dir.databases.Database;
 import me.opkarol.oppets.OpPets;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,10 +12,9 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 public class HelpCommand implements SubCommandInterface {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             return returnMessage(sender, "");
         }
-        Player player = (Player) sender;
 
         if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
             return returnMessage(sender, "");

@@ -2,7 +2,7 @@ package me.opkarol.oppets.commands;
 
 import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
-import org.bukkit.ChatColor;
+import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,10 +18,9 @@ public class SummonCommand implements SubCommandInterface {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             return returnMessage(sender, "");
         }
-        Player player = (Player) sender;
 
         if (args.length != 2) {
             return returnMessage(sender, "");
@@ -35,12 +34,12 @@ public class SummonCommand implements SubCommandInterface {
             return returnMessage(sender, "blocked name");
         }
 
-        if (playerPets == null) {
-            return returnMessage(sender, "null lista petów");
+        if (playerPets == null || playerPets.size() == 0) {
+            return returnMessage(sender, "Your pets list is empty.");
         }
 
         for (Pet pet : playerPets) {
-            if (ChatColor.stripColor(Objects.requireNonNull(pet.getPetName())).equals(ChatColor.stripColor(args[1]))) {
+            if (FormatUtils.getNameString(Objects.requireNonNull(pet.getPetName())).equals(FormatUtils.getNameString(args[1]))) {
                 if (activePet == pet) {
                     return returnMessage(sender, "Ten sam pet");
                 } else {

@@ -1,7 +1,7 @@
 package v1_16_5R;
 
 import dir.interfaces.UtilsInterface;
-import dir.pets.Database;
+import dir.databases.Database;
 import dir.pets.Pet;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
@@ -23,6 +23,9 @@ import java.util.*;
 public class Utils implements UtilsInterface {
     @Override
     public org.bukkit.entity.@Nullable Entity getEntityByUniqueId(UUID uniqueId) {
+        if (uniqueId == null) {
+            return null;
+        }
         return Bukkit.getEntity(uniqueId);
     }
 
@@ -58,10 +61,14 @@ public class Utils implements UtilsInterface {
         if (Database.getDatabase().getCurrentPet(playerUUID) == null) {
             return;
         }
-        if (getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) == null) {
+        Pet pet = Database.getDatabase().getCurrentPet(playerUUID);
+        if (pet.getOwnerUUID() == null) {
+            pet.setOwnerUUID(playerUUID);
+        }
+        if (getEntityByUniqueId(pet.getOwnUUID()) == null) {
             return;
         }
-        CraftEntity entity = (CraftEntity) Objects.requireNonNull(getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()));
+        CraftEntity entity = (CraftEntity) Objects.requireNonNull(getEntityByUniqueId(pet.getOwnUUID()));
         entity.remove();
 
     }

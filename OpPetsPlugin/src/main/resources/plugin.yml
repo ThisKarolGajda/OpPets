@@ -3,6 +3,8 @@ version: '${project.version}'
 main: me.opkarol.oppets.OpPets
 api-version: 1.13
 authors: [ OpKarol, ThisOpKarol, NotOpKarol ]
+softdepend:
+  - MySQL
 
 commands:
   oppets:

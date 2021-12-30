@@ -1,6 +1,6 @@
 package v1_18_1R;
 
-import dir.pets.Database;
+import dir.databases.Database;
 import dir.pets.Pet;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;

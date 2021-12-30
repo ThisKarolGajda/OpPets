@@ -1,11 +1,12 @@
 package v1_16_5R;
 
+import dir.databases.Database;
 import dir.interfaces.BabyEntityCreatorInterface;
-import dir.pets.Database;
 import dir.pets.Pet;
 import net.minecraft.server.v1_16_R3.ChatMessage;
 import net.minecraft.server.v1_16_R3.EntityAgeable;
 import net.minecraft.server.v1_16_R3.WorldServer;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class BabyEntityCreator implements BabyEntityCreatorInterface {
         WorldServer world = ((CraftWorld) player.getWorld()).getHandle();
         EntityAgeable entityAnimal = getPet(pet, player);
         assert pet.getPetName() != null;
-        entityAnimal.setCustomName(new ChatMessage(pet.getPetName()));
+        entityAnimal.setCustomName(new ChatMessage(ChatColor.translateAlternateColorCodes('&', pet.getPetName())));
         entityAnimal.glowing = pet.isGlowing();
         pet.setOwnUUID(entityAnimal.getUniqueID());
         Database.getDatabase().setCurrentPet(player.getUniqueId(), pet);

@@ -1,14 +1,14 @@
 package me.opkarol.oppets;
 
+import dir.databases.MySQLMiniPetsDatabase;
 import dir.interfaces.PacketPlayInSteerVehicleEvent;
 import dir.packets.PacketManager;
-import dir.pets.Database;
+import dir.databases.Database;
 import dir.pets.Pet;
 import me.opkarol.oppets.commands.MainCommand;
-import me.opkarol.oppets.listeners.PlayerInteract;
-import me.opkarol.oppets.listeners.PlayerJoin;
-import me.opkarol.oppets.listeners.PlayerLeaves;
+import me.opkarol.oppets.listeners.*;
 import me.opkarol.oppets.misc.Metrics;
+import me.opkarol.oppets.utils.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -76,24 +76,32 @@ public class PetPluginController {
     }
 
     public void saveFiles() {
-        File file = new File(localPath + "/PetsMap.db");
-        File secondFile = new File(localPath + "/ActivePetMap.db");
-        try {
-            file.createNewFile();
-            secondFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!mySQLEnabled) {
+            File file = new File(localPath + "/PetsMap.db");
+            File secondFile = new File(localPath + "/ActivePetMap.db");
+            try {
+                file.createNewFile();
+                secondFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            FileManager.saveObject(localPath + "/PetsMap.db", Database.getDatabase().getPetsMap());
+            FileManager.saveObject(localPath + "/ActivePetMap.db", Database.getDatabase().getActivePetMap());
+        } else {
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                new MySQLMiniPetsDatabase().databaseUUIDSaver(player.getUniqueId());
+            });
+
         }
-        FileManager.saveObject(localPath + "/PetsMap.db", Database.getDatabase().getPetsMap());
-        FileManager.saveObject(localPath + "/ActivePetMap.db", Database.getDatabase().getActivePetMap());
         removeAllPets();
 
     }
-
+    final boolean mySQLEnabled = ConfigUtils.getBoolean("mysql.enabled");
     public void loadFiles() {
-        Database.getDatabase().setPetsMap((HashMap<UUID, List<Pet>>) FileManager.loadObject(localPath + "/PetsMap.db"));
-        Database.getDatabase().setActivePetMap((HashMap<UUID, Pet>) FileManager.loadObject(localPath + "/ActivePetMap.db"));
-
+        if (!mySQLEnabled) {
+            Database.getDatabase().setPetsMap((HashMap<UUID, List<Pet>>) FileManager.loadObject(localPath + "/PetsMap.db"));
+            Database.getDatabase().setActivePetMap((HashMap<UUID, Pet>) FileManager.loadObject(localPath + "/ActivePetMap.db"));
+        }
     }
 
     public void registerEvents() {
@@ -101,6 +109,8 @@ public class PetPluginController {
         manager.registerEvents(new PlayerJoin(), instance);
         manager.registerEvents(new PlayerLeaves(), instance);
         manager.registerEvents(new PlayerInteract(), instance);
+        manager.registerEvents(new SkillsListeners(), instance);
+        manager.registerEvents(new PetListeners(), instance);
 
     }
 
@@ -117,6 +127,7 @@ public class PetPluginController {
                     ((LivingEntity) OpPets.getUtils().getEntityByUniqueId(Database.getDatabase().getCurrentPet(uuid).getOwnUUID())).setHealth(0);
                 }
             }
+            //TODO change that ^^
         }
     }
 
@@ -138,17 +149,20 @@ public class PetPluginController {
         PluginManager manager = this.instance.getServer().getPluginManager();
 
         switch (getVersion()) {
-            case "v1_16_R1": {
+            case "v1_16_R1" -> {
                 OpPets.setEntityManager(new EntityManager());
                 OpPets.setCreator(new BabyEntityCreator());
                 OpPets.setUtils(new Utils());
                 this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_16_1());
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_1(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_16_1) OpPets.getController().getPacketEvent());
-                PacketManager.setUtils(new v1_16_1R.Utils());
+                PacketManager.setUtils(new Utils());
+                if (mySQLEnabled) {
+                    Database.setUtils(OpPets.getUtils());
+                }
                 return true;
             }
-            case "v1_16_R2": {
+            case "v1_16_R2" -> {
                 OpPets.setEntityManager(new v1_16_3R.entities.EntityManager());
                 OpPets.setCreator(new v1_16_3R.BabyEntityCreator());
                 OpPets.setUtils(new v1_16_3R.Utils());
@@ -156,9 +170,12 @@ public class PetPluginController {
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_3(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_16_3) OpPets.getController().getPacketEvent());
                 PacketManager.setUtils(new v1_16_3R.Utils());
+                if (mySQLEnabled) {
+                    Database.setUtils(OpPets.getUtils());
+                }
                 return true;
             }
-            case "v1_16_R3": {
+            case "v1_16_R3" -> {
                 OpPets.setEntityManager(new v1_16_5R.entities.EntityManager());
                 OpPets.setCreator(new v1_16_5R.BabyEntityCreator());
                 OpPets.setUtils(new v1_16_5R.Utils());
@@ -166,19 +183,25 @@ public class PetPluginController {
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_5(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_16_5) OpPets.getController().getPacketEvent());
                 PacketManager.setUtils(new v1_16_5R.Utils());
+                if (mySQLEnabled) {
+                    Database.setUtils(OpPets.getUtils());
+                }
                 return true;
             }
-            case "v1_17_R1": {
+            case "v1_17_R1" -> {
                 OpPets.setEntityManager(new v1_17_1R.entities.EntityManager());
                 OpPets.setCreator(new v1_17_1R.BabyEntityCreator());
                 OpPets.setUtils(new v1_17_1R.Utils());
                 this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_17_1());
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_17_1(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_17_1) OpPets.getController().getPacketEvent());
+                if (mySQLEnabled) {
+                    Database.setUtils(OpPets.getUtils());
+                }
                 PacketManager.setUtils(new v1_17_1R.Utils());
                 return true;
             }
-            case "v1_18_R1": {
+            case "v1_18_R1" -> {
                 OpPets.setEntityManager(new v1_18_1R.entities.EntityManager());
                 OpPets.setCreator(new v1_18_1R.BabyEntityCreator());
                 OpPets.setUtils(new v1_18_1R.Utils());
@@ -186,12 +209,16 @@ public class PetPluginController {
                 this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_18_1());
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_18_1(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_18_1) OpPets.getController().getPacketEvent());
+                if (mySQLEnabled) {
+                    Database.setUtils(OpPets.getUtils());
+                }
                 return true;
             }
-            default: {
+            default -> {
                 return false;
             }
         }
+
     }
 
     public PacketPlayInSteerVehicleEvent getPacketEvent() {

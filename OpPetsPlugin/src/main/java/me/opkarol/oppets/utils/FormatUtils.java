@@ -35,4 +35,8 @@ public class FormatUtils {
         }
         return stringBuilder.toString();
     }
+
+    public static String getNameString(String string) {
+        return ChatColor.stripColor(formatMessage(string));
+    }
 }

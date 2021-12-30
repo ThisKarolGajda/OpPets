@@ -2,8 +2,8 @@ package me.opkarol.oppets.inventories;
 
 import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
+import me.opkarol.oppets.utils.FormatUtils;
 import net.wesjd.anvilgui.AnvilGUI;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +22,7 @@ public class DeleteAnvilInventory {
         String petName = Objects.requireNonNull(pet.getPetName());
         new AnvilGUI.Builder()
                 .onComplete((player, s) -> {
-                    if (ChatColor.stripColor(s).equals(ChatColor.stripColor(petName))) {
+                    if (FormatUtils.getNameString(s).equals(FormatUtils.getNameString(petName))) {
                         OpPets.getDatabase().removePet(player.getUniqueId(), pet);
                         player.sendMessage(deletedMessage.replace("%pet_name%", petName));
                         OpPets.getUtils().killPetFromPlayerUUID(player.getUniqueId());
@@ -31,7 +31,7 @@ public class DeleteAnvilInventory {
                 })
                 .plugin(OpPets.getInstance())
                 .title(title.replace("%pet_name%", petName))
-                .text("-")
+                .text("=")
                 .itemLeft(new ItemStack(Material.WRITABLE_BOOK))
                 .open(playerOpened);
     }

@@ -1,6 +1,7 @@
 package me.opkarol.oppets.skills;
 
 import dir.pets.OpPetsEntityTypes;
+import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.utils.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -90,10 +91,30 @@ public class SkillUtils {
         if (sec != null) {
             for (String key : sec.getKeys(false)){
                 String iPath = path + ".adders." + key + ".";
-                list.add(new Adder(SkillEnums.SkillsAdders.valueOf(ConfigUtils.getString(iPath + "type"))));
+                list.add(new Adder(SkillEnums.SkillsAdders.valueOf(ConfigUtils.getString(iPath + "type")), ConfigUtils.getDouble(iPath + "levelup.grantedPoints"), ConfigUtils.getInt(iPath + "levelup.everyAction")));
             }
         }
 
         return list;
+    }
+
+    public double getGrantedPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
+        final double[] i = {0};
+        OpPets.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
+            if (adder.getAdder() == skillsAdder) {
+                i[0] = adder.getGrantedPoints();
+            }
+        });
+        return i[0];
+    }
+
+    public double getMaxPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
+        final double[] i = {0};
+        OpPets.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
+            if (adder.getAdder() == skillsAdder) {
+                i[0] = adder.getEveryAction();
+            }
+        });
+        return i[0];
     }
 }

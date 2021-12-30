@@ -3,6 +3,7 @@ package me.opkarol.oppets.commands;
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,10 +16,9 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 public class CreateCommand implements SubCommandInterface {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             return returnMessage(sender, "");
         }
-        Player player = (Player) sender;
 
         if (args.length != 3) {
             return returnMessage(sender, "");
@@ -26,9 +26,9 @@ public class CreateCommand implements SubCommandInterface {
 
         UUID playerUUID = player.getUniqueId();
         String petType = args[1];
-        if (petType.equals("PolarBear")) {
+        if (petType.toLowerCase().equals("polarbear")) {
             petType = "Polar_Bear";
-        } else if (petType.equals("Mushroom")) {
+        } else if (petType.toLowerCase().equals("mushroom")) {
             petType = "Mushroom_Cow";
         } else if (!(OpPets.getEntityManager().getAllowedEntities()
                 .stream()
@@ -38,6 +38,7 @@ public class CreateCommand implements SubCommandInterface {
         }
 
         String petName = args[2];
+        Bukkit.broadcastMessage(petName);
         if (OpPets.getDatabase().getPetList(playerUUID) != null) {
             for (Pet pet : OpPets.getDatabase().getPetList(playerUUID)) {
                 assert pet.getPetName() != null;
@@ -54,8 +55,8 @@ public class CreateCommand implements SubCommandInterface {
             return returnMessage(sender, "zly typ");
         }
 
-        Pet pet = new Pet(petName, type, null, ((Player) sender).getUniqueId());
-        OpPets.getDatabase().addPetToPetsList(((Player) sender).getUniqueId(), pet);
+        Pet pet = new Pet(petName, type, null, playerUUID, "example_skill", true);
+        OpPets.getDatabase().addPetToPetsList(playerUUID, pet);
 
         return returnMessage(sender, "stworzono: " + pet.getPetType() + ", " + petName);
     }

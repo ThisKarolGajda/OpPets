@@ -10,6 +10,18 @@ configVersion: 1.0
 # No help will be given to servers with changed versions values.
 
 # You can touch these values ->:
+
+# MySQL values (by default turned off, switch enabled value to activate SQL).
+mysql:
+  enabled: true
+  driver: "jdbc"
+  host: "localhost"
+  port: "3306"
+  user: "root"
+  password: "localhost"
+  table: "pets"
+  database: "OpPets"
+
 # ------------------------- #
 # Settings section:         #
 # ------------------------- #
@@ -29,9 +41,14 @@ Skills:
     adders:
       adder1:
         type: "MINING"
-        level:
-          points: 1
-          every_action: 5
+        levelup:
+          grantedPoints: 1.0
+          everyAction: 0
+          # If you want progressiveLevel enabled, set everyAction to 0
+          # e = start value, cv = change value, ud = up/down, v = value
+          # %i = current start value = e, r = rounding to bigger number
+          #                 /e/cv/ud,    by/v/  /r/
+          progressiveLevel: "32;true;up;0.3*%i;true"
 
 # ------------------------- #
 # Inventories section:      #
@@ -172,6 +189,7 @@ AnvilInventories:
     nameWithSpaces: "&c Pet name can't have spaces."
     changedName: "&7Changed pet name to &f&l%new_pet_name%&7!"
     incorrectValueName: "&cInvalid value entered."
+    noPermission: "&cYou don't have permission: &f&l%permission%&c."
   DeleteInventory:
     title: "&7Write &f&l%pet_name%&7 to confirm &ndeleting&r &7pet."
     deletedMessage: "&7Deleted &f&l%pet_name%&7!"

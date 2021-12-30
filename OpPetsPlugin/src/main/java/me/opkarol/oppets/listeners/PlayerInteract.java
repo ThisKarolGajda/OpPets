@@ -1,7 +1,9 @@
 package me.opkarol.oppets.listeners;
 
+import dir.databases.Database;
 import dir.interfaces.UtilsInterface;
 import dir.pets.Pet;
+import dir.pets.PetsConverter;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.inventories.LevelInventory;
 import me.opkarol.oppets.inventories.RenameAnvilInventory;
@@ -18,6 +20,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static dir.pets.PetsUtils.removePet;
@@ -53,11 +57,14 @@ public class PlayerInteract implements Listener {
         if (event.getSlot() == -999) return;
         UtilsInterface utils = OpPets.getUtils();
         Player player = (Player) event.getWhoClicked();
-        Pet pet = OpPets.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
+        Pet pet = Database.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
         int slot = event.getSlot();
 
         if (holder instanceof SettingsInventoryHolder) {
             event.setCancelled(true);
+            UUID uuid = player.getUniqueId();
+            List<Pet> petList = Database.getDatabase().getPetList(uuid);
+            petList.removeIf(i -> Objects.equals(i.getPetName(), pet.getPetName()));
             switch (slot) {
                 case 9: {
                     pet.setVisibleToOthers(getOppositeBoolean(pet.isVisibleToOthers()));
@@ -94,6 +101,8 @@ public class PlayerInteract implements Listener {
                     pet.setParticlesEnabled(true);
                     utils.respawnPet(pet, player);
                 }
+                petList.add(pet);
+                Database.getDatabase().setPets(uuid, petList);
             }
             openSettingsInventory(player, pet);
         } else if (holder instanceof LevelInventoryHolder) {
@@ -102,6 +111,8 @@ public class PlayerInteract implements Listener {
             switch (slot) {
                 case 16 ->
                     OpPets.getSkillDatabase().getAccessibleSkillsToPetType(pet.getPetType()).forEach(skill -> player.sendMessage(skill.getA()));
+                case 12 ->
+                        player.sendMessage(new PetsConverter().convertPetToJSON(pet).toJSONString());
                 default -> {
                 }
 

@@ -1,10 +1,10 @@
 package me.opkarol.oppets;
 
+import dir.databases.Database;
 import dir.interfaces.BabyEntityCreatorInterface;
+import dir.interfaces.DatabaseInterface;
 import dir.interfaces.EntityManagerInterface;
 import dir.interfaces.UtilsInterface;
-import dir.pets.Database;
-import dir.pets.MiniPetsDatabase;
 import me.opkarol.oppets.inventories.InventoryManager;
 import me.opkarol.oppets.skills.SkillDatabase;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,9 +25,7 @@ public final class OpPets extends JavaPlugin {
         Database.setInstance(opPets);
         inventoryManager = new InventoryManager();
         controller = new PetPluginController(opPets);
-        if (!getController().setupVersion()) {
-            this.setEnabled(false);
-        }
+        this.setEnabled(getController().setupVersion());
         skillDatabase = new SkillDatabase();
         //api = new OpPetsAPI();
 
@@ -39,6 +37,8 @@ public final class OpPets extends JavaPlugin {
         opPets = null;
         creator = null;
         controller = null;
+        skillDatabase = null;
+        inventoryManager = null;
     }
 
     public static EntityManagerInterface getEntityManager() {
@@ -81,7 +81,7 @@ public final class OpPets extends JavaPlugin {
         return inventoryManager;
     }
 
-    public static MiniPetsDatabase getDatabase() {
+    public static DatabaseInterface getDatabase() {
         return Database.getDatabase();
     }
 
