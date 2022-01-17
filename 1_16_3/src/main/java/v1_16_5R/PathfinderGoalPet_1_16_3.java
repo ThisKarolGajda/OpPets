@@ -1,7 +1,16 @@
 package v1_16_5R;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import dir.databases.Database;
 import dir.pets.Pet;
+import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.*;
 
 import java.util.EnumSet;
@@ -30,7 +39,7 @@ public class PathfinderGoalPet_1_16_3 extends PathfinderGoal {
             return false;
         } else if (this.a.getDisplayName() == null || pet.getPetName() == null) {
             return false;
-        } else if (!(this.a.getDisplayName().getString().equals(pet.getPetName()))) {
+        } else if (!(this.a.getDisplayName().getString().equals(ChatColor.translateAlternateColorCodes('&', pet.getPetName())))) {
             return false;
         } else if (this.b.h(this.a) > (this.g * this.g)) {
             if (pet.isTeleportingToPlayer()) this.a.setPosition(this.b.locX(), b.locY(), b.locZ());

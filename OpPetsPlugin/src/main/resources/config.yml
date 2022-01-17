@@ -1,26 +1,20 @@
 # ------------------------- #
-# OpPets by OpKarol.        #
+#   OpPets by ThisOpKarol   #
 # ------------------------- #
-
-# Editing these values may damage all databases, config file and even server.
-# DON'T TOUCH THEM!
-version: 1.0
-configVersion: 1.0
-# Please.
-# No help will be given to servers with changed versions values.
 
 # You can touch these values ->:
 
 # MySQL values (by default turned off, switch enabled value to activate SQL).
-mysql:
-  enabled: true
-  driver: "jdbc"
-  host: "localhost"
-  port: "3306"
-  user: "root"
-  password: "localhost"
-  table: "pets"
-  database: "OpPets"
+# Current version doesn't support mysql, will be supported in the next versions (Most of the code is done, but I want to make sure that everything works)
+# mysql:
+#   enabled: false
+#   host: "localhost"
+#   port: "3306"
+#   database: "your_database"
+#   login: "user"
+#   password: "password"
+#   table: "OpPets"
+#   driver: "mysql"
 
 # ------------------------- #
 # Settings section:         #
@@ -28,7 +22,7 @@ mysql:
 
 Skills:
   example_skill:
-    available_pets: "[ALL]"      # [AXOLOTL, COW,]
+    available_pets: "[ALL]"      # [AXOLOTL, COW, others]
     abilities:
       abilitity1:
         type: "CUSTOM_COMMAND"
@@ -47,8 +41,9 @@ Skills:
           # If you want progressiveLevel enabled, set everyAction to 0
           # e = start value, cv = change value, ud = up/down, v = value
           # %i = current start value = e, r = rounding to bigger number
+          # 4th parameter is a grow-up in percentage e.g: 15[%] + level
           #                 /e/cv/ud,    by/v/  /r/
-          progressiveLevel: "32;true;up;0.3*%i;true"
+          progressiveLevel: "32;true;up;15;true"
 
 # ------------------------- #
 # Inventories section:      #
@@ -60,61 +55,62 @@ PetMainInventory:
   items:
     level:
       material: "EXPERIENCE_BOTTLE"
-      name: "Level and Experience"
+      name: "&aLevel and Experience"
       lore:
-        - "By clicking here you can check"
-        - "your pet current level and "
-        - "what you get from it"
+        - "&7By clicking here you can check"
+        - "&7your pet current level and "
+        - "&7what you get from it"
       glow: true
     name:
       material: "ANVIL"
-      name: "Change name"
+      name: "&aChange name"
       lore:
-        - "This button allows you to"
-        - "change name of your pet"
+        - "&7This button allows you to"
+        - "&7change name of your pet"
       glow: true
     settings:
       material: "NOTE_BLOCK"
-      name: "Set settings"
+      name: "&aSet-up settings"
       lore:
-        - "Customize settings for"
-        - "your needs, world is open"
+        - "&7Customize settings for"
+        - "&7your needs, world is open"
       glow: true
     respawn:
       material: "TARGET"
-      name: "Respawn pet"
+      name: "&aRespawn your pet!"
       lore:
-        - "Pet got stuck, or died?"
-        - "Respawn it now!"
+        - "&7Pet got stuck, or died?"
+        - "&7Respawn it now!"
       glow: true
 LevelInventory:
   title: "&bCurrent Level of &l%pet_name%&b!"
   items:
     level:
       material: "EXPERIENCE_BOTTLE"
-      name: "Current Level!"
+      name: "&aCurrent Level!"
       lore:
         - ""
-        - "Your current level: %pet_level%/%max_pet_level%, %percentage_of_next_experience%%."
-        - "Your pet needs %pet_experience_next% XP for next level!"
+        - "&7Your current level: &f&l%pet_level%&7/&f&l%max_pet_level%&7, &f&l%percentage_of_next_experience%."
+        - "&7Your pet needs &f&l%pet_experience_next% &7XP for next level!"
+        - ""
       glow: true
     informationBook:
       material: "KNOWLEDGE_BOOK"
-      name: "What is this?!"
+      name: "&aWhat is this?!"
       lore:
-        - "Every pet can level up when doing their job."
-        - "dir.pets can benefit you super-abilities, money"
-        - "effects and more."
-        - "By hovering mouse on Bottle O` Enchanting"
-        - "you can get your pet`s current level,"
-        - "and XP for next level."
-        - "By hovering mouse on Lapis Lazuli, you"
-        - "can see abilities and perks that are"
-        - "unlocking with every level of your pet!"
+        - "&7Every pet can level up when doing their job."
+        - "&7pets can benefit you super-abilities, money"
+        - "&7effects and more."
+        - "&7By hovering mouse on Bottle O` Enchanting"
+        - "&7you can get your pet`s current level,"
+        - "&7and XP for next level."
+        - "&7By hovering mouse on Lapis Lazuli, you"
+        - "&7can see abilities and perks that are"
+        - "&7unlocking with every level of your pet!"
       glow: true
     abilities:
       material: "LAPIS_LAZULI"
-      name: "That's what you get!"
+      name: "&aThat's what you get!"
       lore:
         - "TO DO"
       glow: true
@@ -123,60 +119,145 @@ SettingsInventory:
   items:
     visibleToOthers:
       material: "CUSTOM"
-      name: "visibleToOthers"
+      name: "&aPet visible to others"
       lore:
-        - "TO DO"
+        - "&8By pressing this button you"
+        - "&8can switch on/off setting value"
+        - "&8from the name &7(visibleToOthers)"
+        - "&7Current state: &f&l%state_visibleToOthers%"
       glow: false
     giftable:
       material: "CUSTOM"
-      name: "giftable"
+      name: "&aPet giftable"
       lore:
-        - "TO DO"
+        - "&8By pressing this button you"
+        - "&8can switch on/off setting value"
+        - "&8from the name &7(giftable)"
+        - "&7Current state: &f&l%state_giftable%"
       glow: false
     glows:
       material: "CUSTOM"
-      name: "glows"
+      name: "&aPet glows"
       lore:
-        - "TO DO"
+        - "&8By pressing this button you"
+        - "&8can switch on/off setting value"
+        - "&8from the name &7(glows)"
+        - "&7Current state: &f&l%state_glows%"
       glow: false
     followPlayer:
       material: "CUSTOM"
-      name: "followPlayer"
+      name: "&aFollow player"
       lore:
-        - "TO DO"
+        - "&8By pressing this button you"
+        - "&8can switch on/off setting value"
+        - "&8from the name &7(followPlayer)"
+        - "&7Current state: &f&l%state_followPlayer%"
       glow: false
     teleportToPlayer:
       material: "CUSTOM"
-      name: "teleportToPlayer"
+      name: "&aTeleport to player"
       lore:
-        - "TO DO"
+        - "&8By pressing this button you"
+        - "&8can switch on/off setting value"
+        - "&8from the name &7(teleportToPlayer)"
+        - "&7Current state: &f&l%state_teleportToPlayer%"
       glow: false
     rideable:
       material: "CUSTOM"
-      name: "rideable"
+      name: "&aRideable"
       lore:
-        - "TO DO"
+        - "&8By pressing this button you"
+        - "&8can switch on/off setting value"
+        - "&8from the name &7(rideable)"
+        - "&7Current state: &f&l%state_rideable%"
       glow: false
     otherRideable:
       material: "CUSTOM"
-      name: "otherRideable"
+      name: "&aOther rideable"
       lore:
-        - "TO DO"
+        - "&8By pressing this button you"
+        - "&8can switch on/off setting value"
+        - "&8from the name &7(otherRideable)"
+        - "&7Current state: &f&l%state_otherRideable%"
       glow: false
     particlesEnabled:
       material: "CUSTOM"
-      name: "particlesEnabled"
+      name: "&aParticles enabled"
       lore:
-        - "TO DO"
+        - "&8By pressing this button you"
+        - "&8can switch on/off setting value"
+        - "&8from the name &7(particlesEnabled)"
+        - "&7Current state: &f&l%state_particlesEnabled%"
       glow: false
     resetSettings:
       material: "BARRIER"
-      name: "resetSettings"
+      name: "&cReset settings"
       lore:
-        - "TO DO"
+        - "&8By pressing this button you"
+        - "&8can reset settings of this pet"
+        - "&8/ return to default settings."
       glow: true
-
-
+GuestInventory:
+  title: "&7%pet_name%&7`s stats!"
+  items:
+    level:
+      material: "EXPERIENCE_BOTTLE"
+      name: "&aLevel and Experience"
+      lore:
+        - ""
+        - "&7Pet current level: &f&l%pet_level%&7/&f&l%max_pet_level%&7, &f&l%percentage_of_next_experience%&7."
+        - "&7Pet needs &f&l%pet_experience_next%&7 XP for next level!"
+        - ""
+      glow: true
+    informationBook:
+      material: "KNOWLEDGE_BOOK"
+      name: "&aPet's information!"
+      lore:
+        - "&7Owner: &f&l%pet_owner%"
+        - "&7Name: &f&l%pet_name%"
+        - "&7Experience: &f&l%pet_experience%"
+        - "&7Level: &f&l%pet_level%"
+        - "&7Type: &f&l%pet_type%"
+        - "&7Skill: &f&l%pet_skill%"
+      glow: true
+ShopInventory:
+  title: "&7Shop."
+  items:
+    cow:
+      material: "COW_SPAWN_EGG"
+      name: "&aCow"
+      lore:
+        - "&7Type: &f&l%type%"
+        - "&7Price: &f&l%price%"
+      glow: true
+      options:
+        # Price requires economy plugin - Vault based on OR OpEconomy
+        price: 500
+        type: "COW"
+BuyerAdmitInventory:
+  title: "&7Confirm purchase!"
+  items:
+    confirm:
+      material: "GREEN_WOOL"
+      name: "&aConfirm"
+      lore:
+        - "Press this button to confirm"
+        - "purchasing this pet"
+      glow: true
+    decline:
+      material: "RED_WOOL"
+      name: "&cDecline"
+      lore:
+        - "Press this button to decline"
+        - "purchasing this pet"
+      glow: true
+    informationBook:
+      material: "KNOWLEDGE_BOOK"
+      name: "&7Purchase information!"
+      lore:
+        - "&7Price: &f&l%price%"
+        - "&7Type: &f&l%type%"
+      glow: true
 
 # ------------------------- #
 # Messages section:         #
@@ -194,7 +275,5 @@ AnvilInventories:
     title: "&7Write &f&l%pet_name%&7 to confirm &ndeleting&r &7pet."
     deletedMessage: "&7Deleted &f&l%pet_name%&7!"
     confirmMessage: "&7Write your pet name to confirm!"
-
-
 
 

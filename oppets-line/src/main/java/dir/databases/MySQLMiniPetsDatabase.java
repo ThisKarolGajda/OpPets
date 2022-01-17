@@ -1,9 +1,18 @@
 package dir.databases;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import dir.interfaces.DatabaseInterface;
 import dir.pets.Pet;
 import dir.pets.PetsConverter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,12 +27,12 @@ import static dir.databases.MySQL.*;
 public class MySQLMiniPetsDatabase implements DatabaseInterface {
     /*
     TODO
-    -   [x] Add saver that will consume petsMap and put it into MySQL database             -> Works
+    -
     NOT-WORKING:
     -   [-x] Deleting not current pet = kills current pet = not removing it from database  -> Should work
-    -   Deleting pet doesn't delete pet from map and adds values to database               ->
+    -   Deleting pet doesn't delete pet from map and adds values to database               -> deletes from local map but not mysql
     -   [x] Names with colour doesn't save                                                 -> It has been fixed
-    -   SettingsInventory doesn't works                                                    -> Change saving current pet <= Should work - works too well (spawns new entities / access mysql connection every time which cause lag)
+    -   SettingsInventory doesn't works                                                    -> Change saving current pet, spawns entities without killing previous <= Should work - works too well (spawns new entities / access mysql connection every time which cause lag)
     -   [x] Renamed pet doesn't save after restart                                         -> Works <= Need to change - update command doesn't work
     -   [x] Renamed pet name isn't stripped in auto-complete                               -> Works even with database save - FormatUtils.getNameString()
     -   [] Creating methods looks like they are called twice (sometime)                    -> Recognizing error
@@ -33,58 +42,72 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
     private HashMap<UUID, Pet> activePets;
 
     public void databaseUUIDSaver(UUID id) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                connect();
-                try {
-                    PreparedStatement statement = getConnection().prepareStatement("UPDATE " + MySQL.table + " SET object=? WHERE id=?;");
-                    List<Pet> list = getPetList(id);
-                    for (Pet pet : list) {
-                        if (pet != null) {
-                            statement.setString(1, new PetsConverter().convertPetToJSON(pet).toString());
-                            statement.setString(2, id.toString());
-                            Bukkit.broadcastMessage(statement.toString());
-                            statement.executeUpdate();
-                        }
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                disconnect();
+        if (!isConnected()) connect();
+
+        try {
+            PreparedStatement statement = getConnection().prepareStatement("UPDATE " + MySQL.table + " SET object=? WHERE id=?;");
+            List<Pet> list = getPetList(id);
+            if (list == null) {
+                return;
             }
-        }.runTaskAsynchronously(Database.getInstance());
+            for (Pet pet : list) {
+                if (pet != null) {
+                    statement.setString(1, new PetsConverter().convertPetToJSON(pet).toString());
+                    statement.setString(2, id.toString());
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        disconnect();
+
     }
 
     @Override
     public List<Pet> getPetList(@NotNull UUID uuid) {
-        if (petsMap.get(uuid) == null) {
-            Bukkit.broadcastMessage("null lista");
-            return new ArrayList<>();
+        List<Pet> i;
 
+        if (petsMap == null) {
+            return null;
         }
-        return petsMap.get(uuid);
+
+        if (petsMap.get(uuid) == null) {
+            i = new LinkedList<>();
+
+        } else {
+            i = petsMap.get(uuid);
+        }
+
+        return i;
     }
 
     private @NotNull List<Pet> getPetListFromMySQL(UUID uuid) {
-        List<Pet> i = new ArrayList<>();
         List<String> sI = new ArrayList<>();
-        if (!isConnected()) connect();
+        if (!isConnected()) {
+            connect();
+        }
+
         try {
             PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM " + MySQL.table + " WHERE `id`=?;");
             statement.setString(1, uuid.toString());
 
             ResultSet rs = statement.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 String o = rs.getString("object");
                 sI.add(o);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
+
         disconnect();
 
+        List<Pet> i = new ArrayList<>();
         for (String s : sI) {
             try {
                 i.add(new PetsConverter().convertStringToPet(s));
@@ -126,40 +149,37 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
 
     private @NotNull HashMap<UUID, List<Pet>> getPetsMapFromMySQL() {
         HashMap<UUID, List<Pet>> i = new HashMap<>();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!isConnected()) connect();
-                try {
-                    PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM " + MySQL.table);
-                    ResultSet rs = statement.executeQuery();
-                    Bukkit.broadcastMessage(statement.toString());
+        connect();
 
-                    while(rs.next()) {
-                        UUID id = UUID.fromString(rs.getString("id"));
-                        String o = rs.getString("object");
-                        if (!o.startsWith("{")) o = o.substring(1, o.length() - 1);
-                        Bukkit.broadcastMessage(o);
-                        if (i.get(id) == null) {
-                            List<Pet> list = new LinkedList<>();
-                            list.add(new PetsConverter().convertStringToPet(o));
-                            i.put(id, list);
-                        } else {
-                            Pet pet = new PetsConverter().convertStringToPet(o);
-                            if (!i.get(id).contains(pet)) {
-                                List<Pet> list = i.get(id);
-                                list.add(pet);
-                                i.replace(id, list);
-                            }
-                        }
+        try {
+            PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM " + MySQL.table);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                UUID id = UUID.fromString(rs.getString("id"));
+                String o = rs.getString("object");
+                if (!o.startsWith("{")) o = o.substring(1, o.length() - 1);
+
+                if (i.get(id) == null) {
+                    List<Pet> list = new LinkedList<>();
+                    list.add(new PetsConverter().convertStringToPet(o));
+                    i.put(id, list);
+                } else {
+                    Pet pet = new PetsConverter().convertStringToPet(o);
+                    if (!i.get(id).contains(pet)) {
+                        List<Pet> list = i.get(id);
+                        list.add(pet);
+                        i.replace(id, list);
                     }
-                statement.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
                 }
-                disconnect();
             }
-        }.runTaskAsynchronously(Database.getInstance());
+            statement.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        disconnect();
+
         return i;
     }
 
@@ -169,6 +189,7 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
             @Override
             public void run() {
                 getPetsMap().keySet().forEach(uuid -> i.put(uuid, getCurrentPet(uuid)));
+
             }
         }.runTaskAsynchronously(Database.getInstance());
         return i;
@@ -191,7 +212,6 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
         setActivePetMap(getActivePetsFromMap());
 
         if (petsMap == null) {
-            Bukkit.broadcastMessage("XD");
             petsMap = new HashMap<>();
         }
 
@@ -248,17 +268,38 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
     }
 
     @Override
-    public void removePet(UUID uuid, Pet pet) {
-        LinkedList<Pet> list = (LinkedList<Pet>) petsMap.get(uuid);
-        if (Objects.equals(getCurrentPet(uuid).getPetName(), pet.getPetName())){
-            removeCurrentPet(uuid);
+    public void removePet(UUID uuid, @NotNull Pet pet) {
+        List<Pet> list = petsMap.get(uuid);
+        if (Objects.equals(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getCurrentPet(uuid).getPetName()))), ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', pet.getPetName())))) {
+            removeCurrentPet(pet, uuid);
         }
-        list.remove(pet);
+
+        List<Pet> listI = new ArrayList<>();
+        for (Pet petI : list) {
+            if (!Objects.equals(petI.getPetName(), pet.getPetName())) {
+                listI.add(petI);
+            }
+        }
+
+        setPets(uuid, listI);
+
         for (Pet pet1 : getPetListFromMySQL(uuid)) {
             if (Objects.equals(pet1.getPetName(), pet.getPetName())) {
-                if (!deleteData("object", "=", String.valueOf(new PetsConverter().convertPetToJSON(pet1)), MySQL.table)) {
-                    //TODO error while deleting pet from database
+                connect();
+
+                try {
+                    PreparedStatement statement = getConnection().prepareStatement("DELETE FROM " + table + " WHERE id=? AND object=?");
+                    statement.setString(1, uuid.toString());
+                    statement.setString(2, new PetsConverter().convertPetToJSON(pet1).toString());
+
+                    statement.executeUpdate();
+
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
+
+                disconnect();
             }
         }
 
@@ -266,16 +307,20 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
 
     @Override
     public void removeCurrentPet(UUID uuid) {
+
+    }
+
+    @Override
+    public void removeCurrentPet(@NotNull Pet pet, UUID uuid) {
+        Objects.requireNonNull(Bukkit.getEntity(pet.getOwnUUID())).remove();
         List<Pet> pets = getPetList(uuid);
-        String name = getCurrentPet(uuid).getPetName();
-        for (Pet petI : pets) {
-            if (Objects.equals(petI.getPetName(), name)) {
-                petI.setActive(true);
-                Database.getUtils().removeEntity(Database.getUtils().getEntityByUniqueId(petI.getOwnUUID()));
-            }
-        }
+        Database.getUtils().removeEntity(Database.getUtils().getEntityByUniqueId(pet.getOwnUUID()));
+        pets.removeIf(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName()));
+        pet.setActive(false);
+        pets.add(pet);
         setPets(uuid, pets);
     }
+
 
     @Override
     public void setPets(UUID uuid, List<Pet> objects) {
@@ -307,18 +352,21 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
                 petsMap.get(playerUUID).removeIf(pet1 -> pet1.equals(pet));
             }
             petsMap.get(playerUUID).add(pet);
-
         } else {
             List<Pet> list = new ArrayList<>();
             list.add(pet);
             petsMap.put(playerUUID, list);
-            return true;
         }
-        return false;
+        return true;
     }
 
     private void addPetToPetsFromMySQL(UUID playerUUID, Pet pet) {
         List<Pet> list = getPetList(playerUUID);
+
+        if (list == null || list.size() == 0) {
+            list = new ArrayList<>();
+        }
+
         list.add(pet);
         if (!isConnected()) connect();
         try {
@@ -337,4 +385,5 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
         }
         disconnect();
     }
+
 }

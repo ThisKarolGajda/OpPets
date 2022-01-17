@@ -1,30 +1,41 @@
 package me.opkarol.oppets.listeners;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import dir.databases.Database;
 import dir.interfaces.UtilsInterface;
+import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
-import dir.pets.PetsConverter;
+import dir.pets.PetsUtils;
 import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.inventories.LevelInventory;
-import me.opkarol.oppets.inventories.RenameAnvilInventory;
-import me.opkarol.oppets.inventories.SettingsInventory;
-import me.opkarol.oppets.inventories.holders.LevelInventoryHolder;
-import me.opkarol.oppets.inventories.holders.PetMainInventoryHolder;
-import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
+import me.opkarol.oppets.inventories.*;
+import me.opkarol.oppets.inventories.holders.*;
+import me.opkarol.oppets.skills.SkillUtils;
+import me.opkarol.oppets.utils.FormatUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static dir.pets.PetsUtils.removePet;
+import static me.opkarol.oppets.utils.InventoryUtils.*;
 
 public class PlayerInteract implements Listener {
 
@@ -35,13 +46,20 @@ public class PlayerInteract implements Listener {
             if (OpPets.getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
                 event.setCancelled(true);
                 player.openInventory(OpPets.getInventoryManager().getInventoryByIndex(0));
+                event.getPlayer().updateInventory();
                 return;
             }
         }
         for (UUID uuid : OpPets.getDatabase().getActivePetMap().keySet()) {
-            if (OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID().equals(event.getRightClicked().getUniqueId())) {
-                event.setCancelled(true);
-                return;
+            Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
+            if (pet != null) {
+                if (pet.getOwnUUID() == null) return;
+                if (pet.getOwnUUID().equals(event.getRightClicked().getUniqueId())) {
+                    event.setCancelled(true);
+                    Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).openInventory(new GuestInventory(pet).getInventory());
+                    event.getPlayer().updateInventory();
+                    break;
+                }
             }
         }
     }
@@ -49,84 +67,92 @@ public class PlayerInteract implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerInteract2(@NotNull InventoryClickEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
-
-        if (holder == null){
-            return;
-        }
+        if (holder == null) return;
 
         if (event.getSlot() == -999) return;
-        UtilsInterface utils = OpPets.getUtils();
         Player player = (Player) event.getWhoClicked();
-        Pet pet = Database.getDatabase().getCurrentPet(event.getWhoClicked().getUniqueId());
+        UUID uuid = player.getUniqueId();
+        Pet pet = Database.getDatabase().getCurrentPet(uuid);
         int slot = event.getSlot();
+        UtilsInterface utils = OpPets.getUtils();
 
         if (holder instanceof SettingsInventoryHolder) {
             event.setCancelled(true);
-            UUID uuid = player.getUniqueId();
-            List<Pet> petList = Database.getDatabase().getPetList(uuid);
-            petList.removeIf(i -> Objects.equals(i.getPetName(), pet.getPetName()));
             switch (slot) {
-                case 9: {
-                    pet.setVisibleToOthers(getOppositeBoolean(pet.isVisibleToOthers()));
-                    utils.respawnPet(pet, player);
-                }
-                case 10:
-                    pet.setGiftable(getOppositeBoolean(pet.isGiftable()));
-                case 11: {
-                    pet.setGlow(getOppositeBoolean(pet.isGlowing()));
-                    utils.respawnPet(pet, player);
-                }
-                case 12: {
-                    pet.setFollowPlayer(getOppositeBoolean(pet.isFollowingPlayer()));
-                    utils.respawnPet(pet, player);
-                }
-                case 13: {
-                    pet.setTeleportingToPlayer(getOppositeBoolean(pet.isTeleportingToPlayer()));
-                    utils.respawnPet(pet, player);
-                }
-                case 14:
-                    pet.setRideable(getOppositeBoolean(pet.isRideable()));
-                case 15:
-                    pet.setOtherRideable(getOppositeBoolean(pet.isOtherRideable()));
-                case 16:
-                    pet.setParticlesEnabled(getOppositeBoolean(pet.areParticlesEnabled()));
-                case 17: {
-                    pet.setVisibleToOthers(true);
-                    pet.setGiftable(false);
-                    pet.setGlow(false);
-                    pet.setFollowPlayer(true);
-                    pet.setTeleportingToPlayer(true);
-                    pet.setRideable(true);
-                    pet.setOtherRideable(false);
-                    pet.setParticlesEnabled(true);
-                    utils.respawnPet(pet, player);
-                }
-                petList.add(pet);
-                Database.getDatabase().setPets(uuid, petList);
+                case 9 -> pet.setVisibleToOthers(getOppositeBoolean(pet.isVisibleToOthers()));
+                case 10 -> pet.setGiftable(getOppositeBoolean(pet.isGiftable()));
+                case 11 -> pet.setGlow(getOppositeBoolean(pet.isGlowing()));
+                case 12 -> pet.setFollowPlayer(getOppositeBoolean(pet.isFollowingPlayer()));
+                case 13 -> pet.setTeleportingToPlayer(getOppositeBoolean(pet.isTeleportingToPlayer()));
+                case 14 -> pet.setRideable(getOppositeBoolean(pet.isRideable()));
+                case 15 -> pet.setOtherRideable(getOppositeBoolean(pet.isOtherRideable()));
+                case 16 -> pet.setParticlesEnabled(getOppositeBoolean(pet.areParticlesEnabled()));
+                case 17 -> pet.rS();
             }
+            utils.respawnPet(pet, player);
+            PetsUtils.savePetProgress(pet, uuid);
             openSettingsInventory(player, pet);
         } else if (holder instanceof LevelInventoryHolder) {
             event.setCancelled(true);
-
-            switch (slot) {
-                case 16 ->
-                    OpPets.getSkillDatabase().getAccessibleSkillsToPetType(pet.getPetType()).forEach(skill -> player.sendMessage(skill.getA()));
-                case 12 ->
-                        player.sendMessage(new PetsConverter().convertPetToJSON(pet).toJSONString());
-                default -> {
-                }
-
+            if (slot == 16) {
+                OpPets.getSkillDatabase().getAccessibleSkillsToPetType(pet.getPetType()).forEach(skill -> player.sendMessage(skill.getA()));
             }
-
         } else if (holder instanceof PetMainInventoryHolder) {
             event.setCancelled(true);
             switch (slot) {
                 case 10 -> player.openInventory(new LevelInventory(pet).getInventory());
                 case 12 -> new RenameAnvilInventory(pet, player);
                 case 14 -> player.openInventory(new SettingsInventory(pet).getInventory());
+                case 16 -> utils.respawnPet(pet, player);
+            }
+        } else if (holder instanceof GuestInventoryHolder) {
+            event.setCancelled(true);
+        } else if (holder instanceof ShopInventoryHolder) {
+            event.setCancelled(true);
+            Inventory inventory = player.getOpenInventory().getInventory(slot);
+            if (inventory == null) return;
+
+            ItemStack item = inventory.getItem(slot);
+            if (item == null) return;
+
+            if (item.getItemMeta() == null) return;
+
+            if (FormatUtils.formatMessage(item.getItemMeta().getDisplayName()).equals("") || item.getItemMeta().getDisplayName().contains("PANE"))
+                return;
+            player.openInventory(new BuyerAdmitInventory(item).getInventory());
+        } else if (holder instanceof BuyerAdmitInventoryHolder) {
+            event.setCancelled(true);
+            switch (slot) {
+                case 10 -> {
+                    player.sendMessage("Declined");
+                    player.closeInventory();
+                }
                 case 16 -> {
-                    removePet(utils, pet);
-                    OpPets.getCreator().spawnMiniPet(pet, player);
+                    Inventory inventory = player.getOpenInventory().getInventory(slot);
+                    if (inventory == null) return;
+
+                    ItemStack item = inventory.getItem(slot);
+                    if (item == null) return;
+
+                    ItemMeta meta = item.getItemMeta();
+                    if (meta == null) return;
+
+                    int price = (int) getValueFromKey(priceKey, meta, ItemTagType.INTEGER);
+                    String type = (String) getValueFromKey(typeKey, meta, ItemTagType.STRING);
+                    //TODO: balance checking and removing
+
+                    final String[] name = {type};
+                    int i = 0;
+                    while (OpPets.getDatabase().getPetList(uuid).stream().anyMatch(pet1 -> FormatUtils.getNameString(name[0]).equals(FormatUtils.getNameString(pet1.getPetName())))) {
+                        name[0] = type + "-" + i;
+                        i++;
+                    }
+                    OpPetsEntityTypes.TypeOfEntity entity = OpPetsEntityTypes.TypeOfEntity.valueOf(type);
+
+                    Pet pet1 = new Pet(name[0], entity, null, uuid, new SkillUtils().getRandomSkillName(entity), true);
+                    OpPets.getDatabase().addPetToPetsList(uuid, pet1);
+                    player.sendMessage("created");
+                    player.closeInventory();
                 }
             }
         }

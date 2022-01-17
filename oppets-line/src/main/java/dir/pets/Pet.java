@@ -1,5 +1,13 @@
 package dir.pets;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import org.bukkit.Warning;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +26,7 @@ public class Pet implements Serializable {
     private boolean d;                        //isActive
     private UUID e1;                          //ownUUID
     private UUID e2;                          //ownerUUID
-    private String sS = "10011101";
+    private String sS;
     private String skill;
 
     public Pet(String petName, OpPetsEntityTypes.TypeOfEntity petType, UUID ownUUID, UUID ownerUUID, String skillName, boolean active) {
@@ -30,6 +38,7 @@ public class Pet implements Serializable {
         setOwnUUID(ownUUID);
         setOwnerUUID(ownerUUID);
         setSkillName(skillName);
+        setSettingsSerialized("10011101");
         setActive(active);
     }
 

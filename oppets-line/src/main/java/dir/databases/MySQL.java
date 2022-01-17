@@ -1,5 +1,13 @@
 package dir.databases;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.sql.Connection;
@@ -10,112 +18,96 @@ public class MySQL {
     private static Connection con;
 
     public static void setupMySQL() {
-        connect();
+        FileConfiguration config = Database.getInstance().getConfig();
+        port = config.getString("mysql.port");
+        host = config.getString("mysql.host");
+        user = config.getString("mysql.login");
+        password = config.getString("mysql.password");
+        database = config.getString("mysql.database");
+        driver = config.getString("mysql.driver");
+        table = config.getString("mysql.table");
 
-        if (!isConnected()) {
-            try {
-                throw new Exception("Database error.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        createTable(table, "id VARCHAR (36), object TEXT");
+        update("CREATE TABLE IF NOT EXISTS " + table + " (id VARCHAR (36), object TEXT);");
 
     }
 
-    public static boolean createTable(String table, String columns) {
-        return update("CREATE TABLE IF NOT EXISTS " + table + " (" + columns + ");");
+    public static void connect() {
+        new MySQL().setConnection();
     }
+
 
     public static Connection getConnection() {
         return con;
-    }
-
-    public static boolean deleteData(String column, String logic_gate, String data, String table) {
-        if (data != null) {
-            data = "'" + data + "'";
-        }
-
-        return MySQL.update("DELETE FROM " + table + " WHERE " + column + logic_gate + data + ";");
     }
 
     public static boolean update(String command) {
         if (command == null) {
             return false;
         } else {
-            boolean result = false;
+            final boolean[] result = {false};
             connect();
 
-            try {
-                if (con != null) {
-                    Statement st = con.createStatement();
-                    st.executeUpdate(command);
-                    st.close();
-                    result = true;
-                }
-            } catch (Exception var4) {
-                var4.printStackTrace();
-            }
+                    try {
+                        if (con != null) {
+                            Statement st = con.createStatement();
+                            st.executeUpdate(command);
+                            st.close();
+                            result[0] = true;
+                        }
+                    } catch (Exception var4) {
+                        var4.printStackTrace();
+                    }
 
             disconnect();
-            return result;
+            return result[0];
         }
     }
 
     public static void disconnect() {
-        try {
-            if (isConnected()) {
-                con.close();
-            }
-        } catch (Exception var2) {
-            var2.printStackTrace();
-        }
 
-        con = null;
+                try {
+                    if (isConnected()) {
+                        con.close();
+                    }
+                } catch (Exception var2) {
+                    var2.printStackTrace();
+                }
+
     }
 
     public static boolean isConnected() {
+        boolean i = false;
+
         if (con != null) {
             try {
-                return !con.isClosed();
+                i = !con.isClosed();
             } catch (Exception var1) {
                 var1.printStackTrace();
             }
         }
 
-        return false;
+        return i;
     }
 
-    public static void connect() {
-        setConnection();
+    private static String port;
+    private static String host;
+    private static String user;
+    private static String password;
+    private static String database;
+    private static String driver;
+    public static String table;
 
-    }
-
-    private static final FileConfiguration config = Database.getInstance().getConfig();
-    private static final String port = config.getString("mysql.port");
-    private static final String host = config.getString("mysql.host");
-    private static final String user = config.getString("mysql.user");
-    private static final String password = config.getString("mysql.password");
-    private static final String database = config.getString("mysql.database");
-    private static final String driver = config.getString("mysql.driver");
-    public static final String table = config.getString("mysql.table");
-
-
-
-    public static void setConnection() {
-        if (host != null && user != null && password != null && database != null) {
-            disconnect();
-
+    public void setConnection() {
+        if (!isConnected()) {
             try {
-                assert driver != null;
                 if (driver.length() != 0) {
-                    con = DriverManager.getConnection("jdbc:" + driver + "://" + host + ":" + port + "/" + database, user, password);
+                    String url = "jdbc:" + driver + "://" + host + ":" + port + "/" + database;
+                    con = DriverManager.getConnection(url, user, password);
                 }
+
             } catch (Exception var7) {
                 var7.printStackTrace();
             }
-
         }
     }
 

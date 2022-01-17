@@ -1,17 +1,22 @@
 package me.opkarol.oppets;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+import dir.databases.Database;
 import dir.databases.MySQLMiniPetsDatabase;
 import dir.interfaces.PacketPlayInSteerVehicleEvent;
 import dir.packets.PacketManager;
-import dir.databases.Database;
 import dir.pets.Pet;
 import me.opkarol.oppets.commands.MainCommand;
 import me.opkarol.oppets.listeners.*;
 import me.opkarol.oppets.misc.Metrics;
-import me.opkarol.oppets.utils.ConfigUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.PluginManager;
 import v1_16_1R.BabyEntityCreator;
 import v1_16_1R.PacketPlayInSteerVehicleEvent_v1_16_1;
@@ -27,13 +32,10 @@ import v1_17_1R.PlayerSteerVehicleEvent_v1_17_1;
 import v1_18_1R.PacketPlayInSteerVehicleEvent_v1_18_1;
 import v1_18_1R.PlayerSteerVehicleEvent_v1_18_1;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 public class PetPluginController {
     private final OpPets instance;
@@ -63,28 +65,12 @@ public class PetPluginController {
     public void bStatsActivation() {
         int pluginId = 13211;
         Metrics metrics = new Metrics(getInstance(), pluginId);
-
-        metrics.addCustomChart(new Metrics.SingleLineChart("pets", new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                final int[] i = {0};
-                Database.getDatabase().getPetsMap().keySet().forEach(uuid -> i[0] += Database.getDatabase().getPetList(uuid).size());
-                return 0;
-            }
-        }));
+        metrics.addCustomChart(new Metrics.SingleLineChart("pets", () -> Database.getDatabase().getPetsMap().keySet().stream().mapToInt(uuid -> Database.getDatabase().getPetList(uuid).size()).sum()));
 
     }
 
     public void saveFiles() {
-        if (!mySQLEnabled) {
-            File file = new File(localPath + "/PetsMap.db");
-            File secondFile = new File(localPath + "/ActivePetMap.db");
-            try {
-                file.createNewFile();
-                secondFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (!Database.mySQLAccess) {
             FileManager.saveObject(localPath + "/PetsMap.db", Database.getDatabase().getPetsMap());
             FileManager.saveObject(localPath + "/ActivePetMap.db", Database.getDatabase().getActivePetMap());
         } else {
@@ -96,11 +82,13 @@ public class PetPluginController {
         removeAllPets();
 
     }
-    final boolean mySQLEnabled = ConfigUtils.getBoolean("mysql.enabled");
+
     public void loadFiles() {
-        if (!mySQLEnabled) {
-            Database.getDatabase().setPetsMap((HashMap<UUID, List<Pet>>) FileManager.loadObject(localPath + "/PetsMap.db"));
-            Database.getDatabase().setActivePetMap((HashMap<UUID, Pet>) FileManager.loadObject(localPath + "/ActivePetMap.db"));
+        if (!Database.mySQLAccess) {
+            Object activeMap = FileManager.loadObject(localPath + "/ActivePetMap.db");
+            Object map = FileManager.loadObject(localPath + "/PetsMap.db");
+            Database.getDatabase().setPetsMap((HashMap<UUID, List<Pet>>) map);
+            Database.getDatabase().setActivePetMap((HashMap<UUID, Pet> ) activeMap);
         }
     }
 
@@ -122,12 +110,8 @@ public class PetPluginController {
     public void removeAllPets() {
         for (UUID uuid : Database.getDatabase().getActivePetMap().keySet()) {
             if (Database.getDatabase().getCurrentPet(uuid).getOwnUUID() != null) {
-                Entity entity = OpPets.getUtils().getEntityByUniqueId(Database.getDatabase().getCurrentPet(uuid).getOwnUUID());
-                if (entity != null) {
-                    ((LivingEntity) OpPets.getUtils().getEntityByUniqueId(Database.getDatabase().getCurrentPet(uuid).getOwnUUID())).setHealth(0);
-                }
+                OpPets.getUtils().removeEntity(OpPets.getUtils().getEntityByUniqueId(Database.getDatabase().getCurrentPet(uuid).getOwnUUID()));
             }
-            //TODO change that ^^
         }
     }
 
@@ -157,7 +141,7 @@ public class PetPluginController {
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_1(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_16_1) OpPets.getController().getPacketEvent());
                 PacketManager.setUtils(new Utils());
-                if (mySQLEnabled) {
+                if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
                 return true;
@@ -170,7 +154,7 @@ public class PetPluginController {
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_3(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_16_3) OpPets.getController().getPacketEvent());
                 PacketManager.setUtils(new v1_16_3R.Utils());
-                if (mySQLEnabled) {
+                if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
                 return true;
@@ -183,7 +167,7 @@ public class PetPluginController {
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_5(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_16_5) OpPets.getController().getPacketEvent());
                 PacketManager.setUtils(new v1_16_5R.Utils());
-                if (mySQLEnabled) {
+                if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
                 return true;
@@ -195,7 +179,7 @@ public class PetPluginController {
                 this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_17_1());
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_17_1(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_17_1) OpPets.getController().getPacketEvent());
-                if (mySQLEnabled) {
+                if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
                 PacketManager.setUtils(new v1_17_1R.Utils());
@@ -209,7 +193,7 @@ public class PetPluginController {
                 this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_18_1());
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_18_1(), this.instance);
                 PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_18_1) OpPets.getController().getPacketEvent());
-                if (mySQLEnabled) {
+                if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
                 return true;

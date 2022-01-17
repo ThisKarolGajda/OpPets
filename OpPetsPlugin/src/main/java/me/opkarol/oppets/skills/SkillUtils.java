@@ -1,5 +1,13 @@
 package me.opkarol.oppets.skills;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
@@ -89,9 +97,14 @@ public class SkillUtils {
         ConfigurationSection sec = OpPets.getInstance().getConfig().getConfigurationSection(path + ".adders");
 
         if (sec != null) {
-            for (String key : sec.getKeys(false)){
+            for (String key : sec.getKeys(false)) {
                 String iPath = path + ".adders." + key + ".";
-                list.add(new Adder(SkillEnums.SkillsAdders.valueOf(ConfigUtils.getString(iPath + "type")), ConfigUtils.getDouble(iPath + "levelup.grantedPoints"), ConfigUtils.getInt(iPath + "levelup.everyAction")));
+                int everyAction = ConfigUtils.getInt(iPath + "levelup.everyAction");
+                if (everyAction == 0) {
+                    list.add(new Adder(SkillEnums.SkillsAdders.valueOf(ConfigUtils.getString(iPath + "type")), ConfigUtils.getString(iPath + "levelup.progressiveLevel")));
+                } else {
+                    list.add(new Adder(SkillEnums.SkillsAdders.valueOf(ConfigUtils.getString(iPath + "type")), ConfigUtils.getDouble(iPath + "levelup.grantedPoints"), everyAction));
+                }
             }
         }
 
@@ -102,7 +115,9 @@ public class SkillUtils {
         final double[] i = {0};
         OpPets.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
             if (adder.getAdder() == skillsAdder) {
-                i[0] = adder.getGrantedPoints();
+                if (!adder.progressiveAdderEnabled()) {
+                    i[0] = adder.getGrantedPoints();
+                } else i[0] = 1.0D;
             }
         });
         return i[0];
@@ -111,10 +126,31 @@ public class SkillUtils {
     public double getMaxPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
         final double[] i = {0};
         OpPets.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
-            if (adder.getAdder() == skillsAdder) {
-                i[0] = adder.getEveryAction();
+            if (adder.progressiveAdderEnabled()) {
+                i[0] = adder.calculateMaxCurrent(pet.getLevel());
+            } else {
+                if (adder.getAdder() == skillsAdder) {
+                    i[0] = adder.getEveryAction();
+                }
             }
         });
         return i[0];
+    }
+
+    public String getRandomSkillName(OpPetsEntityTypes.TypeOfEntity type) {
+        List<Skill> list = OpPets.getSkillDatabase().getAccessibleSkillsToPetType(type);
+
+        if (list == null) return null;
+
+        if (list.size() == 1) {
+            return list.get(0).getA();
+        } else {
+            return list.get(getRandomNumber(0, list.size() - 1)).getA();
+        }
+
+    }
+
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
     }
 }

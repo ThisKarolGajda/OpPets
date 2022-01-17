@@ -1,7 +1,16 @@
 package me.opkarol.oppets.skills;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
+import dir.pets.PetsUtils;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.utils.ConfigUtils;
@@ -20,7 +29,6 @@ public class SkillDatabase {
     private final ConfigurationSection sec;
     private final HashMap<String, Skill> map = new HashMap<>();
     private final SkillUtils utils = new SkillUtils();
-    private final HashMap<UUID, Integer> actionMap = new HashMap<>();
 
     public SkillDatabase() {
         sec = OpPets.getInstance().getConfig().getConfigurationSection(basicPath);
@@ -59,12 +67,9 @@ public class SkillDatabase {
     }
 
     public List<Skill> getAccessibleSkillsToPetType(OpPetsEntityTypes.TypeOfEntity type) {
-        List<Skill> list = new ArrayList<>();
+        if (map.size() == 0) return null;
 
-        if (map.size() == 0) {
-            Bukkit.broadcastMessage("blank map");
-            return null;
-        }
+        List<Skill> list = new ArrayList<>();
 
         for (Skill skill : map.values()) {
             if (skill != null) {
@@ -79,38 +84,19 @@ public class SkillDatabase {
         return list;
     }
 
-    public int getCurrentActionNumberFromPet(UUID petUUID) {
-        return actionMap.get(petUUID);
-    }
-
-    public void addActionToPet(UUID petUUID, int value) {
-        actionMap.put(petUUID, value);
-    }
-
-    public void changeActionValueToPet(UUID petUUID, int newValue) {
-        actionMap.replace(petUUID, newValue);
-    }
-
-    public boolean containsActionOfPet(UUID petUUID) {
-        return actionMap.containsKey(petUUID);
-    }
-
     public void addPoint(SkillEnums.SkillsAdders skillEnums, @NotNull Pet pet, Player player) {
-        UUID uuid = pet.getOwnUUID();
-        if (containsActionOfPet(uuid)) {
-            changeActionValueToPet(uuid, getCurrentActionNumberFromPet(uuid) + 1);
-        } else {
-            addActionToPet(uuid, 1);
-        }
         SkillUtils utils = new SkillUtils();
-        pet.setPetExperience(pet.getPetExperience() + utils.getGrantedPointsFromEnum(pet, skillEnums));
+        double experience = pet.getPetExperience();
+        double grantedPoints = utils.getGrantedPointsFromEnum(pet, skillEnums);
+        pet.setPetExperience(experience + grantedPoints);
 
         double maxPoints = utils.getMaxPointsFromEnum(pet, skillEnums);
 
-        if (maxPoints <= getCurrentActionNumberFromPet(uuid)) {
+        if (maxPoints <= pet.getPetExperience()) {
             Bukkit.getPluginManager().callEvent(new PetLevelupEvent(player, pet));
-
         }
+
+        PetsUtils.savePetProgress(pet, pet.getOwnerUUID());
     }
 
 }

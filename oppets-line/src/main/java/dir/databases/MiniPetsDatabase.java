@@ -1,7 +1,17 @@
 package dir.databases;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import dir.interfaces.DatabaseInterface;
 import dir.pets.Pet;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -38,7 +48,8 @@ public class MiniPetsDatabase implements DatabaseInterface {
     @Override
     public void removePet(UUID uuid, @NotNull Pet pet) {
         LinkedList<Pet> list = (LinkedList<Pet>) petsMap.get(uuid);
-        if (Objects.equals(getCurrentPet(uuid).getPetName(), pet.getPetName())){
+        assert pet.getPetName() != null;
+        if (Objects.equals(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getCurrentPet(uuid).getPetName()))), ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', pet.getPetName())))) {
             removeCurrentPet(uuid);
         }
         list.remove(pet);
@@ -82,7 +93,13 @@ public class MiniPetsDatabase implements DatabaseInterface {
 
     @Override
     public void removeCurrentPet(UUID uuid) {
+        Objects.requireNonNull(Bukkit.getEntity(activePetMap.get(uuid).getOwnUUID())).remove();
         activePetMap.remove(uuid);
+    }
+
+    @Override
+    public void removeCurrentPet(@NotNull Pet pet, UUID uuid) {
+
     }
 
     @Override
@@ -103,13 +120,14 @@ public class MiniPetsDatabase implements DatabaseInterface {
     public boolean addPetToPetsList(UUID uuid, Pet pet) {
         List<Pet> petList;
         if (getPetList(uuid) == null) {
-            setPets(uuid, new ArrayList<>(Collections.singletonList(pet)));
+            setPets(uuid, new LinkedList<>(Collections.singletonList(pet)));
             return true;
         } else {
-            petList = new ArrayList<>(getPetList(uuid));
+            petList = new LinkedList<>(getPetList(uuid));
         }
         petList.add(pet);
         setPets(uuid, petList);
         return true;
     }
+
 }
