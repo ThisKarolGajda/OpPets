@@ -9,6 +9,7 @@ package me.opkarol.oppets.commands;
  */
 
 import dir.pets.Pet;
+import me.opkarol.oppets.Messages;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.Bukkit;
@@ -16,28 +17,25 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.UUID;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-public class GiftCommand implements SubCommandInterface {
+public class GiftCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("noConsole"));
         }
-        ///oppets gift PET PLAYER_NAME
+
         if (args.length != 3) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets gift <PET> <PLAYER>"));
         }
 
         UUID uuid = player.getUniqueId();
         String petName = args[1];
-        if (OpPets.getDatabase().getPetList(uuid).stream().noneMatch(pet -> FormatUtils.getNameString(pet.getPetName()).equals(FormatUtils.getNameString(petName)))) {
-            return returnMessage(sender, "");
-        }
         Pet pet = null;
+
         for (Pet pet1 : OpPets.getDatabase().getPetList(uuid)) {
             assert pet1.getPetName() != null;
             if (FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName))) {
@@ -45,44 +43,48 @@ public class GiftCommand implements SubCommandInterface {
             }
         }
 
+        if (pet == null) {
+            return returnMessage(sender, Messages.stringMessage("invalidPet"));
+        }
+
+        if (!pet.isGiftable()) {
+            return returnMessage(sender, Messages.stringMessage("petIsntGiftable"));
+        }
+
         String playerName = args[2];
         boolean b;
         UUID uuid1;
+        String playerIName = "";
         try {
             Player playerI = Bukkit.getPlayer(playerName);
+            assert playerI != null;
             b = playerI.hasPlayedBefore();
             uuid1 = playerI.getUniqueId();
+            playerIName = playerI.getName();
         } catch (Exception ignore) {
             OfflinePlayer playerI = Bukkit.getOfflinePlayer(playerName);
             b = playerI.hasPlayedBefore();
             uuid1 = playerI.getUniqueId();
+            playerIName = playerI.getName();
+        }
+
+        if (OpPets.getDatabase().getPetList(uuid1).stream().anyMatch(pet1 -> FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName)))) {
+            return returnMessage(sender, Messages.stringMessage("receiverSameNamedPet").replace("%pet_name%", petName));
         }
 
         if (!b || uuid1.toString().length() == 0) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("receiverInvalid"));
         }
 
         OpPets.getDatabase().removePet(uuid, pet);
         OpPets.getDatabase().addPetToPetsList(uuid1, pet);
 
-        return returnMessage(sender, "transformed");
+        return returnMessage(sender, Messages.stringMessage("petGifted").replace("%pet_name%", petName).replace("%player_name%", playerIName));
     }
-
-
 
     @Override
     public String getPermission() {
         return "oppets.command.gift";
-    }
-
-    @Override
-    public List<String> getDescription() {
-        return null;
-    }
-
-    @Override
-    public String getDescriptionAsString() {
-        return null;
     }
 
     @Override

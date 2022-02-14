@@ -19,7 +19,7 @@ import java.util.*;
 public class PetsConverter {
 
     public Pet convertJSONToPet(@NotNull JSONObject object) {
-        String name, settings, skill;
+        String name, settings, skill, prestige;
         double experience;
         int level;
         OpPetsEntityTypes.TypeOfEntity type;
@@ -35,8 +35,10 @@ public class PetsConverter {
         active = (boolean) object.get("active");
         ownUUID = null;
         ownerUUID = UUID.fromString(String.valueOf(object.get("ownerUUID")));
+        prestige = String.valueOf(object.get("prestige"));
 
-        return new Pet(name, experience, level, type, active, ownUUID, ownerUUID, settings, skill);
+
+        return new Pet(name, experience, level, type, active, ownUUID, ownerUUID, settings, skill, prestige);
     }
 
     public JSONObject convertPetToJSON(@NotNull Pet pet) {
@@ -50,11 +52,12 @@ public class PetsConverter {
         map.put("ownerUUID", String.valueOf(pet.getOwnerUUID()));
         map.put("settings", pet.getSettingsSerialized());
         map.put("skill", pet.getSkillName());
+        map.put("prestige", pet.getPrestige());
         return new JSONObject(map);
     }
 
     public List<JSONObject> convertPetListToJSONList(List<Pet> pet) {
-        if (pet == null){
+        if (pet == null) {
             return null;
         }
         List<JSONObject> i = new ArrayList<>();

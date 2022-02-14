@@ -13,7 +13,6 @@ import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.tags.ItemTagType;
@@ -23,10 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.opkarol.oppets.utils.ConfigUtils.*;
+import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.*;
 
-public class BuyerAdmitInventory {
+public class BuyerAdmitInventory implements IInventory {
     private final Inventory inventory;
     private final ItemStack itemStack;
     private final ItemMeta meta;
@@ -50,15 +49,16 @@ public class BuyerAdmitInventory {
 
     private void setupInventory() {
         String path = "BuyerAdmitInventory.items.";
-        inventory.setItem(10, itemCreator(Material.valueOf(getString(path + "decline.material")), getMessage(path + "decline.name"), setPlaceHolders(getListString(path + "decline.lore")), null, true, getBoolean(path + "decline.glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(13, itemCreator(Material.valueOf(getString(path + "informationBook.material")), getMessage(path + "informationBook.name"), setPlaceHolders(getListString(path + "informationBook.lore")), null, true, getBoolean(path + "informationBook.glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(16, itemCreatorShop(type, Integer.parseInt(price), Material.valueOf(getString(path + "confirm.material")), getMessage(path + "confirm.name"), setPlaceHolders(getListString(path + "confirm.lore")), null, true, getBoolean(path + "confirm.glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
+        inventory.setItem(10, itemCreator(path + "decline.", this));
+        inventory.setItem(13, itemCreator(path + "informationBook.", this));
+        inventory.setItem(16, itemCreatorShop(type, Integer.parseInt(price), path + "confirm.", this));
         setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
 
     }
 
+    @Override
     @Contract(pure = true)
-    private @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
+    public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         List<String> list = new ArrayList<>();
         if (meta == null) return lore;
 

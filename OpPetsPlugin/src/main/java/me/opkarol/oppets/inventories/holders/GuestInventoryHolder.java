@@ -12,7 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-public class GuestInventoryHolder implements InventoryHolder {
+public class GuestInventoryHolder implements InventoryHolder, IHolder {
     @NotNull
     @Override
     public Inventory getInventory() {

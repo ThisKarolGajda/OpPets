@@ -33,4 +33,21 @@ public class ParticlesManager {
             }
         }.runTaskAsynchronously(OpPets.getInstance());
     }
+
+    public static void prestigeChangeEffect(Player player, Entity entity) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (int degree = 0; degree < 360; degree++) {
+                    Location location = entity.getLocation();
+                    double radians = Math.toRadians(degree);
+                    double x = Math.cos(radians);
+                    double z = Math.sin(radians);
+                    location.add(x, 0, z);
+                    player.spawnParticle(Particle.CLOUD, location, 3);
+                    location.subtract(x, 0, z);
+                }
+            }
+        }.runTaskAsynchronously(OpPets.getInstance());
+    }
 }

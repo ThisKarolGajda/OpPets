@@ -15,21 +15,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.opkarol.oppets.utils.ConfigUtils.*;
+import static me.opkarol.oppets.utils.ConfigUtils.getInt;
+import static me.opkarol.oppets.utils.ConfigUtils.getString;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreatorShop;
 import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
-public class ShopInventory {
+public class ShopInventory implements IInventory {
 
     final String guiTitle = getString("ShopInventory.title");
     final Inventory inventory;
+    String path;
 
     public ShopInventory() {
         inventory = Bukkit.createInventory(new ShopInventoryHolder(), 54, FormatUtils.formatMessage(guiTitle));
@@ -49,7 +50,8 @@ public class ShopInventory {
         for (String key : sec.getKeys(false)) {
             if (i > 53) break;
             key = key + ".";
-            inventory.setItem(i, itemCreatorShop(getString(path + key + "options.type"), getInt(path + key + "options.price"), Material.valueOf(getString(path + key + "material")), getMessage(path + key + "name"), setPlaceHolders(getListString(path + key + "lore"), path + key), null, true, getBoolean(path + key + "glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
+            this.path = path + key;
+            inventory.setItem(i, itemCreatorShop(getString(path + key + "options.type"), getInt(path + key + "options.price"), path + key, this));
             i++;
         }
 
@@ -57,8 +59,9 @@ public class ShopInventory {
 
     }
 
+    @Override
     @Contract(pure = true)
-    private @NotNull List<String> setPlaceHolders(@NotNull List<String> lore, String path) {
+    public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         List<String> list = new ArrayList<>();
         String type = getString(path + ".options.type");
         String price = String.valueOf(getInt(path + ".options.price"));

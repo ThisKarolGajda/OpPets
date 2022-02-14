@@ -1,9 +1,12 @@
 name: OpPets
 version: '${project.version}'
 main: me.opkarol.oppets.OpPets
-api-version: 1.13
+api-version: 1.16
 authors: [ OpKarol, ThisOpKarol, NotOpKarol ]
+softdepend: [ Vault ]
 
 commands:
   oppets:
-    description: "Main command"
+    description: "OpPets core command. Used to do everything with using your pet up to managing it."
+
+

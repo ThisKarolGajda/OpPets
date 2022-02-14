@@ -8,7 +8,7 @@ package dir.databases;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.interfaces.DatabaseInterface;
+import dir.interfaces.IDatabase;
 import dir.pets.Pet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class MiniPetsDatabase implements DatabaseInterface {
+public class MiniPetsDatabase implements IDatabase {
 
     private HashMap<UUID, Pet> activePetMap;
     private HashMap<UUID, List<Pet>> petsMap;
@@ -47,14 +47,23 @@ public class MiniPetsDatabase implements DatabaseInterface {
 
     @Override
     public void removePet(UUID uuid, @NotNull Pet pet) {
-        LinkedList<Pet> list = (LinkedList<Pet>) petsMap.get(uuid);
+        ArrayList<Pet> list = (ArrayList<Pet>) petsMap.get(uuid);
+
         assert pet.getPetName() != null;
-        if (Objects.equals(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getCurrentPet(uuid).getPetName()))), ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', pet.getPetName())))) {
-            removeCurrentPet(uuid);
+        if (getCurrentPet(uuid) != null) {
+            if (Objects.equals(getName(Objects.requireNonNull(getCurrentPet(uuid).getPetName())), getName(pet.getPetName()))) {
+                removeCurrentPet(uuid);
+            }
         }
-        list.remove(pet);
+
+        list.removeIf(pet1 -> Objects.equals(getName(pet1.getPetName()), getName(pet.getPetName())));
+
         setPets(uuid, list);
 
+    }
+
+    private String getName(String s) {
+        return ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', s));
     }
 
     @Override
@@ -99,16 +108,18 @@ public class MiniPetsDatabase implements DatabaseInterface {
 
     @Override
     public void removeCurrentPet(@NotNull Pet pet, UUID uuid) {
-
+        Objects.requireNonNull(Bukkit.getEntity(pet.getOwnUUID())).remove();
+        activePetMap.remove(uuid);
     }
 
     @Override
     public void setPets(UUID uuid, List<Pet> list) {
+        petsMap.remove(uuid);
         if (petsMap.containsKey(uuid)) {
-            petsMap.replace(uuid, list);
-        } else {
-            petsMap.put(uuid, list);
+            petsMap.remove(uuid, list);
         }
+        petsMap.put(uuid, list);
+
     }
 
     @Override
@@ -120,10 +131,10 @@ public class MiniPetsDatabase implements DatabaseInterface {
     public boolean addPetToPetsList(UUID uuid, Pet pet) {
         List<Pet> petList;
         if (getPetList(uuid) == null) {
-            setPets(uuid, new LinkedList<>(Collections.singletonList(pet)));
+            setPets(uuid, new ArrayList<>(Collections.singletonList(pet)));
             return true;
         } else {
-            petList = new LinkedList<>(getPetList(uuid));
+            petList = new ArrayList<>(getPetList(uuid));
         }
         petList.add(pet);
         setPets(uuid, petList);

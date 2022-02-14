@@ -10,17 +10,19 @@ package v1_16_1R;
 
 import dir.databases.Database;
 import dir.pets.Pet;
+import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Location;
 
 import java.util.EnumSet;
 
 public class PathfinderGoalPet_1_16_1 extends PathfinderGoal {
-
     private final EntityAnimal a;
     private final double f;
     private final double g;
-    Pet pet;
+    private Pet pet;
     private EntityLiving b;
+    private Location l;
 
     public PathfinderGoalPet_1_16_1(EntityAnimal a, double speed, float distance) {
         this.a = a;
@@ -38,7 +40,9 @@ public class PathfinderGoalPet_1_16_1 extends PathfinderGoal {
             return false;
         } else if (this.a.getDisplayName() == null || pet.getPetName() == null) {
             return false;
-        } else if (!(this.a.getDisplayName().getString().equals(pet.getPetName()))) {
+        } else if (l != null && l == b.getBukkitEntity().getLocation()) {
+            return false;
+        } else if (!(this.a.getDisplayName().getString().equals(ChatColor.translateAlternateColorCodes('&', pet.getPetName())))) {
             return false;
         } else if (this.b.h(this.a) > (this.g * this.g)) {
             if (pet.isTeleportingToPlayer()) this.a.setPosition(this.b.locX(), b.locY(), b.locZ());
@@ -52,6 +56,7 @@ public class PathfinderGoalPet_1_16_1 extends PathfinderGoal {
 
     @Override
     public void c() {
+        l = b.getBukkitEntity().getLocation();
         this.a.getNavigation().a(this.b.locX(), this.b.locY(), this.b.locZ(), this.f);
     }
 

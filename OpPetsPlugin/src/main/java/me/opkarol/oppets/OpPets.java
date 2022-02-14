@@ -9,33 +9,90 @@ package me.opkarol.oppets;
  */
 
 import dir.databases.Database;
-import dir.interfaces.BabyEntityCreatorInterface;
-import dir.interfaces.DatabaseInterface;
-import dir.interfaces.EntityManagerInterface;
-import dir.interfaces.UtilsInterface;
-import me.opkarol.oppets.inventories.InventoryManager;
+import dir.interfaces.IBabyEntityCreator;
+import dir.interfaces.IDatabase;
+import dir.interfaces.IEntityManager;
+import dir.interfaces.IUtils;
+import dir.prestiges.PrestigeManager;
 import me.opkarol.oppets.skills.SkillDatabase;
 import org.bukkit.plugin.java.JavaPlugin;
+
+/**
+ * OpPets main Class which extends JavaPlugin.
+ * Used as a getter and setter for all classes objects.
+ *
+ * Overrides main methods of JavaPlugin - onEnable and onDisable
+ * creating custom methods which sets private static objects.
+ *
+ * This class also contains disablePlugin method
+ * which can be used to disable OpPets functionality.
+ */
 
 public final class OpPets extends JavaPlugin {
     private static OpPets opPets;
     private static PetPluginController controller;
-    private static InventoryManager inventoryManager;
-    private static BabyEntityCreatorInterface creator;
-    private static EntityManagerInterface entityManager;
-    private static UtilsInterface utils;
-    //private static OpPetsAPI api;
+    private static IBabyEntityCreator creator;
+    private static IEntityManager entityManager;
+    private static IUtils utils;
     private static SkillDatabase skillDatabase;
+    private static PrestigeManager prestigeManager;
+    private Messages messages;
+    //private static Economy economy;
+
+    public static IEntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    public static void setEntityManager(IEntityManager entityManager) {
+        OpPets.entityManager = entityManager;
+    }
+
+    public static IUtils getUtils() {
+        return utils;
+    }
+
+    public static void setUtils(IUtils utils) {
+        OpPets.utils = utils;
+    }
+
+    public static PetPluginController getController() {
+        return controller;
+    }
+
+    public static OpPets getInstance() {
+        return opPets;
+    }
+
+    public static IBabyEntityCreator getCreator() {
+        return creator;
+    }
+
+    public static void setCreator(IBabyEntityCreator creator2) {
+        OpPets.creator = creator2;
+    }
+
+    public static IDatabase getDatabase() {
+        return Database.getDatabase();
+    }
+
+    public static SkillDatabase getSkillDatabase() {
+        return skillDatabase;
+    }
+
+    public static PrestigeManager getPrestigeManager() {
+        return prestigeManager;
+    }
 
     @Override
     public void onEnable() {
         opPets = this;
         Database.setInstance(opPets);
-        inventoryManager = new InventoryManager();
         controller = new PetPluginController(opPets);
-        this.setEnabled(getController().setupVersion());
         skillDatabase = new SkillDatabase();
-        //api = new OpPetsAPI();
+        this.setEnabled(getController().setupVersion());
+        messages = new Messages().onEnable();
+        prestigeManager = new PrestigeManager();
+        //economy = controller.setupEconomy();
 
     }
 
@@ -46,58 +103,24 @@ public final class OpPets extends JavaPlugin {
         creator = null;
         controller = null;
         skillDatabase = null;
-        inventoryManager = null;
+        entityManager = null;
+        utils = null;
+        messages = null;
+        prestigeManager = null;
+        //economy = null;
     }
 
-    public static EntityManagerInterface getEntityManager() {
-        return entityManager;
-    }
-
-    public static void setEntityManager(EntityManagerInterface entityManager) {
-        OpPets.entityManager = entityManager;
-    }
-
-    public static UtilsInterface getUtils() {
-        return utils;
-    }
-
-    public static void setUtils(UtilsInterface utils) {
-        OpPets.utils = utils;
-    }
-
-    //public static OpPetsAPI getAPI() {
-        //return api;
+    //public static Economy getEconomy() {
+    //return economy;
     //}
 
-    public static PetPluginController getController() {
-        return controller;
-    }
-
-    public static OpPets getInstance() {
-        return opPets;
-    }
-
-    public static BabyEntityCreatorInterface getCreator() {
-        return creator;
-    }
-
-    public static void setCreator(BabyEntityCreatorInterface creator2) {
-        OpPets.creator = creator2;
-    }
-
-    public static InventoryManager getInventoryManager() {
-        return inventoryManager;
-    }
-
-    public static DatabaseInterface getDatabase() {
-        return Database.getDatabase();
-    }
-
-    public static SkillDatabase getSkillDatabase() {
-        return skillDatabase;
-    }
-
-    public void disablePlugin(String reason){
+    /**
+     * Method that informs a server with provided reason about
+     * OpPets`s shutdown and logs it as a class method.
+     *
+     * @param reason string value is a message shown in the server's console
+     */
+    public void disablePlugin(String reason) {
         this.getLogger().info(reason);
         this.setEnabled(false);
     }

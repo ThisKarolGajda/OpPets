@@ -14,7 +14,6 @@ import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static me.opkarol.oppets.utils.ConfigUtils.*;
+import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.*;
 
-public class SettingsInventory {
+public class SettingsInventory implements IInventory {
     private final Inventory inventory;
     Pet pet;
 
@@ -58,23 +57,22 @@ public class SettingsInventory {
 
     private void setupInventory() {
         String path = "SettingsInventory.items.";
-
-        inventory.setItem(9, itemCreatorLamp(getMessage(path + "visibleToOthers.name"), setPlaceHolders(getListString(path + "visibleToOthers.lore")), null, true, getBoolean(path + "visibleToOthers.glow"), null, visibleToOthers, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(10, itemCreatorLamp(getMessage(path + "giftable.name"), setPlaceHolders(getListString(path + "giftable.lore")), null, true, getBoolean(path + "giftable.glow"), null, giftable, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(11, itemCreatorLamp(getMessage(path + "glows.name"), setPlaceHolders(getListString(path + "glows.lore")), null, true, getBoolean(path + "glows.glow"), null, glows, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(12, itemCreatorLamp(getMessage(path + "followPlayer.name"), setPlaceHolders(getListString(path + "followPlayer.lore")), null, true, getBoolean(path + "followPlayer.glow"), null, followPlayer, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(13, itemCreatorLamp(getMessage(path + "teleportToPlayer.name"), setPlaceHolders(getListString(path + "teleportToPlayer.lore")), null, true, getBoolean(path + "teleportToPlayer.glow"), null, teleportToPlayer, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(14, itemCreatorLamp(getMessage(path + "rideable.name"), setPlaceHolders(getListString(path + "rideable.lore")), null, true, getBoolean(path + "rideable.glow"), null, rideable, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(15, itemCreatorLamp(getMessage(path + "otherRideable.name"), setPlaceHolders(getListString(path + "otherRideable.lore")), null, true, getBoolean(path + "otherRideable.glow"), null, otherRideable, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(16, itemCreatorLamp(getMessage(path + "particlesEnabled.name"), setPlaceHolders(getListString(path + "particlesEnabled.lore")), null, true, getBoolean(path + "particlesEnabled.glow"), null, particlesEnabled, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(17, itemCreator(Material.valueOf(getString(path + "resetSettings.material")), getMessage(path + "resetSettings.name"), setPlaceHolders(getListString(path + "resetSettings.lore")), null, true, getBoolean(path + "resetSettings.glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
+        inventory.setItem(9, itemCreatorLamp(path + "visibleToOthers.", visibleToOthers, this));
+        inventory.setItem(10, itemCreatorLamp(path + "giftable.", giftable, this));
+        inventory.setItem(11, itemCreatorLamp(path + "glows.", glows, this));
+        inventory.setItem(12, itemCreatorLamp(path + "followPlayer.", followPlayer, this));
+        inventory.setItem(13, itemCreatorLamp(path + "teleportToPlayer.", teleportToPlayer, this));
+        inventory.setItem(14, itemCreatorLamp(path + "rideable.", rideable, this));
+        inventory.setItem(15, itemCreatorLamp(path + "otherRideable.", otherRideable, this));
+        inventory.setItem(16, itemCreatorLamp(path + "particlesEnabled.", particlesEnabled, this));
+        inventory.setItem(17, itemCreator(path + "resetSettings.", this));
         setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
 
     }
 
-
+    @Override
     @Contract(pure = true)
-    private @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
+    public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         List<String> list = new ArrayList<>();
         for (String sI : lore) {
             list.add(FormatUtils.formatMessage(sI.replace("%state_visibleToOthers%", String.valueOf(visibleToOthers)).replace("%state_giftable%", String.valueOf(giftable)).replace("%state_glows%", String.valueOf(glows)).replace("%state_followPlayer%", String.valueOf(followPlayer)).replace("%state_teleportToPlayer%", String.valueOf(teleportToPlayer)).replace("%state_rideable%", String.valueOf(rideable)).replace("%state_otherRideable%", String.valueOf(otherRideable)).replace("%state_particlesEnabled%", String.valueOf(particlesEnabled))));

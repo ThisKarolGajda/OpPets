@@ -24,6 +24,10 @@
 
     <repositories>
         <repository>
+            <id>vault</id>
+            <url>https://mvnrepository.com/artifact/net.milkbowl.vault/Vault</url>
+        </repository>
+        <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -34,15 +38,10 @@
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>oppets-line</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.opkarol.oppets</groupId>
-            <artifactId>OpPetsAPI</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
@@ -55,6 +54,12 @@
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_17_1</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.opkarol.oppets</groupId>
+            <artifactId>1_17</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
@@ -76,7 +81,6 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -114,6 +118,7 @@
                                         <include>META-INF/**</include>
                                         <include>dir/**</include>
                                         <include>v1_18_1R/**</include>
+                                        <include>v1_17R/**</include>
                                         <include>v1_17_1R/**</include>
                                         <include>v1_16_1R/**</include>
                                         <include>v1_16_3R/**</include>

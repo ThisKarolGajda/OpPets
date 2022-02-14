@@ -9,32 +9,32 @@ package me.opkarol.oppets.commands;
  */
 
 import dir.pets.Pet;
+import me.opkarol.oppets.Messages;
 import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.inventories.DeleteAnvilInventory;
+import me.opkarol.oppets.inventories.anvil.DeleteAnvilInventory;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-public class DeleteCommand implements SubCommandInterface {
+public class DeleteCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("noConsole"));
         }
 
         if (args.length != 2) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets delete <PET>"));
         }
 
         Pet pet = getPetByName(player.getUniqueId(), FormatUtils.getNameString(args[1]));
         if (pet == null) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("invalidPet"));
         } else {
             new DeleteAnvilInventory(pet, player);
             return true;
@@ -44,16 +44,6 @@ public class DeleteCommand implements SubCommandInterface {
     @Override
     public String getPermission() {
         return "oppets.command.delete";
-    }
-
-    @Override
-    public List<String> getDescription() {
-        return null;
-    }
-
-    @Override
-    public String getDescriptionAsString() {
-        return null;
     }
 
     @Override

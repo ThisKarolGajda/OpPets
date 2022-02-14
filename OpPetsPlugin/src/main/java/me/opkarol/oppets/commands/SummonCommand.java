@@ -9,29 +9,29 @@ package me.opkarol.oppets.commands;
  */
 
 import dir.pets.Pet;
+import me.opkarol.oppets.Messages;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static me.opkarol.oppets.commands.MainCommand.noPetsString;
+import static me.opkarol.oppets.commands.OpPetsCommand.noPetsString;
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-public class SummonCommand implements SubCommandInterface {
+public class SummonCommand implements ICommand {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("noConsole"));
         }
 
         if (args.length != 2) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets summon <PET>"));
         }
 
         UUID playerUUID = player.getUniqueId();
@@ -39,40 +39,30 @@ public class SummonCommand implements SubCommandInterface {
         Pet activePet = OpPets.getDatabase().getCurrentPet(playerUUID);
 
         if (args[1].equals(noPetsString)) {
-            return returnMessage(sender, "blocked name");
+            return returnMessage(sender, Messages.stringMessage("petBlockedName").replace("%blocked_word%", noPetsString));
         }
 
         if (playerPets == null || playerPets.size() == 0) {
-            return returnMessage(sender, "Your pets list is empty.");
+            return returnMessage(sender, Messages.stringMessage("petListEmpty"));
         }
 
         for (Pet pet : playerPets) {
             if (FormatUtils.getNameString(Objects.requireNonNull(pet.getPetName())).equals(FormatUtils.getNameString(args[1]))) {
                 if (activePet == pet) {
-                    return returnMessage(sender, "Ten sam pet");
+                    return returnMessage(sender, Messages.stringMessage("samePet"));
                 } else {
                     OpPets.getUtils().killPetFromPlayerUUID(playerUUID);
                     OpPets.getCreator().spawnMiniPet(pet, player);
-                    return returnMessage(sender, "Zespawnowano peta");
+                    return returnMessage(sender, Messages.stringMessage("summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
                 }
             }
         }
-        return returnMessage(sender, "Pet nie istnieje");
+        return returnMessage(sender, Messages.stringMessage("invalidPet"));
     }
 
     @Override
     public String getPermission() {
         return "oppets.command.summon";
-    }
-
-    @Override
-    public List<String> getDescription() {
-        return Arrays.asList("", "");
-    }
-
-    @Override
-    public String getDescriptionAsString() {
-        return null;
     }
 
     @Override

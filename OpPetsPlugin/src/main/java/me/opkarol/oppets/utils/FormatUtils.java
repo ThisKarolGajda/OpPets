@@ -34,16 +34,6 @@ public class FormatUtils {
         return true;
     }
 
-    //TODO
-    @Contract(pure = true)
-    public static @NotNull String getStringFromFormattedMessage(@NotNull String message) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (char c : message.toCharArray()) {
-            stringBuilder.append(ChatColor.stripColor(String.valueOf(c)));
-        }
-        return stringBuilder.toString();
-    }
-
     public static String getNameString(String string) {
         return ChatColor.stripColor(formatMessage(string));
     }

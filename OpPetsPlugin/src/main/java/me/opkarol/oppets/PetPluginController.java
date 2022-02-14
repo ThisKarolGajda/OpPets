@@ -10,10 +10,11 @@ package me.opkarol.oppets;
 
 import dir.databases.Database;
 import dir.databases.MySQLMiniPetsDatabase;
-import dir.interfaces.PacketPlayInSteerVehicleEvent;
+import dir.interfaces.IPacketPlayInSteerVehicleEvent;
 import dir.packets.PacketManager;
 import dir.pets.Pet;
-import me.opkarol.oppets.commands.MainCommand;
+import me.opkarol.oppets.commands.OpPetsCommand;
+import me.opkarol.oppets.files.FileManager;
 import me.opkarol.oppets.listeners.*;
 import me.opkarol.oppets.misc.Metrics;
 import org.bukkit.Bukkit;
@@ -27,7 +28,9 @@ import v1_16_3R.PacketPlayInSteerVehicleEvent_v1_16_3;
 import v1_16_3R.PlayerSteerVehicleEvent_v1_16_3;
 import v1_16_5R.PacketPlayInSteerVehicleEvent_v1_16_5;
 import v1_16_5R.PlayerSteerVehicleEvent_v1_16_5;
+import v1_17R.PacketPlayInSteerVehicleEvent_v1_17;
 import v1_17_1R.PacketPlayInSteerVehicleEvent_v1_17_1;
+import v1_17R.PlayerSteerVehicleEvent_v1_17;
 import v1_17_1R.PlayerSteerVehicleEvent_v1_17_1;
 import v1_18_1R.PacketPlayInSteerVehicleEvent_v1_18_1;
 import v1_18_1R.PlayerSteerVehicleEvent_v1_18_1;
@@ -37,10 +40,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+//import net.milkbowl.vault.economy.Economy;
+
+/**
+ * PetPluginController is a controlling class that can run methods
+ * which would be redundant in the main OpPets class.
+ *
+ * This public class contains methods that helps build and compile
+ * OpPets but also has some Logic, File Managers and MySQL access.
+ */
+
 public class PetPluginController {
     private final OpPets instance;
     private final String localPath = OpPets.getInstance().getDataFolder().getAbsolutePath();
-    private PacketPlayInSteerVehicleEvent packetEvent;
+    private IPacketPlayInSteerVehicleEvent packetEvent;
     private String version;
 
     public PetPluginController(OpPets opPets) {
@@ -52,46 +65,71 @@ public class PetPluginController {
         return instance;
     }
 
+    /**
+     * Plugin initialization method that runs File Configuration saver, loading files
+     * Database logic and Registers event and Commands.
+     * It's also used to set up InventoryManager and activate bStats with plugin id.
+     *
+     */
     public void init() {
         getInstance().saveDefaultConfig();
         loadFiles();
         Database.getDatabase().startLogic();
         registerEvents();
         registerCommands();
-        setupInventories();
-        bStatsActivation();
+        bStatsActivation(13211);
     }
 
-    public void bStatsActivation() {
-        int pluginId = 13211;
+    /**
+     * Void method which run track operation that hooks to your server,
+     * which also counts pet numbers in the server.
+     *
+     * @param pluginId plugin id used to connect with bStats site
+     * @see me.opkarol.oppets.misc.Metrics
+     */
+    public void bStatsActivation(int pluginId) {
         Metrics metrics = new Metrics(getInstance(), pluginId);
         metrics.addCustomChart(new Metrics.SingleLineChart("pets", () -> Database.getDatabase().getPetsMap().keySet().stream().mapToInt(uuid -> Database.getDatabase().getPetList(uuid).size()).sum()));
-
     }
 
+    /**
+     * Method which runs in OpPets onDisable method.
+     * This saves mySql and normal database files to a simple connector.
+     * Can be used in both ways.
+     *
+     * @see me.opkarol.oppets.OpPets
+     */
     public void saveFiles() {
         if (!Database.mySQLAccess) {
             FileManager.saveObject(localPath + "/PetsMap.db", Database.getDatabase().getPetsMap());
             FileManager.saveObject(localPath + "/ActivePetMap.db", Database.getDatabase().getActivePetMap());
         } else {
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                new MySQLMiniPetsDatabase().databaseUUIDSaver(player.getUniqueId());
-            });
-
+            Bukkit.getOnlinePlayers().forEach(player -> new MySQLMiniPetsDatabase().databaseUUIDSaver(player.getUniqueId()));
         }
         removeAllPets();
-
     }
 
+    /**
+     * Method which runs in OpPets onEnable method.
+     * Only used if there isn't active mysql connection,
+     * because mysql updates itself with every type connection.
+     *
+     * @see me.opkarol.oppets.OpPets
+     */
     public void loadFiles() {
         if (!Database.mySQLAccess) {
             Object activeMap = FileManager.loadObject(localPath + "/ActivePetMap.db");
             Object map = FileManager.loadObject(localPath + "/PetsMap.db");
             Database.getDatabase().setPetsMap((HashMap<UUID, List<Pet>>) map);
-            Database.getDatabase().setActivePetMap((HashMap<UUID, Pet> ) activeMap);
+            Database.getDatabase().setActivePetMap((HashMap<UUID, Pet>) activeMap);
         }
     }
 
+    /**
+     * Method used to registerEvents which were previously provided.
+     *
+     * @see org.bukkit.plugin.PluginManager
+     */
     public void registerEvents() {
         PluginManager manager = instance.getServer().getPluginManager();
         manager.registerEvents(new PlayerJoin(), instance);
@@ -99,33 +137,45 @@ public class PetPluginController {
         manager.registerEvents(new PlayerInteract(), instance);
         manager.registerEvents(new SkillsListeners(), instance);
         manager.registerEvents(new PetListeners(), instance);
-
+        manager.registerEvents(new ChatReceiver(), instance);
     }
 
+    /**
+     * Method used to register not null commands which registers both
+     * Executor and TabCompleter in a MainCommand class.
+     *
+     * @see me.opkarol.oppets.commands.OpPetsCommand
+     */
     public void registerCommands() {
-        Objects.requireNonNull(getInstance().getCommand("oppets")).setExecutor(new MainCommand());
-        Objects.requireNonNull(getInstance().getCommand("oppets")).setTabCompleter(new MainCommand());
+        Objects.requireNonNull(getInstance().getCommand("oppets")).setExecutor(new OpPetsCommand());
+        Objects.requireNonNull(getInstance().getCommand("oppets")).setTabCompleter(new OpPetsCommand());
     }
 
+    /**
+     * Final method which loops through every UUID from activePetsMap key set
+     * and checks if it's valid.
+     * If result is valid, it can be successfully removed using Bukkit method.
+     */
     public void removeAllPets() {
         for (UUID uuid : Database.getDatabase().getActivePetMap().keySet()) {
-            if (Database.getDatabase().getCurrentPet(uuid).getOwnUUID() != null) {
-                OpPets.getUtils().removeEntity(OpPets.getUtils().getEntityByUniqueId(Database.getDatabase().getCurrentPet(uuid).getOwnUUID()));
+            if (Database.getDatabase().getCurrentPet(uuid).getOwnUUID() == null) {
+                continue;
             }
+            OpPets.getUtils().removeEntity(OpPets.getUtils().getEntityByUniqueId(Database.getDatabase().getCurrentPet(uuid).getOwnUUID()));
         }
     }
 
-    public void setupInventories() {
-        OpPets.getInventoryManager().setupList();
-
-    }
-
+    /**
+     * This is a main method of this class, which provides classified information about every
+     * version, and sets it to main OpPets class, PacketManager class and Database class.
+     */
     public boolean setupVersion() {
         String version;
         try {
-            version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            version = Bukkit.getBukkitVersion().split("-")[0];
             this.setVersion(version);
         } catch (ArrayIndexOutOfBoundsException var5) {
+            new OpPets().disablePlugin(var5.getCause().getMessage());
             return false;
         }
 
@@ -133,83 +183,83 @@ public class PetPluginController {
         PluginManager manager = this.instance.getServer().getPluginManager();
 
         switch (getVersion()) {
-            case "v1_16_R1" -> {
+            case "1.16", "1.16.1", "1.16.2" -> {
                 OpPets.setEntityManager(new EntityManager());
                 OpPets.setCreator(new BabyEntityCreator());
                 OpPets.setUtils(new Utils());
                 this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_16_1());
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_1(), this.instance);
-                PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_16_1) OpPets.getController().getPacketEvent());
                 PacketManager.setUtils(new Utils());
                 if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
-                return true;
             }
-            case "v1_16_R2" -> {
+            case "1.16.3", "1.16.4" -> {
                 OpPets.setEntityManager(new v1_16_3R.entities.EntityManager());
                 OpPets.setCreator(new v1_16_3R.BabyEntityCreator());
                 OpPets.setUtils(new v1_16_3R.Utils());
                 this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_16_3());
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_3(), this.instance);
-                PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_16_3) OpPets.getController().getPacketEvent());
                 PacketManager.setUtils(new v1_16_3R.Utils());
                 if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
-                return true;
             }
-            case "v1_16_R3" -> {
+            case "1.16.5" -> {
                 OpPets.setEntityManager(new v1_16_5R.entities.EntityManager());
                 OpPets.setCreator(new v1_16_5R.BabyEntityCreator());
                 OpPets.setUtils(new v1_16_5R.Utils());
                 this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_16_5());
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_5(), this.instance);
-                PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_16_5) OpPets.getController().getPacketEvent());
                 PacketManager.setUtils(new v1_16_5R.Utils());
                 if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
-                return true;
             }
-            case "v1_17_R1" -> {
-                OpPets.setEntityManager(new v1_17_1R.entities.EntityManager());
-                OpPets.setCreator(new v1_17_1R.BabyEntityCreator());
-                OpPets.setUtils(new v1_17_1R.Utils());
-                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_17_1());
-                manager.registerEvents(new PlayerSteerVehicleEvent_v1_17_1(), this.instance);
-                PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_17_1) OpPets.getController().getPacketEvent());
+            case "1.17" -> {
+                OpPets.setEntityManager(new v1_17R.entities.EntityManager());
+                OpPets.setCreator(new v1_17R.BabyEntityCreator());
+                OpPets.setUtils(new v1_17R.Utils());
+                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_17());
+                manager.registerEvents(new PlayerSteerVehicleEvent_v1_17(), this.instance);
                 if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
                 PacketManager.setUtils(new v1_17_1R.Utils());
-                return true;
             }
-            case "v1_18_R1" -> {
+            case "1.17.1" -> {
+                OpPets.setEntityManager(new v1_17R.entities.EntityManager());
+                OpPets.setCreator(new v1_17_1R.BabyEntityCreator());
+                OpPets.setUtils(new v1_17_1R.Utils());
+                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_17_1());
+                manager.registerEvents(new PlayerSteerVehicleEvent_v1_17_1(), this.instance);
+                if (Database.mySQLAccess) {
+                    Database.setUtils(OpPets.getUtils());
+                }
+                PacketManager.setUtils(new v1_17_1R.Utils());
+            }
+            case "1.18" -> {
                 OpPets.setEntityManager(new v1_18_1R.entities.EntityManager());
                 OpPets.setCreator(new v1_18_1R.BabyEntityCreator());
                 OpPets.setUtils(new v1_18_1R.Utils());
                 PacketManager.setUtils(new v1_18_1R.Utils());
                 this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_18_1());
                 manager.registerEvents(new PlayerSteerVehicleEvent_v1_18_1(), this.instance);
-                PacketManager.setEvent((PacketPlayInSteerVehicleEvent_v1_18_1) OpPets.getController().getPacketEvent());
                 if (Database.mySQLAccess) {
                     Database.setUtils(OpPets.getUtils());
                 }
-                return true;
             }
-            default -> {
-                return false;
-            }
+            default -> throw new IllegalStateException("Unexpected value: " + getVersion());
         }
-
+        PacketManager.setEvent(OpPets.getController().getPacketEvent());
+        return true;
     }
 
-    public PacketPlayInSteerVehicleEvent getPacketEvent() {
+    public IPacketPlayInSteerVehicleEvent getPacketEvent() {
         return this.packetEvent;
     }
 
-    public void setPacketEvent(PacketPlayInSteerVehicleEvent packetEvent) {
+    public void setPacketEvent(IPacketPlayInSteerVehicleEvent packetEvent) {
         this.packetEvent = packetEvent;
     }
 
@@ -220,4 +270,15 @@ public class PetPluginController {
     public void setVersion(String version) {
         this.version = version;
     }
+
+    //public @Nullable Economy setupEconomy() {
+    //    if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
+    //        return null;
+    //    }
+    //    RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+    //    if (rsp == null) {
+    //        return null;
+    //    }
+    //    return rsp.getProvider();
+    //}
 }

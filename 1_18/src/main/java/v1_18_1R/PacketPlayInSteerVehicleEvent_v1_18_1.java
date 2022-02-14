@@ -8,7 +8,7 @@ package v1_18_1R;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.interfaces.PacketPlayInSteerVehicleEvent;
+import dir.interfaces.IPacketPlayInSteerVehicleEvent;
 import net.minecraft.network.protocol.game.PacketPlayInSteerVehicle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PacketPlayInSteerVehicleEvent_v1_18_1 extends Event implements PacketPlayInSteerVehicleEvent {
+public class PacketPlayInSteerVehicleEvent_v1_18_1 extends Event implements IPacketPlayInSteerVehicleEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private PacketPlayInSteerVehicle packet;
     private Player player;
@@ -28,16 +28,16 @@ public class PacketPlayInSteerVehicleEvent_v1_18_1 extends Event implements Pack
     }
 
     @NotNull
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-    @NotNull
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
-    public PacketPlayInSteerVehicleEvent initialize(Object obj1, Object obj2) {
+    @NotNull
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
+
+    public IPacketPlayInSteerVehicleEvent initialize(Object obj1, Object obj2) {
         this.packet = (PacketPlayInSteerVehicle) obj1;
         this.player = (Player) obj2;
         return this;

@@ -18,14 +18,12 @@ import org.bukkit.Location;
 import java.util.EnumSet;
 
 public class PathfinderGoalPet_1_18_1 extends Goal {
-
     private final Animal a;
     private final double f;
     private final double g;
     private LivingEntity b;
-    private Pet p = null;
+    private Pet p;
     private Location l;
-
 
     public PathfinderGoalPet_1_18_1(Animal a, double speed, float distance) {
         this.a = a;
@@ -34,7 +32,6 @@ public class PathfinderGoalPet_1_18_1 extends Goal {
         this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
-
     @Override
     public boolean canUse() {
         return this.a != null;
@@ -42,7 +39,6 @@ public class PathfinderGoalPet_1_18_1 extends Goal {
 
     @Override
     public void tick() {
-
         this.b = this.a.getTarget();
         if (p == null && b != null)
             p = Database.getDatabase().getCurrentPet(b.getUUID());
@@ -50,8 +46,6 @@ public class PathfinderGoalPet_1_18_1 extends Goal {
         if (b == null || this.a.getDisplayName() == null) {
             return;
         }
-        // Last location (l) is a construction parameter which validates last owner's position with current
-        // which prevents using navigation for the same location.
         else if (l != null && l == b.getBukkitEntity().getLocation()) {
             return;
         } else if (!(this.a.getName().getString().equals(p.getPetName()))) {

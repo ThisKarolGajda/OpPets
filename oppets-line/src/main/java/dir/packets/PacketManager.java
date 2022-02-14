@@ -8,20 +8,17 @@ package dir.packets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.interfaces.PacketPlayInSteerVehicleEvent;
-import dir.interfaces.UtilsInterface;
+import dir.interfaces.IUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 public class PacketManager implements Listener {
-    private static UtilsInterface utils;
+    private static IUtils utils;
     private static Object event;
 
     public static void removePlayer(Player player) {
@@ -33,7 +30,7 @@ public class PacketManager implements Listener {
         ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
             @Override
             public void channelRead(ChannelHandlerContext channelHandlerContext, Object packet) {
-                Bukkit.getPluginManager().callEvent((Event) ((PacketPlayInSteerVehicleEvent) getEvent()).initialize(packet, player));
+                utils.rideEventRegister(getEvent(), packet, player);
             }
         };
         ChannelPipeline pipeline = (ChannelPipeline) utils.getPlayerPipeline(player);
@@ -49,7 +46,7 @@ public class PacketManager implements Listener {
         PacketManager.event = event;
     }
 
-    public static void setUtils(UtilsInterface utils) {
+    public static void setUtils(IUtils utils) {
         PacketManager.utils = utils;
     }
 }

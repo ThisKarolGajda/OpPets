@@ -8,7 +8,7 @@ package dir.databases;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.interfaces.DatabaseInterface;
+import dir.interfaces.IDatabase;
 import dir.pets.Pet;
 import dir.pets.PetsConverter;
 import org.bukkit.Bukkit;
@@ -24,7 +24,7 @@ import java.util.*;
 import static dir.databases.MySQL.*;
 
 
-public class MySQLMiniPetsDatabase implements DatabaseInterface {
+public class MySQLMiniPetsDatabase implements IDatabase {
     /*
     TODO
     -
@@ -75,7 +75,7 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
         }
 
         if (petsMap.get(uuid) == null) {
-            i = new LinkedList<>();
+            i = new ArrayList<>();
 
         } else {
             i = petsMap.get(uuid);
@@ -161,7 +161,7 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
                 if (!o.startsWith("{")) o = o.substring(1, o.length() - 1);
 
                 if (i.get(id) == null) {
-                    List<Pet> list = new LinkedList<>();
+                    List<Pet> list = new ArrayList<>();
                     list.add(new PetsConverter().convertStringToPet(o));
                     i.put(id, list);
                 } else {
@@ -196,13 +196,13 @@ public class MySQLMiniPetsDatabase implements DatabaseInterface {
     }
 
     @Override
-    public void setActivePetMap(HashMap<UUID, Pet> loadObject) {
-        activePets = loadObject;
+    public HashMap<UUID, Pet> getActivePetMap() {
+        return activePets;
     }
 
     @Override
-    public HashMap<UUID, Pet> getActivePetMap() {
-        return activePets;
+    public void setActivePetMap(HashMap<UUID, Pet> loadObject) {
+        activePets = loadObject;
     }
 
     @Override

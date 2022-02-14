@@ -11,25 +11,37 @@ package me.opkarol.oppets.skills;
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.utils.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class SkillUtils {
+    private final FileConfiguration config;
+    private final SkillDatabase database;
 
-    public List<OpPetsEntityTypes.TypeOfEntity> getAllowedEntities(@NotNull String string){
+    public SkillUtils() {
+        config = OpPets.getInstance().getConfig();
+        database = OpPets.getSkillDatabase();
+    }
+
+    public SkillUtils(SkillDatabase database) {
+        config = OpPets.getInstance().getConfig();
+        this.database = database;
+    }
+
+    public List<OpPetsEntityTypes.TypeOfEntity> getAllowedEntities(@NotNull String string) {
         String substring = string.substring(1, string.length() - 1);
         String[] strings = substring.split(",");
-
-
         List<OpPetsEntityTypes.TypeOfEntity> list = new ArrayList<>();
         try {
-            for (String pseudoType : strings){
-                if (pseudoType.equals("ALL")){
+            for (String pseudoType : strings) {
+                if (pseudoType.equals("[]")) break;
+                if (pseudoType.equals("ALL")) {
                     list.addAll(Arrays.stream(OpPetsEntityTypes.TypeOfEntity.values()).toList());
                     break;
                 }
@@ -38,82 +50,65 @@ public class SkillUtils {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-
-
         return list;
     }
 
-    public List<Ability> getSkillAbilitiesFromSection(String path){
-        if (path == null){
+    public List<Ability> getSkillAbilitiesFromSection(String pathI) {
+        if (pathI == null) {
             return null;
         }
-
-        path = path.substring(0, path.length() - 1);
-
+        pathI = pathI.substring(0, pathI.length() - 1);
         List<Ability> list = new ArrayList<>();
-
-        ConfigurationSection sec = OpPets.getInstance().getConfig().getConfigurationSection(path + ".abilities");
-
+        ConfigurationSection sec = config.getConfigurationSection(pathI + ".abilities");
         if (sec != null) {
-            for (String key : sec.getKeys(false)){
-                String iPath = path + ".abilities." + key + ".";
-                list.add(new Ability(SkillEnums.SkillsAbilities.valueOf(ConfigUtils.getString(iPath + "type")), ConfigUtils.getString(iPath + "command")));
+            for (String key : sec.getKeys(false)) {
+                String iPath = pathI + ".abilities." + key + ".";
+                list.add(new Ability(SkillEnums.SkillsAbilities.valueOf(config.getString(iPath + "type")), iPath));
             }
         }
-
         return list;
     }
 
-    public List<Requirement> getSkillRequirementFromSection(String path){
-        if (path == null){
+    public List<Requirement> getSkillRequirementFromSection(String path) {
+        if (path == null) {
             return null;
         }
-
         path = path.substring(0, path.length() - 1);
-
         List<Requirement> list = new ArrayList<>();
-
-        ConfigurationSection sec = OpPets.getInstance().getConfig().getConfigurationSection(path + ".requirements");
-
+        ConfigurationSection sec = config.getConfigurationSection(path + ".requirements");
         if (sec != null) {
-            for (String key : sec.getKeys(false)){
+            for (String key : sec.getKeys(false)) {
                 String iPath = path + ".requirements." + key + ".";
-                list.add(new Requirement(SkillEnums.SkillsRequirements.valueOf(ConfigUtils.getString(iPath + "type"))));
+                list.add(new Requirement(SkillEnums.SkillsRequirements.valueOf(config.getString(iPath + "type"))));
             }
         }
-
         return list;
     }
 
-    public List<Adder> getSkillAdderFromSection(String path){
-        if (path == null){
+    public List<Adder> getSkillAdderFromSection(String path) {
+        if (path == null) {
             return null;
         }
-
         path = path.substring(0, path.length() - 1);
-
         List<Adder> list = new ArrayList<>();
-
-        ConfigurationSection sec = OpPets.getInstance().getConfig().getConfigurationSection(path + ".adders");
-
+        ConfigurationSection sec = config.getConfigurationSection(path + ".adders");
         if (sec != null) {
             for (String key : sec.getKeys(false)) {
                 String iPath = path + ".adders." + key + ".";
-                int everyAction = ConfigUtils.getInt(iPath + "levelup.everyAction");
+                int everyAction = config.getInt(iPath + "levelup.everyAction");
                 if (everyAction == 0) {
-                    list.add(new Adder(SkillEnums.SkillsAdders.valueOf(ConfigUtils.getString(iPath + "type")), ConfigUtils.getString(iPath + "levelup.progressiveLevel")));
+                    list.add(new Adder(SkillEnums.SkillsAdders.valueOf(config.getString(iPath + "type")), config.getString(iPath + "levelup.progressiveLevel"), Objects.requireNonNull(config.getString(iPath + "materials"))));
                 } else {
-                    list.add(new Adder(SkillEnums.SkillsAdders.valueOf(ConfigUtils.getString(iPath + "type")), ConfigUtils.getDouble(iPath + "levelup.grantedPoints"), everyAction));
+                    list.add(new Adder(SkillEnums.SkillsAdders.valueOf(config.getString(iPath + "type")), config.getDouble(iPath + "levelup.grantedPoints"), everyAction, Objects.requireNonNull(config.getString(iPath + "materials"))));
                 }
             }
         }
-
         return list;
     }
 
     public double getGrantedPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
         final double[] i = {0};
-        OpPets.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
+        database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
             if (adder.getAdder() == skillsAdder) {
                 if (!adder.progressiveAdderEnabled()) {
                     i[0] = adder.getGrantedPoints();
@@ -125,7 +120,7 @@ public class SkillUtils {
 
     public double getMaxPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
         final double[] i = {0};
-        OpPets.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
+        database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
             if (adder.progressiveAdderEnabled()) {
                 i[0] = adder.calculateMaxCurrent(pet.getLevel());
             } else {
@@ -138,19 +133,19 @@ public class SkillUtils {
     }
 
     public String getRandomSkillName(OpPetsEntityTypes.TypeOfEntity type) {
-        List<Skill> list = OpPets.getSkillDatabase().getAccessibleSkillsToPetType(type);
-
+        List<Skill> list = database.getAccessibleSkillsToPetType(type);
         if (list == null) return null;
-
         if (list.size() == 1) {
             return list.get(0).getA();
         } else {
             return list.get(getRandomNumber(0, list.size() - 1)).getA();
         }
-
     }
 
     public int getRandomNumber(int min, int max) {
+        if (min == max) {
+            return min;
+        }
         return (int) ((Math.random() * (max - min)) + min);
     }
 }

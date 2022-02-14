@@ -10,26 +10,26 @@ package me.opkarol.oppets.commands;
 
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
+import me.opkarol.oppets.Messages;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.skills.SkillUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-public class CreateCommand implements SubCommandInterface {
+public class CreateCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("noConsole"));
         }
 
         if (args.length != 3) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets create <TYPE> <NAME>"));
         }
 
         UUID playerUUID = player.getUniqueId();
@@ -42,7 +42,7 @@ public class CreateCommand implements SubCommandInterface {
                 .stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toList()).contains(petType.toLowerCase()))) {
-            return returnMessage(sender, "invalid");
+            return returnMessage(sender, Messages.stringMessage("wrongType").replace("%pet_type%", petType));
         }
 
         String petName = args[2];
@@ -50,7 +50,7 @@ public class CreateCommand implements SubCommandInterface {
             for (Pet pet : OpPets.getDatabase().getPetList(playerUUID)) {
                 assert pet.getPetName() != null;
                 if (pet.getPetName().equals(petName)) {
-                    return returnMessage(sender, "");
+                    return returnMessage(sender, Messages.stringMessage("petWithSameName").replace("%pet_name%", petName));
                 }
             }
         }
@@ -59,12 +59,12 @@ public class CreateCommand implements SubCommandInterface {
         try {
             type = OpPetsEntityTypes.TypeOfEntity.valueOf(petType.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return returnMessage(sender, "zly typ");
+            return returnMessage(sender, Messages.stringMessage("wrongType").replace("%pet_type%", petType));
         }
 
         Pet pet = new Pet(petName, type, null, playerUUID, new SkillUtils().getRandomSkillName(type), true);
         if (OpPets.getDatabase().addPetToPetsList(playerUUID, pet)) {
-            return returnMessage(sender, "stworzono: " + pet.getPetType() + ", " + petName);
+            return returnMessage(sender, Messages.stringMessage("createdPet").replace("%pet_name%", petName).replace("%pet_type%", petType));
         }
 
         try {
@@ -79,16 +79,6 @@ public class CreateCommand implements SubCommandInterface {
     @Override
     public String getPermission() {
         return "oppets.command.create";
-    }
-
-    @Override
-    public List<String> getDescription() {
-        return null;
-    }
-
-    @Override
-    public String getDescriptionAsString() {
-        return null;
     }
 
     @Override

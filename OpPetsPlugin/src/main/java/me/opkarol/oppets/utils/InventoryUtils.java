@@ -8,12 +8,11 @@ package me.opkarol.oppets.utils;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import com.google.common.collect.Multimap;
 import me.opkarol.oppets.OpPets;
+import me.opkarol.oppets.inventories.IInventory;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -24,42 +23,18 @@ import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-
 import static me.opkarol.oppets.utils.FormatUtils.formatList;
 import static me.opkarol.oppets.utils.FormatUtils.formatMessage;
 
 public class InventoryUtils {
 
-    public static @NotNull ItemStack itemCreator(Material material, String displayName, List<String> lore, Multimap<Attribute, AttributeModifier> attributeModifierMultiMap, boolean unbreakable, boolean glow, Map<Enchantment, Integer> enchantmentIntegerMap, ItemFlag... itemFlags) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        assert meta != null;
-        meta.setDisplayName(formatMessage(displayName));
-        meta.setLore(formatList(lore));
-        meta.setAttributeModifiers(attributeModifierMultiMap);
-        meta.setUnbreakable(unbreakable);
-        if (glow) meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-        meta.addItemFlags(itemFlags);
-        if (enchantmentIntegerMap != null) item.addUnsafeEnchantments(enchantmentIntegerMap);
-        item.setItemMeta(meta);
-        return item;
-    }
-
     public static NamespacedKey typeKey = new NamespacedKey(OpPets.getInstance(), "oppets-shop-type");
     public static NamespacedKey priceKey = new NamespacedKey(OpPets.getInstance(), "oppets-shop-price");
-    public static @NotNull ItemStack itemCreatorShop(String type, int price, Material material, String displayName, List<String> lore, Multimap<Attribute, AttributeModifier> attributeModifierMultiMap, boolean unbreakable, boolean glow, Map<Enchantment, Integer> enchantmentIntegerMap, ItemFlag... itemFlags) {
-        ItemStack item = new ItemStack(material);
+
+    public static @NotNull ItemStack itemCreatorShop(String type, int price, String path, @NotNull IInventory inventory) {
+        ItemStack item = itemCreator(path, inventory);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        meta.setDisplayName(formatMessage(displayName));
-        meta.setLore(formatList(lore));
-        meta.setAttributeModifiers(attributeModifierMultiMap);
-        meta.setUnbreakable(unbreakable);
-        if (glow) meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-        meta.addItemFlags(itemFlags);
-        if (enchantmentIntegerMap != null) item.addUnsafeEnchantments(enchantmentIntegerMap);
         meta.getCustomTagContainer().setCustomTag(typeKey, ItemTagType.STRING, type);
         meta.getCustomTagContainer().setCustomTag(priceKey, ItemTagType.INTEGER, price);
         item.setItemMeta(meta);
@@ -69,26 +44,30 @@ public class InventoryUtils {
     public static @Nullable Object getValueFromKey(NamespacedKey namespacedKey, @NotNull ItemMeta meta, ItemTagType type) {
         CustomItemTagContainer tagContainer = meta.getCustomTagContainer();
 
-        if(tagContainer.hasCustomTag(namespacedKey, type)) {
+        if (tagContainer.hasCustomTag(namespacedKey, type)) {
             return tagContainer.getCustomTag(namespacedKey, type);
         }
         return null;
     }
 
-    public static @NotNull ItemStack itemCreatorLamp(String displayName, List<String> lore, Multimap<Attribute, AttributeModifier> attributeModifierMultiMap, boolean unbreakable, boolean glow, Map<Enchantment, Integer> enchantmentIntegerMap, boolean lights, ItemFlag... itemFlags) {
+    public static @NotNull ItemStack itemCreatorLamp(String path, boolean lights, @NotNull IInventory inventory) {
+        FileConfiguration config = OpPets.getInstance().getConfig();
         Material material;
-        if (lights) material = Material.RED_CONCRETE;
-        else material = Material.BLACK_CONCRETE;
+        switch (String.valueOf(lights)) {
+            case "true" -> material = Material.RED_CONCRETE;
+            case "false" -> material = Material.BLACK_CONCRETE;
+            default -> material = Material.YELLOW_CONCRETE;
+        }
+
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        meta.setDisplayName(formatMessage(displayName));
-        meta.setLore(formatList(lore));
-        meta.setAttributeModifiers(attributeModifierMultiMap);
-        meta.setUnbreakable(unbreakable);
-        if (glow) meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-        meta.addItemFlags(itemFlags);
-        if (enchantmentIntegerMap != null) item.addUnsafeEnchantments(enchantmentIntegerMap);
+        meta.setDisplayName(formatMessage(config.getString(path + "name")));
+        meta.setLore(formatList(inventory.setPlaceHolders(config.getStringList(path + "lore"))));
+        meta.setAttributeModifiers(null);
+        meta.setUnbreakable(true);
+        if (config.getBoolean(path + "glow")) meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         item.setItemMeta(meta);
         return item;
     }
@@ -97,7 +76,7 @@ public class InventoryUtils {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        meta.setDisplayName(formatMessage("&9"));
+        meta.setDisplayName(formatMessage("&k"));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
         item.setItemMeta(meta);
@@ -111,5 +90,21 @@ public class InventoryUtils {
                 inventory.setItem(i, glass);
             }
         }
+    }
+
+
+    public static @NotNull ItemStack itemCreator(String path, @NotNull IInventory inventory) {
+        FileConfiguration config = OpPets.getInstance().getConfig();
+        ItemStack item = new ItemStack(Material.valueOf(config.getString(path + "material")));
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(formatMessage(config.getString(path + "name")));
+        meta.setLore(formatList(inventory.setPlaceHolders(config.getStringList(path + "lore"))));
+        meta.setAttributeModifiers(null);
+        meta.setUnbreakable(true);
+        if (config.getBoolean(path + "glow")) meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        item.setItemMeta(meta);
+        return item;
     }
 }

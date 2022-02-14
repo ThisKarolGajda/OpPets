@@ -9,14 +9,12 @@ package me.opkarol.oppets.inventories;
  */
 
 import dir.pets.Pet;
-import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.inventories.holders.LevelInventoryHolder;
-import me.opkarol.oppets.skills.Adder;
 import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,13 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static me.opkarol.oppets.utils.ConfigUtils.*;
+import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
-public class LevelInventory {
-    private final Inventory inventory;
+public class LevelInventory implements IInventory {
     final Pet pet;
+    private final Inventory inventory;
 
     public LevelInventory(@NotNull Pet pet) {
         this.pet = pet;
@@ -44,50 +42,27 @@ public class LevelInventory {
 
     private void setupInventory() {
         String path = "LevelInventory.items.";
-        inventory.setItem(10, itemCreator(Material.valueOf(getString(path + "informationBook.material")), getMessage(path + "informationBook.name"), setPlaceHolders(getListString(path + "informationBook.lore")), null, true, getBoolean(path + "informationBook.glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(13, itemCreator(Material.valueOf(getString(path + "level.material")), getMessage(path + "level.name"), setPlaceHolders(getListString(path + "level.lore")), null, true, getBoolean(path + "level.glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(16, itemCreator(Material.valueOf(getString(path + "abilities.material")), getMessage(path + "abilities.name"), setPlaceHolders(getListString(path + "abilities.lore")), null, true, getBoolean(path + "abilities.glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
+        inventory.setItem(10, itemCreator(path + "informationBook.", this));
+        inventory.setItem(13, itemCreator(path + "level.", this));
+        inventory.setItem(16, itemCreator(path + "abilities.", this));
         setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
 
     }
 
+    @Override
     @Contract(pure = true)
-    private @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
+    public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         List<String> list = new ArrayList<>();
 
-        String skillName = pet.getSkillName();
-        int petLevel = pet.getLevel();
-        double adderPoints = getAdderPoints(skillName, true, pet);
-        String maxLevel = String.valueOf(petLevel + 1);
-        String percentageOfNext = (adderPoints / getAdderPoints(skillName, false, pet)) + "%";
-        String petExperience = String.valueOf(Math.round(adderPoints - pet.getPetExperience()));
+        String maxLevel = String.valueOf(OpUtils.getMaxLevel(pet));
+        String percentageOfNext = OpUtils.getPercentageOfNextLevel(pet);
+        String petExperience = String.valueOf(OpUtils.getPetLevelExperience(pet));
 
         for (String sI : lore) {
-            list.add(FormatUtils.formatMessage(sI.replace("%max_pet_level%", maxLevel).replace("%percentage_of_next_experience%", percentageOfNext).replace("%pet_experience_next%", petExperience).replace("%pet_level%", String.valueOf(petLevel))));
+            list.add(FormatUtils.formatMessage(sI.replace("%max_pet_level%", maxLevel).replace("%percentage_of_next_experience%", percentageOfNext).replace("%pet_experience_next%", petExperience).replace("%pet_level%", String.valueOf(OpUtils.getLevel(pet)))));
         }
         return list;
     }
 
-    public static double getAdderPoints(String skillName, boolean lowestOutput, Pet pet) {
-        double number = 0D;
-        List<Adder> list = OpPets.getSkillDatabase().getSkillFromMap(skillName).getE();
-        for (Adder adder : list) {
-            double calculated = adder.calculateMaxCurrent(pet.getLevel());
-            if (number == 0) {
-                number = calculated;
-            }
 
-            if (lowestOutput) {
-                if (calculated < number) {
-                    number = calculated;
-                }
-            } else {
-                if (calculated > number) {
-                    number = calculated;
-                }
-            }
-
-        }
-        return number;
-    }
 }

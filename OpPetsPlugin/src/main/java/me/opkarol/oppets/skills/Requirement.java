@@ -11,7 +11,7 @@ package me.opkarol.oppets.skills;
 public class Requirement {
     private SkillEnums.SkillsRequirements requirement;
 
-    public Requirement(SkillEnums.SkillsRequirements requirements){
+    public Requirement(SkillEnums.SkillsRequirements requirements) {
         setRequirement(requirements);
     }
 

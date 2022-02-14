@@ -9,25 +9,24 @@ package me.opkarol.oppets.inventories;
  */
 
 import dir.pets.Pet;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.inventories.holders.GuestInventoryHolder;
 import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static me.opkarol.oppets.inventories.LevelInventory.getAdderPoints;
-import static me.opkarol.oppets.utils.ConfigUtils.*;
+import static me.opkarol.oppets.utils.ConfigUtils.getString;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
-public class GuestInventory {
+public class GuestInventory implements IInventory {
     final String guiTitle = getString("GuestInventory.title");
     final Pet pet;
     final Inventory inventory;
@@ -44,29 +43,27 @@ public class GuestInventory {
 
     private void setupInventory() {
         String path = "GuestInventory.items.";
-        inventory.setItem(11, itemCreator(Material.valueOf(getString(path + "informationBook.material")), getMessage(path + "informationBook.name"), setPlaceHolders(getListString(path + "informationBook.lore")), null, true, getBoolean(path + "informationBook.glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
-        inventory.setItem(15, itemCreator(Material.valueOf(getString(path + "level.material")), getMessage(path + "level.name"), setPlaceHolders(getListString(path + "level.lore")), null, true, getBoolean(path + "level.glow"), null, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE));
+        inventory.setItem(11, itemCreator(path + "informationBook.", this));
+        inventory.setItem(15, itemCreator(path + "level.", this));
         setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
 
     }
 
-    @Contract(pure = true)
-    private @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
+    @Override
+    @NotNull
+    public List<String> setPlaceHolders(@NotNull List<String> lore) {
         List<String> list = new ArrayList<>();
         String owner = FormatUtils.formatMessage(getPlayerName(pet.getOwnerUUID()));
         String petName = FormatUtils.formatMessage(pet.getPetName());
         String petType = pet.getPetType().name();
         String skillName = pet.getSkillName();
 
-        int petLevel = pet.getLevel();
-        double adderPoints = getAdderPoints(skillName, true, pet);
-
-        String maxLevel = String.valueOf(petLevel + 1);
-        String percentageOfNext = (adderPoints / getAdderPoints(skillName, false, pet)) + "%";
-        String petExperience = String.valueOf(Math.round(adderPoints - pet.getPetExperience()));
+        String maxLevel = String.valueOf(OpUtils.getMaxLevel(pet));
+        String percentageOfNext = OpUtils.getPercentageOfNextLevel(pet);
+        String petExperience = String.valueOf(OpUtils.getPetLevelExperience(pet));
 
         for (String sI : lore) {
-            list.add(FormatUtils.formatMessage(sI.replace("%max_pet_level%", maxLevel).replace("%percentage_of_next_experience%", percentageOfNext).replace("%pet_experience_next%", petExperience)).replace("%pet_owner%", owner).replace("%pet_name%", petName).replace("%pet_experience%", petExperience).replace("%pet_level%", String.valueOf(petLevel)).replace("%pet_type%", petType).replace("%pet_skill%", skillName));
+            list.add(FormatUtils.formatMessage(sI.replace("%current_prestige%", OpPets.getPrestigeManager().getFilledPrestige(pet.getPrestige())).replace("%max_pet_level%", maxLevel).replace("%percentage_of_next_experience%", percentageOfNext).replace("%pet_experience_next%", petExperience)).replace("%pet_owner%", owner).replace("%pet_name%", petName).replace("%pet_experience%", petExperience).replace("%pet_level%", String.valueOf(OpUtils.getLevel(pet))).replace("%pet_type%", petType).replace("%pet_skill%", skillName));
         }
         return list;
     }

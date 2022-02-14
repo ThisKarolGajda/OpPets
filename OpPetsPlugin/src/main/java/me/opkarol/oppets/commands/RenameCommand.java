@@ -10,8 +10,9 @@ package me.opkarol.oppets.commands;
 
 import dir.databases.Database;
 import dir.pets.Pet;
+import me.opkarol.oppets.Messages;
 import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.inventories.RenameAnvilInventory;
+import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,16 +22,16 @@ import java.util.UUID;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-public class RenameCommand implements SubCommandInterface{
+public class RenameCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("noConsole"));
         }
 
         UUID uuid = player.getUniqueId();
         if (OpPets.getDatabase().getPetList(uuid) == null) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("invalidPet"));
         }
 
         if (args.length == 1) {
@@ -49,22 +50,12 @@ public class RenameCommand implements SubCommandInterface{
             return true;
         }
 
-        return returnMessage(sender, "");
+        return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets rename <PET>"));
     }
 
     @Override
     public String getPermission() {
         return "oppets.command.rename";
-    }
-
-    @Override
-    public List<String> getDescription() {
-        return null;
-    }
-
-    @Override
-    public String getDescriptionAsString() {
-        return null;
     }
 
     @Override

@@ -9,78 +9,55 @@ package dir.pets;
  */
 
 import dir.databases.Database;
-import dir.interfaces.UtilsInterface;
+import dir.prestiges.PrestigeManager;
+import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 
 public class PetsUtils {
 
-    @TestOnly
-    public static @NotNull String serializeSettingsOfPet(boolean @NotNull ... settings) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (boolean b : settings) {
-            if (b) {
-                stringBuilder.append("1");
-            } else stringBuilder.append("0");
-        }
-        return stringBuilder.toString();
+    @Contract(pure = true)
+    public static boolean getBinaryFromStringAndChar(@NotNull String text, int number) {
+        return String.valueOf(text.charAt(number)).equals(String.valueOf(1));
     }
 
     @Contract(pure = true)
-    public static boolean @NotNull [] deserializeSettingsOfPet(@NotNull String serializedSettings) {
-        boolean[] booleans = new boolean[serializedSettings.length()];
+    public static @NotNull String getBinaryFromStringToChar(@NotNull String text, int number, boolean value) {
+        StringBuilder builder = new StringBuilder();
         int i = 0;
-        for (char c : serializedSettings.toCharArray()) {
-            booleans[i] = String.valueOf(c).equals("1");
+        for (char c : text.toCharArray()) {
+            if (i == number) {
+                builder.append(value ? 1 : 0);
+            } else {
+                builder.append(c);
+            }
             i++;
         }
-        return booleans;
-    }
-
-    @Contract(pure = true)
-    public static boolean getDeserializedValueOfSettingsPetFromIndex(@NotNull String serializedSettings, int i) {
-        if (i > serializedSettings.length()) return false;
-        char c = serializedSettings.charAt(i);
-        return String.valueOf(c).equals("1");
-    }
-
-    public static @NotNull String setDeserializedSettings(@NotNull String serializedSettings, int i, boolean b) {
-        if (i > serializedSettings.length()) return serializedSettings;
-        StringBuilder stringBuilder = new StringBuilder();
-        int iI = 0;
-        for (char c : serializedSettings.toCharArray()) {
-            if (iI == i) {
-                if (b) {
-                    stringBuilder.append("1");
-                } else stringBuilder.append("0");
-            } else {
-                stringBuilder.append(c);
-            }
-            iI++;
-        }
-        return stringBuilder.toString();
-    }
-
-    public static void removePet(@NotNull UtilsInterface utils, @NotNull Pet pet) {
-        utils.removeEntity(utils.getEntityByUniqueId(pet.getOwnUUID()));
+        return builder.toString();
     }
 
     public static void savePetProgress(Pet pet, UUID playerUUID) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                List<Pet> list = Database.getDatabase().getPetList(playerUUID);
+                ArrayList<Pet> list = (ArrayList<Pet>) Database.getDatabase().getPetList(playerUUID);
                 list.removeIf(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName()));
                 list.add(pet);
                 Database.getDatabase().setPets(playerUUID, list);
-
             }
         }.runTaskAsynchronously(Database.getInstance());
+    }
+
+    public static @Nullable String getPetFormattedName(@NotNull Pet pet) {
+        if (pet.getPetName() != null) {
+            return ChatColor.translateAlternateColorCodes('&', pet.getPetName().replace("%p%", new PrestigeManager().getFilledPrestige(pet.getPrestige())));
+        }
+        return null;
     }
 }

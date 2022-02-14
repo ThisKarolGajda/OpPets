@@ -9,8 +9,9 @@ package v1_18_1R;
  */
 
 import dir.databases.Database;
-import dir.interfaces.BabyEntityCreatorInterface;
+import dir.interfaces.IBabyEntityCreator;
 import dir.pets.Pet;
+import dir.pets.PetsUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
@@ -19,27 +20,18 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import v1_18_1R.entities.*;
 
-public class BabyEntityCreator implements BabyEntityCreatorInterface {
+public class BabyEntityCreator implements IBabyEntityCreator {
 
     @Override
     public void spawnMiniPet(@NotNull Pet pet, @NotNull Player player) {
         pet.setOwnerUUID(player.getUniqueId());
         Animal entityAnimal = getPet(pet, player);
-        entityAnimal.setCustomName(Component.nullToEmpty(pet.getPetName()));
+        entityAnimal.setCustomName(Component.nullToEmpty(PetsUtils.getPetFormattedName(pet)));
         entityAnimal.setGlowingTag(pet.isGlowing());
         pet.setOwnUUID(entityAnimal.getUUID());
         Database.getDatabase().setCurrentPet(player.getUniqueId(), pet);
-
-        //RESULT: Entity isn't found = Entity isn't created
-
         CraftWorld world = (CraftWorld) player.getWorld();
-
         world.addEntity(entityAnimal, CreatureSpawnEvent.SpawnReason.CUSTOM);
-
-        /*
-        ID functions which tracks entities and display them to
-        players with different settings
-         */
         int id = entityAnimal.getId();
         Database.getDatabase().addIdPet(pet.getOwnUUID(), id);
         if (pet.isVisibleToOthers()) return;
@@ -48,27 +40,48 @@ public class BabyEntityCreator implements BabyEntityCreatorInterface {
 
     public Animal getPet(@NotNull Pet pet, Player player) {
         switch (pet.getPetType()) {
-            case AXOLOTL: new Axolotl(player.getLocation(), player, pet);
-            case CAT: new Cat(player.getLocation(), player, pet);
-            case CHICKEN: new Chicken(player.getLocation(), player, pet);
-            case COW: return new Cow(player.getLocation(), player, pet);
-            case DONKEY: return new Donkey(player.getLocation(), player, pet);
-            case FOX: return new Fox(player.getLocation(), player, pet);
-            case GOAT: return new Goat(player.getLocation(), player, pet);
-            case HORSE: return new Horse(player.getLocation(), player, pet);
-            case LLAMA: new Llama(player.getLocation(), player, pet);
-            case MULE: return new Mule(player.getLocation(), player, pet);
-            case MUSHROOM_COW: return new MushroomCow(player.getLocation(), player, pet);
-            case OCELOT: return new Ocelot(player.getLocation(), player, pet);
-            case PANDA: return new Panda(player.getLocation(), player, pet);
-            case PARROT: return new Parrot(player.getLocation(), player, pet);
-            case PIG: return new Pig(player.getLocation(), player, pet);
-            case POLAR_BEAR: return new PolarBear(player.getLocation(), player, pet);
-            case RABBIT: return new Rabbit(player.getLocation(), player, pet);
-            case SHEEP: return new Sheep(player.getLocation(), player, pet);
-            case TURTLE: return new Turtle(player.getLocation(), player, pet);
-            case WOLF: return new Wolf(player.getLocation(), player, pet);
-            default: throw new IllegalStateException("Unexpected value: " + pet.getPetType());
+            case AXOLOTL:
+                return new Axolotl(player.getLocation(), player, pet);
+            case CAT:
+                return new Cat(player.getLocation(), player, pet);
+            case CHICKEN:
+                return new Chicken(player.getLocation(), player, pet);
+            case COW:
+                return new Cow(player.getLocation(), player, pet);
+            case DONKEY:
+                return new Donkey(player.getLocation(), player, pet);
+            case FOX:
+                return new Fox(player.getLocation(), player, pet);
+            case GOAT:
+                return new Goat(player.getLocation(), player, pet);
+            case HORSE:
+                return new Horse(player.getLocation(), player, pet);
+            case LLAMA:
+                return new Llama(player.getLocation(), player, pet);
+            case MULE:
+                return new Mule(player.getLocation(), player, pet);
+            case MUSHROOM_COW:
+                return new MushroomCow(player.getLocation(), player, pet);
+            case OCELOT:
+                return new Ocelot(player.getLocation(), player, pet);
+            case PANDA:
+                return new Panda(player.getLocation(), player, pet);
+            case PARROT:
+                return new Parrot(player.getLocation(), player, pet);
+            case PIG:
+                return new Pig(player.getLocation(), player, pet);
+            case POLAR_BEAR:
+                return new PolarBear(player.getLocation(), player, pet);
+            case RABBIT:
+                return new Rabbit(player.getLocation(), player, pet);
+            case SHEEP:
+                return new Sheep(player.getLocation(), player, pet);
+            case TURTLE:
+                return new Turtle(player.getLocation(), player, pet);
+            case WOLF:
+                return new Wolf(player.getLocation(), player, pet);
+            default:
+                throw  new IllegalStateException("Unexpected value: " + pet.getPetType());
         }
     }
 

@@ -10,15 +10,16 @@ package me.opkarol.oppets.skills;
 
 public class SkillEnums {
 
-    /*
+    /**
         SkillsAbilities are abilities that are given to a player         ->
         for every * action / for every level upgrade / every level * action
      */
     public enum SkillsAbilities {
-        CUSTOM_COMMAND, PLUGIN_CONNECTION, VANILLA_EFFECTS, VANILLA_ENCHANTS, TREASURE,
+        // CURRENT PLUGIN CONNECTIONS: Vault
+        CUSTOM_COMMAND, PLUGIN_CONNECTION, VANILLA_EFFECT, TREASURE
     }
 
-    /*
+    /**
         SkillsRequirements are requirements that are needed to level up such as:
 
      */
@@ -26,17 +27,17 @@ public class SkillEnums {
         PET_LEVEL,
     }
 
-    /*
-        SkillBoosters are addons that can help to level up your pet
+    /**
+        SkillBoosters are addons that can help players to level up their pets
      */
     public enum SkillsBoosters {
         CUSTOM_BOOSTER, SERVER_BOOST, PLAYER_BOOST, WORLD_BOOST, PET_BOOST
     }
 
-    /*
+    /**
         SkillAdders are selective group of actions that leads to leveling up your pet
      */
     public enum SkillsAdders {
-        MINING, HARVESTING, CRAFTING, SMELTING,
+        MINING, HARVESTING, CRAFTING, SMELTING, FISHING
     }
 }

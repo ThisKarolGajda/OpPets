@@ -11,91 +11,70 @@ package me.opkarol.oppets.skills;
 import dir.pets.OpPetsEntityTypes;
 
 import java.util.List;
-import java.util.UUID;
 
 public class Skill extends SkillEnums {
 
-    /*
-    String a = name
-    SkillsAbilities[] b = list of skill abilities
-    SkillsRequirements c = -"-
-    SkillsBoosters d = -"-
-    SkillsAdders e = -"-
-    OpPetsEntityTypes.TypeOfEntity[] f = allowed entities to have selected skill
-    UUID g = skill UUID;
-     */
+    private String name;
+    private List<Ability> abilityList;
+    private List<Requirement> requirementList;
+    private List<Adder> adderList;
+    private List<OpPetsEntityTypes.TypeOfEntity> typeOfEntityList;
+    private int maxLevel;
 
-    private String a;
-    private List<Ability> b;
-    private List<Requirement> c;
-    private List<Booster> d;
-    private List<Adder> e;
-    private List<OpPetsEntityTypes.TypeOfEntity> f;
-    private UUID g;
-
-    public Skill(String name, List<Ability> b, List<Requirement> c, List<Booster> d, List<Adder> e, List<OpPetsEntityTypes.TypeOfEntity> f, UUID g){
+    public Skill(String name, List<Ability> b, List<Requirement> c, List<Adder> e, List<OpPetsEntityTypes.TypeOfEntity> f, int h) {
         setA(name);
         setB(b);
         setC(c);
-        setD(d);
         setE(e);
         setF(f);
-        setG(g);
+        setH(h);
     }
 
     public String getA() {
-        return a;
+        return name;
     }
 
     public void setA(String a) {
-        this.a = a;
+        this.name = a;
     }
 
     public List<Ability> getB() {
-        return b;
+        return abilityList;
     }
 
     public void setB(List<Ability> b) {
-        this.b = b;
+        this.abilityList = b;
     }
 
     public List<Requirement> getC() {
-        return c;
+        return requirementList;
     }
 
     public void setC(List<Requirement> c) {
-        this.c = c;
-    }
-
-    public List<Booster> getD() {
-        return d;
-    }
-
-    public void setD(List<Booster> d) {
-        this.d = d;
+        this.requirementList = c;
     }
 
     public List<Adder> getE() {
-        return e;
+        return adderList;
     }
 
     public void setE(List<Adder> e) {
-        this.e = e;
+        this.adderList = e;
     }
 
     public List<OpPetsEntityTypes.TypeOfEntity> getF() {
-        return f;
+        return typeOfEntityList;
     }
 
     public void setF(List<OpPetsEntityTypes.TypeOfEntity> f) {
-        this.f = f;
+        this.typeOfEntityList = f;
     }
 
-    public UUID getG() {
-        return g;
+    public int getH() {
+        return maxLevel;
     }
 
-    public void setG(UUID g) {
-        this.g = g;
+    public void setH(int h) {
+        this.maxLevel = h;
     }
 }

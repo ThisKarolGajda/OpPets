@@ -8,11 +8,13 @@ package v1_16_3R;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.interfaces.UtilsInterface;
 import dir.databases.Database;
+import dir.interfaces.IPacketPlayInSteerVehicleEvent;
+import dir.interfaces.IUtils;
 import dir.pets.Pet;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
+import net.minecraft.server.v1_16_R2.PacketPlayInSteerVehicle;
 import net.minecraft.server.v1_16_R2.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_16_R2.PathfinderGoal;
 import net.minecraft.server.v1_16_R2.PathfinderGoalSelector;
@@ -21,6 +23,7 @@ import org.bukkit.craftbukkit.v1_16_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class Utils implements UtilsInterface {
+public class Utils implements IUtils {
     @Override
     public org.bukkit.entity.@Nullable Entity getEntityByUniqueId(UUID uniqueId) {
         return Bukkit.getEntity(uniqueId);
@@ -136,5 +139,14 @@ public class Utils implements UtilsInterface {
     @Override
     public ChannelPipeline getPlayerPipeline(Player player) {
         return ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
+    }
+
+    @Override
+    public boolean rideEventRegister(Object event, Object packet, Player player) {
+        if (packet instanceof PacketPlayInSteerVehicle) {
+            Bukkit.getPluginManager().callEvent((Event) ((IPacketPlayInSteerVehicleEvent) event).initialize(packet, player));
+            return true;
+        }
+        return false;
     }
 }

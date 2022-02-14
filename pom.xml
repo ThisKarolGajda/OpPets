@@ -19,11 +19,11 @@
         <module>oppets-line</module>
         <module>1_18</module>
         <module>1_17_1</module>
+        <module>1_17</module>
         <module>1_16_3</module>
         <module>1_16_2</module>
         <module>1_16_1</module>
         <module>OpPetsPlugin</module>
-        <module>OpPetsAPI</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -69,11 +69,6 @@
             <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
             <version>1.5.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.27</version>
         </dependency>
     </dependencies>
 

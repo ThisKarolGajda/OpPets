@@ -9,12 +9,13 @@ package me.opkarol.oppets.listeners;
  */
 
 import dir.databases.Database;
-import dir.interfaces.UtilsInterface;
+import dir.interfaces.IUtils;
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import dir.pets.PetsUtils;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.inventories.*;
+import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
 import me.opkarol.oppets.inventories.holders.*;
 import me.opkarol.oppets.skills.SkillUtils;
 import me.opkarol.oppets.utils.FormatUtils;
@@ -45,7 +46,7 @@ public class PlayerInteract implements Listener {
         if (OpPets.getDatabase().getCurrentPet(player.getUniqueId()) != null) {
             if (OpPets.getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
                 event.setCancelled(true);
-                player.openInventory(OpPets.getInventoryManager().getInventoryByIndex(0));
+                player.openInventory(new PetMainInventory().getInventory());
                 event.getPlayer().updateInventory();
                 return;
             }
@@ -65,19 +66,23 @@ public class PlayerInteract implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void playerInteract2(@NotNull InventoryClickEvent event) {
+    public void playerInteract(@NotNull InventoryClickEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
-        if (holder == null) return;
+        if (holder == null || event.getSlot() == -999) return;
 
-        if (event.getSlot() == -999) return;
         Player player = (Player) event.getWhoClicked();
         UUID uuid = player.getUniqueId();
         Pet pet = Database.getDatabase().getCurrentPet(uuid);
         int slot = event.getSlot();
-        UtilsInterface utils = OpPets.getUtils();
+        IUtils utils = OpPets.getUtils();
+
+        if (holder instanceof IHolder) {
+            event.setCancelled(true);
+        } else {
+            return;
+        }
 
         if (holder instanceof SettingsInventoryHolder) {
-            event.setCancelled(true);
             switch (slot) {
                 case 9 -> pet.setVisibleToOthers(getOppositeBoolean(pet.isVisibleToOthers()));
                 case 10 -> pet.setGiftable(getOppositeBoolean(pet.isGiftable()));
@@ -87,28 +92,19 @@ public class PlayerInteract implements Listener {
                 case 14 -> pet.setRideable(getOppositeBoolean(pet.isRideable()));
                 case 15 -> pet.setOtherRideable(getOppositeBoolean(pet.isOtherRideable()));
                 case 16 -> pet.setParticlesEnabled(getOppositeBoolean(pet.areParticlesEnabled()));
-                case 17 -> pet.rS();
+                case 17 -> pet.resetSettings();
             }
             utils.respawnPet(pet, player);
             PetsUtils.savePetProgress(pet, uuid);
             openSettingsInventory(player, pet);
-        } else if (holder instanceof LevelInventoryHolder) {
-            event.setCancelled(true);
-            if (slot == 16) {
-                OpPets.getSkillDatabase().getAccessibleSkillsToPetType(pet.getPetType()).forEach(skill -> player.sendMessage(skill.getA()));
-            }
         } else if (holder instanceof PetMainInventoryHolder) {
-            event.setCancelled(true);
             switch (slot) {
                 case 10 -> player.openInventory(new LevelInventory(pet).getInventory());
                 case 12 -> new RenameAnvilInventory(pet, player);
                 case 14 -> player.openInventory(new SettingsInventory(pet).getInventory());
                 case 16 -> utils.respawnPet(pet, player);
             }
-        } else if (holder instanceof GuestInventoryHolder) {
-            event.setCancelled(true);
         } else if (holder instanceof ShopInventoryHolder) {
-            event.setCancelled(true);
             Inventory inventory = player.getOpenInventory().getInventory(slot);
             if (inventory == null) return;
 
@@ -121,12 +117,8 @@ public class PlayerInteract implements Listener {
                 return;
             player.openInventory(new BuyerAdmitInventory(item).getInventory());
         } else if (holder instanceof BuyerAdmitInventoryHolder) {
-            event.setCancelled(true);
             switch (slot) {
-                case 10 -> {
-                    player.sendMessage("Declined");
-                    player.closeInventory();
-                }
+                case 10 -> player.closeInventory();
                 case 16 -> {
                     Inventory inventory = player.getOpenInventory().getInventory(slot);
                     if (inventory == null) return;
@@ -139,7 +131,15 @@ public class PlayerInteract implements Listener {
 
                     int price = (int) getValueFromKey(priceKey, meta, ItemTagType.INTEGER);
                     String type = (String) getValueFromKey(typeKey, meta, ItemTagType.STRING);
-                    //TODO: balance checking and removing
+                    //Economy economy = OpPets.getEconomy();
+
+                    //if (economy != null) {
+                    //    if (!economy.has(player, price)) {
+                    //        return;
+                    //    }
+//
+                    //    economy.withdrawPlayer(player, price);
+                    //}
 
                     final String[] name = {type};
                     int i = 0;
@@ -151,7 +151,6 @@ public class PlayerInteract implements Listener {
 
                     Pet pet1 = new Pet(name[0], entity, null, uuid, new SkillUtils().getRandomSkillName(entity), true);
                     OpPets.getDatabase().addPetToPetsList(uuid, pet1);
-                    player.sendMessage("created");
                     player.closeInventory();
                 }
             }

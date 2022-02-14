@@ -9,42 +9,31 @@ package me.opkarol.oppets.commands;
  */
 
 import dir.databases.Database;
-import me.opkarol.oppets.OpPets;
+import me.opkarol.oppets.Messages;
+import me.opkarol.oppets.inventories.PetMainInventory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-public class HelpCommand implements SubCommandInterface {
+public class HelpCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("noConsole"));
         }
 
         if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
-            return returnMessage(sender, "");
+            return returnMessage(sender, Messages.stringMessage("invalidPet"));
         }
 
-        player.openInventory(OpPets.getInventoryManager().getInventoryByIndex(0));
+        player.openInventory(new PetMainInventory().getInventory());
         return true;
     }
 
     @Override
     public String getPermission() {
         return "oppets.command.help";
-    }
-
-    @Override
-    public List<String> getDescription() {
-        return null;
-    }
-
-    @Override
-    public String getDescriptionAsString() {
-        return null;
     }
 
     @Override

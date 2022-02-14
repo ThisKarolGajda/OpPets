@@ -18,8 +18,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerSteerVehicleEvent_v1_16_5 implements Listener {
-    public PlayerSteerVehicleEvent_v1_16_5() {
-    }
 
     @NotNull
     private static Vector getVelocityVector(@NotNull Vector vector, Player player, float side, float forw) {
@@ -44,11 +42,13 @@ public class PlayerSteerVehicleEvent_v1_16_5 implements Listener {
         boolean jump = event.isJumping();
         boolean sneaking = event.isSneaking();
 
-        assert vehicle != null;
+        if (vehicle == null) {
+            return;
+        }
 
         if (sneaking) {
-            vehicle.removePassenger(player);
             PacketManager.removePlayer(player);
+            vehicle.removePassenger(player);
         }
 
         if (jump && vehicle.isOnGround()) {

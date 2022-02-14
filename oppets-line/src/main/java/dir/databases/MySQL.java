@@ -15,7 +15,14 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 
 public class MySQL {
+    public static String table;
     private static Connection con;
+    private static String port;
+    private static String host;
+    private static String user;
+    private static String password;
+    private static String database;
+    private static String driver;
 
     public static void setupMySQL() {
         FileConfiguration config = Database.getInstance().getConfig();
@@ -35,7 +42,6 @@ public class MySQL {
         new MySQL().setConnection();
     }
 
-
     public static Connection getConnection() {
         return con;
     }
@@ -47,16 +53,16 @@ public class MySQL {
             final boolean[] result = {false};
             connect();
 
-                    try {
-                        if (con != null) {
-                            Statement st = con.createStatement();
-                            st.executeUpdate(command);
-                            st.close();
-                            result[0] = true;
-                        }
-                    } catch (Exception var4) {
-                        var4.printStackTrace();
-                    }
+            try {
+                if (con != null) {
+                    Statement st = con.createStatement();
+                    st.executeUpdate(command);
+                    st.close();
+                    result[0] = true;
+                }
+            } catch (Exception var4) {
+                var4.printStackTrace();
+            }
 
             disconnect();
             return result[0];
@@ -65,13 +71,13 @@ public class MySQL {
 
     public static void disconnect() {
 
-                try {
-                    if (isConnected()) {
-                        con.close();
-                    }
-                } catch (Exception var2) {
-                    var2.printStackTrace();
-                }
+        try {
+            if (isConnected()) {
+                con.close();
+            }
+        } catch (Exception var2) {
+            var2.printStackTrace();
+        }
 
     }
 
@@ -88,14 +94,6 @@ public class MySQL {
 
         return i;
     }
-
-    private static String port;
-    private static String host;
-    private static String user;
-    private static String password;
-    private static String database;
-    private static String driver;
-    public static String table;
 
     public void setConnection() {
         if (!isConnected()) {

@@ -8,12 +8,14 @@ package v1_17_1R.entities;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.interfaces.EntityManagerInterface;
+import dir.databases.Database;
+import dir.databases.misc.PetDatabaseObject;
+import dir.interfaces.IEntityManager;
+import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.animal.Animal;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -26,12 +28,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class EntityManager implements EntityManagerInterface {
+public class EntityManager implements IEntityManager {
 
-    public void initPathfinder(@NotNull Object entity) {
+    public void initPathfinder(@NotNull Object entity, OpPetsEntityTypes.TypeOfEntity type) {
         Animal e = (Animal) entity;
+        PetDatabaseObject object = Database.getPetsDatabase().getObjectFromDatabase(type);
         e.goalSelector.getAvailableGoals().clear();
-        e.goalSelector.addGoal(1, new PathfinderGoalPet_1_17_1(e, 1.9, 15));
+        e.goalSelector.addGoal(1, new PathfinderGoalPet_1_17_1(e, object.getEntitySpeed(), object.getEntityDistance()));
         e.goalSelector.addGoal(0, new FloatGoal(e));
         e.goalSelector.addGoal(2, new LookAtPlayerGoal(e, net.minecraft.world.entity.player.Player.class, 4.0F));
     }
@@ -50,20 +53,9 @@ public class EntityManager implements EntityManagerInterface {
         entity.setGoalTarget(((CraftPlayer) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
         pet.setOwnerUUID(player.getUniqueId());
         pet.setOwnUUID(entity.getUUID());
-        String version = Bukkit.getBukkitVersion().split("-")[0];
-
         Utils utils = new Utils();
-        switch (version) {
-            case "1.17":
-                utils.removePathfinders(null, entity.targetSelector);
-                break;
-            case "1.17.1":
-                utils.removePathfinders(entity.targetSelector, entity.goalSelector);
-                break;
-            default:
-                return;
-        }
-        initPathfinder(entity);
+        utils.removePathfinders(entity.goalSelector, entity.targetSelector);
+        initPathfinder(entity, pet.getPetType());
     }
 
     @Override

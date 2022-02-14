@@ -2,48 +2,85 @@
 #   OpPets by ThisOpKarol   #
 # ------------------------- #
 
-# You can touch these values ->:
-
-# MySQL values (by default turned off, switch enabled value to activate SQL).
-# Current version doesn't support mysql, will be supported in the next versions (Most of the code is done, but I want to make sure that everything works)
-# mysql:
-#   enabled: false
-#   host: "localhost"
-#   port: "3306"
-#   database: "your_database"
-#   login: "user"
-#   password: "password"
-#   table: "OpPets"
-#   driver: "mysql"
-
 # ------------------------- #
 # Settings section:         #
 # ------------------------- #
 
+Prestiges:
+  # Every skill has max level, after which pet becomes unnecessary, thanks to prestige system
+  # we were able to make a never-ending farming level pet. After every pet maxed level, owner
+  # can choose if they want to exchange pet into new prestige. If they do they lost every
+  # statistic on pet, but they get ability to get skills rewards again, and get new prestige
+  # levels. ☆
+  enabled: true
+  format: "&8[&l%prestige%&e&l☆&8]"
+
 Skills:
   example_skill:
-    available_pets: "[ALL]"      # [AXOLOTL, COW, others]
+    available_pets: '[ALL]'
+    max_level: 5
     abilities:
-      abilitity1:
-        type: "CUSTOM_COMMAND"
-        command: "/some-command"
+      ability1:
+        type: PLUGIN_CONNECTION
+        connection: Vault
+        options:
+          action: 500
+      ability2:
+        type: CUSTOM_COMMAND
+        options:
+          command: eco give %player% 500
+      ability3:
+        type: VANILLA_EFFECT
+        options:
+          effect: SPEED
+          # Duration is provided in ticks, 1 second = 20 ticks.
+          duration: 100
+          amplifier: 1
+      # Treasures will be a JSON Object
+      # This feature is coming soon!
+      ability4:
+        type: TREASURE
+        name: '&bLevel Treasure!'
+        options: { }
     requirements:
       requirement1:
-        type: "PET_LEVEL"
-    boosters:
-
+        type: PET_LEVEL
     adders:
       adder1:
-        type: "MINING"
+        type: MINING
+        materials: STONE, COBBLESTONE
         levelup:
-          grantedPoints: 1.0
+          grantedPoints: 0
           everyAction: 0
-          # If you want progressiveLevel enabled, set everyAction to 0
-          # e = start value, cv = change value, ud = up/down, v = value
-          # %i = current start value = e, r = rounding to bigger number
-          # 4th parameter is a grow-up in percentage e.g: 15[%] + level
-          #                 /e/cv/ud,    by/v/  /r/
-          progressiveLevel: "32;true;up;15;true"
+          progressiveLevel: 32;true;up;10;true
+      adder2:
+        type: HARVESTING
+        materials: WHEAT, SWEET_BERRY_BUSH
+        levelup:
+          grantedPoints: 0
+          everyAction: 0
+          progressiveLevel: 32;true;up;10;true
+      adder3:
+        type: CRAFTING
+        materials: ALL
+        levelup:
+          grantedPoints: 0
+          everyAction: 0
+          progressiveLevel: 32;true;up;10;true
+      adder4:
+        type: SMELTING
+        materials: ALL
+        levelup:
+          grantedPoints: 0
+          everyAction: 0
+          progressiveLevel: 32;true;up;10;true
+      adder5:
+        type: FISHING
+        materials: ALL
+        levelup:
+          grantedPoints: 0
+          everyAction: 0
+          progressiveLevel: 32;true;up;10;true
 
 # ------------------------- #
 # Inventories section:      #
@@ -83,7 +120,7 @@ PetMainInventory:
         - "&7Respawn it now!"
       glow: true
 LevelInventory:
-  title: "&bCurrent Level of &l%pet_name%&b!"
+  title: "&eCurrent Level of &l%pet_name%&e!"
   items:
     level:
       material: "EXPERIENCE_BOTTLE"
@@ -115,7 +152,7 @@ LevelInventory:
         - "TO DO"
       glow: true
 SettingsInventory:
-  title: "&7%pet_name% &7built-in settings."
+  title: "&7%pet_name% &ebuilt-in settings."
   items:
     visibleToOthers:
       material: "CUSTOM"
@@ -219,6 +256,7 @@ GuestInventory:
         - "&7Level: &f&l%pet_level%"
         - "&7Type: &f&l%pet_type%"
         - "&7Skill: &f&l%pet_skill%"
+        - "&7Prestige: &f&l%current_prestige%"
       glow: true
 ShopInventory:
   title: "&7Shop."
@@ -231,7 +269,7 @@ ShopInventory:
         - "&7Price: &f&l%price%"
       glow: true
       options:
-        # Price requires economy plugin - Vault based on OR OpEconomy
+        # Price requires economy plugin - Vault based on
         price: 500
         type: "COW"
 BuyerAdmitInventory:
@@ -265,15 +303,82 @@ BuyerAdmitInventory:
 
 AnvilInventories:
   RenameInventory:
-    title: "&7Enter &f&lnew &7pet name!"
+    titleRename: "&7Enter &f&lnew &7pet name!"
     thisNameIsBlocked: "&cThis name is blocked."
     nameWithSpaces: "&c Pet name can't have spaces."
     changedName: "&7Changed pet name to &f&l%new_pet_name%&7!"
     incorrectValueName: "&cInvalid value entered."
-    noPermission: "&cYou don't have permission: &f&l%permission%&c."
   DeleteInventory:
-    title: "&7Write &f&l%pet_name%&7 to confirm &ndeleting&r &7pet."
+    titleDelete: "&7Write &f&l%pet_name%&7 to confirm &ndeleting&r &7pet."
     deletedMessage: "&7Deleted &f&l%pet_name%&7!"
     confirmMessage: "&7Write your pet name to confirm!"
+  PrestigeInventory:
+    titlePrestige: "&7Write &f&l%pet_name%&7 to confirm prestige-up."
+    confirmPrestigeMessage: "&7Write your pet name to confirm!"
+Commands:
+  badCommandUsage: "&cBad command usage! Use &f&l%proper_usage% &cinstead."
+  noPermission: "&cYou don't have permission &f&l%permission% &cto use this command."
+  noConsole: "&7Console cannot use this command."
+  petWithSameName: "&cYour pets have already the name &f&l%pet_name%&c."
+  wrongType: "&cSelected type &f&l%pet_type% &cis not available"
+  createdPet: "&7Created &f&l%pet_name%&7, pet type of &f&l%pet_type%&7."
+  invalidPet: "&cPet is invalid!"
+  petIsntGiftable: "&cPet isn't giftable!"
+  petIsntRideable: "&cPet isn't rideable"
+  receiverSameNamedPet: "&cReceiver already has pet named &f&l%pet_name%&c!"
+  receiverInvalid: "&cReceiver is invalid."
+  petGifted: "&f&l%pet_name% &7has been gifted to &f&l%player_name%&7!"
+  petBlockedName: "&cPet name contains blocked phrase &f&l%blocked_word%&c!"
+  petListEmpty: "&cPet list is empty."
+  samePet: "&cYou have the same pet equipped."
+  summonedPet: "&7You have summoned pet &f&l%pet_name%&7!"
+  cantPrestige: "&cYour pet cannot prestige now. Need &f&l%more_levels% &cmore levels to be able to!"
+  changedAdminValue: "&7Set value: &f&l%value%&7 for object: &f&l%key%&7, for &f&l%player_name%&7 pet: &f&l%pet_name%&7!"
+Messages:
+  petLevelUpMessage: "&2-------------------------------%newline%&eNew level &6&l%pet_name%&e!%newline%&eYour pet is now level &6&l%current_level%&e!%newline%Your pet needs &6&l%experience_level% &eexp &eto reach next level.%newline%&2-------------------------------%newline%"
+  prestigeUpMessage: "&2-------------------------------%newline%&eNew prestige &6&l%pet_name%&e!%newline%&eYour pet is now on prestige &6&l%current_prestige%&e!%newline%Your pet needs &6&l%max_level% &elevels &eto reach next prestige.%newline%&2-------------------------------%newline%"
+Pets:
+  # AXOLOTL (1.17+)
+  AXOLOTL:
+    special_ability: true
+    speed: 1.9f
+    # Distance is a float value after which a^2 from player distance, entity will be teleported.
+    # Example: entityDistance = 15, a^2 = 225, entity will be teleported after 225 blocks distance.
+    distance: 15f
+  CAT:
+  CHICKEN:
+  COW:
+  DONKEY:
+  FOX:
+  # GOAT (1.17+)
+  GOAT:
+  HORSE:
+  LLAMA:
+  MULE:
+  MUSHROOM_COW:
+  OCELOT:
+  PANDA:
+  PARROT:
+  PIG:
+  POLAR_BEAR:
+  RABBIT:
+  SHEEP:
+  TURTLE:
+  WOLF:
 
 
+# ------------------------- #
+#  Currently not working    #
+# ------------------------- #
+
+# MySQL values (by default turned off, switch enabled value to activate SQL).
+# Current version doesn't support mysql, will be supported in the next versions (Most of the code is done, but I want to make sure that everything works)
+# mysql:
+#   enabled: false
+#   host: "localhost"
+#   port: "3306"
+#   database: "your_database"
+#   login: "user"
+#   password: "password"
+#   table: "OpPets"
+#   driver: "mysql"

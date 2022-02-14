@@ -17,14 +17,18 @@ import org.jetbrains.annotations.NotNull;
 
 public class PetLevelupEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-    private boolean isCancelled;
     private final Pet pet;
     private final Player player;
+    private boolean isCancelled;
 
-    public PetLevelupEvent(Player player, Pet pet){
+    public PetLevelupEvent(Player player, Pet pet) {
         this.isCancelled = false;
         this.player = player;
         this.pet = pet;
+    }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS_LIST;
     }
 
     @Override
@@ -39,10 +43,6 @@ public class PetLevelupEvent extends Event implements Cancellable {
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return HANDLERS_LIST;
-    }
-
-    public static HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
 

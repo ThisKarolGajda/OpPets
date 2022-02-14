@@ -8,7 +8,10 @@ package v1_16_3R.entities;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.interfaces.EntityManagerInterface;
+import dir.databases.Database;
+import dir.databases.misc.PetDatabaseObject;
+import dir.interfaces.IEntityManager;
+import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import net.minecraft.server.v1_16_R2.EntityAnimal;
 import net.minecraft.server.v1_16_R2.EntityHuman;
@@ -25,12 +28,13 @@ import v1_16_3R.Utils;
 import java.util.Arrays;
 import java.util.List;
 
-public class EntityManager implements EntityManagerInterface {
+public class EntityManager implements IEntityManager {
 
-    public void initPathfinder(@NotNull Object entity) {
+    public void initPathfinder(@NotNull Object entity, OpPetsEntityTypes.TypeOfEntity type) {
         EntityAnimal e = (EntityAnimal) entity;
+        PetDatabaseObject object = Database.getPetsDatabase().getObjectFromDatabase(type);
         e.goalSelector.d().close();
-        e.goalSelector.a(1, new PathfinderGoalPet_1_16_2(e, 1.9, 15));
+        e.goalSelector.a(1, new PathfinderGoalPet_1_16_2(e, object.getEntitySpeed(), object.getEntityDistance()));
         e.goalSelector.a(2, new PathfinderGoalLookAtPlayer(e, EntityHuman.class, 4.0F));
         e.goalSelector.a(0, new PathfinderGoalFloat(e));
 
@@ -52,7 +56,7 @@ public class EntityManager implements EntityManagerInterface {
         pet.setOwnerUUID(player.getUniqueId());
         pet.setOwnUUID(entity.getUniqueID());
         new Utils().removePathfinders(entity.goalSelector, entity.targetSelector);
-        initPathfinder(entity);
+        initPathfinder(entity, pet.getPetType());
     }
 
     @Override
