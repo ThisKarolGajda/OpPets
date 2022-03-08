@@ -34,8 +34,6 @@ public interface IUtils {
 
     void removePathfinders(Object var1, Object var2);
 
-    void removeEntity(Object obj1);
-
     Object getPlayerChannel(Player player);
 
     Object getPlayerPipeline(Player player);
@@ -47,7 +45,6 @@ public interface IUtils {
      * @param event  specific version event object
      * @param packet received packet
      * @param player owner
-     * @return
      */
-    boolean rideEventRegister(Object event, Object packet, Player player);
+    void rideEventRegister(Object event, Object packet, Player player);
 }

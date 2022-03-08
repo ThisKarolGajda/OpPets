@@ -1,4 +1,4 @@
-package me.opkarol.oppets;
+package me.opkarol.oppets.files;
 
 /*
  = Copyright (c) 2021-2022.
@@ -8,16 +8,16 @@ package me.opkarol.oppets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.utils.ConfigUtils;
 import me.opkarol.oppets.utils.FormatUtils;
+import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
 public class Messages extends ConfigUtils {
-
-    private static final HashMap<String, String> map = new HashMap<>();
-    private String path;
+    private static HashMap<String, String> map;
 
     /**
      * Returns a formatted message which is taken from hash map, which values were saved at the onEnable method.
@@ -36,45 +36,27 @@ public class Messages extends ConfigUtils {
     }
 
     public Messages onEnable() {
-        path = "Commands.";
-        setValue("badCommandUsage");
-        setValue("noPermission");
-        setValue("noConsole");
-        setValue("petWithSameName");
-        setValue("wrongType");
-        setValue("createdPet");
-        setValue("invalidPet");
-        setValue("petIsntGiftable");
-        setValue("petIsntRideable");
-        setValue("receiverSameNamedPet");
-        setValue("receiverInvalid");
-        setValue("petGifted");
-        setValue("petBlockedName");
-        setValue("petListEmpty");
-        setValue("samePet");
-        setValue("summonedPet");
-        setValue("cantPrestige");
-        setValue("changedAdminValue");
-        path = "AnvilInventories.RenameInventory.";
-        setValue("titleRename");
-        setValue("thisNameIsBlocked");
-        setValue("nameWithSpaces");
-        setValue("changedName");
-        setValue("incorrectValueName");
-        path = "AnvilInventories.DeleteInventory.";
-        setValue("titleDelete");
-        setValue("deletedMessage");
-        setValue("confirmMessage");
-        path = "AnvilInventories.PrestigeInventory.";
-        setValue("titlePrestige");
-        setValue("confirmPrestigeMessage");
-        path = "Messages.";
-        setValue("petLevelUpMessage");
-        setValue("prestigeUpMessage");
+        map = new HashMap<>();
+        setSection("Commands.");
+        setSection("AnvilInventories.RenameInventory.");
+        setSection("AnvilInventories.DeleteInventory.");
+        setSection("AnvilInventories.PrestigeInventory.");
+        setSection("Messages.");
         return this;
     }
 
-    private void setValue(String value) {
+    private void setSection(@NotNull String value) {
+        ConfigurationSection section = OpPets.getInstance().getConfig().getConfigurationSection(value.substring(0, value.length() - 1));
+        if (section == null) {
+            return;
+        }
+        for (String key : section.getKeys(false)) {
+            setPath(value, key);
+        }
+
+    }
+
+    private void setPath(String path, String value) {
         map.put(value, getString(path + value));
     }
 

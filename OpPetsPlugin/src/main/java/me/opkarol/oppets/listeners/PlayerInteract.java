@@ -41,26 +41,29 @@ import static me.opkarol.oppets.utils.InventoryUtils.*;
 public class PlayerInteract implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void playerInteract(PlayerInteractEntityEvent event) {
+    public void playerInteract(@NotNull PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
+        if (player.isSneaking()) {
+            return;
+        }
         if (OpPets.getDatabase().getCurrentPet(player.getUniqueId()) != null) {
             if (OpPets.getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
                 event.setCancelled(true);
                 player.openInventory(new PetMainInventory().getInventory());
                 event.getPlayer().updateInventory();
-                return;
             }
-        }
-        for (UUID uuid : OpPets.getDatabase().getActivePetMap().keySet()) {
-            Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
-            if (pet != null) {
-                if (pet.getOwnUUID() == null) return;
-                if (pet.getOwnUUID().equals(event.getRightClicked().getUniqueId())) {
-                    event.setCancelled(true);
-                    Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).openInventory(new GuestInventory(pet).getInventory());
-                    event.getPlayer().updateInventory();
-                    break;
+        } else {
+            for (UUID uuid : OpPets.getDatabase().getActivePetMap().keySet()) {
+                Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
+                if (pet == null || pet.getOwnUUID() == null) {
+                    return;
                 }
+                if (!pet.getOwnUUID().equals(event.getRightClicked().getUniqueId())) {
+                    return;
+                }
+                event.setCancelled(true);
+                Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).openInventory(new GuestInventory(pet).getInventory());
+                event.getPlayer().updateInventory();
             }
         }
     }

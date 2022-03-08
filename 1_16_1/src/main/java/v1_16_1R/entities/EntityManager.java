@@ -26,7 +26,7 @@ import v1_16_1R.PathfinderGoalPet_1_16_1;
 import v1_16_1R.Utils;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 
 public class EntityManager implements IEntityManager {
 
@@ -61,8 +61,8 @@ public class EntityManager implements IEntityManager {
     }
 
     @Override
-    public List<String> getAllowedEntities() {
-        return Arrays.asList("Cat", "Chicken", "Cow", "Donkey", "Fox", "Zoglin", "Horse", "Llama", "Mule", "Mushroom_Cow", "Ocelot", "Panda", "Parrot", "Pig", "PolarBear", "Rabbit", "Sheep", "Turtle", "Wolf");
+    public HashSet<String> getAllowedEntities() {
+        return new HashSet<>(Arrays.asList("Cat", "Chicken", "Cow", "Donkey", "Fox", "Horse", "Llama", "Mule", "Mushroom_Cow", "Ocelot", "Panda", "Parrot", "Pig", "PolarBear", "Rabbit", "Sheep", "Turtle", "Wolf"));
     }
 }
 

@@ -11,7 +11,6 @@ package dir.databases;
 import dir.interfaces.IDatabase;
 import dir.pets.Pet;
 import dir.pets.PetsConverter;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -189,7 +188,6 @@ public class MySQLMiniPetsDatabase implements IDatabase {
             @Override
             public void run() {
                 getPetsMap().keySet().forEach(uuid -> i.put(uuid, getCurrentPet(uuid)));
-
             }
         }.runTaskAsynchronously(Database.getInstance());
         return i;
@@ -271,7 +269,7 @@ public class MySQLMiniPetsDatabase implements IDatabase {
     public void removePet(UUID uuid, @NotNull Pet pet) {
         List<Pet> list = petsMap.get(uuid);
         if (Objects.equals(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getCurrentPet(uuid).getPetName()))), ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', pet.getPetName())))) {
-            removeCurrentPet(pet, uuid);
+            this.removeCurrentPet(pet, uuid);
         }
 
         List<Pet> listI = new ArrayList<>();
@@ -310,11 +308,9 @@ public class MySQLMiniPetsDatabase implements IDatabase {
 
     }
 
-    @Override
     public void removeCurrentPet(@NotNull Pet pet, UUID uuid) {
-        Objects.requireNonNull(Bukkit.getEntity(pet.getOwnUUID())).remove();
         List<Pet> pets = getPetList(uuid);
-        Database.getUtils().removeEntity(Database.getUtils().getEntityByUniqueId(pet.getOwnUUID()));
+        Database.getUtils().killPetFromPlayerUUID(uuid);
         pets.removeIf(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName()));
         pet.setActive(false);
         pets.add(pet);

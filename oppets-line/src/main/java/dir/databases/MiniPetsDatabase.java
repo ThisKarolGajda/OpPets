@@ -12,6 +12,7 @@ import dir.interfaces.IDatabase;
 import dir.pets.Pet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -48,18 +49,16 @@ public class MiniPetsDatabase implements IDatabase {
     @Override
     public void removePet(UUID uuid, @NotNull Pet pet) {
         ArrayList<Pet> list = (ArrayList<Pet>) petsMap.get(uuid);
-
-        assert pet.getPetName() != null;
+        if (pet.getPetName() == null) {
+            return;
+        }
         if (getCurrentPet(uuid) != null) {
             if (Objects.equals(getName(Objects.requireNonNull(getCurrentPet(uuid).getPetName())), getName(pet.getPetName()))) {
                 removeCurrentPet(uuid);
             }
         }
-
         list.removeIf(pet1 -> Objects.equals(getName(pet1.getPetName()), getName(pet.getPetName())));
-
         setPets(uuid, list);
-
     }
 
     private String getName(String s) {
@@ -102,13 +101,14 @@ public class MiniPetsDatabase implements IDatabase {
 
     @Override
     public void removeCurrentPet(UUID uuid) {
-        Objects.requireNonNull(Bukkit.getEntity(activePetMap.get(uuid).getOwnUUID())).remove();
-        activePetMap.remove(uuid);
-    }
-
-    @Override
-    public void removeCurrentPet(@NotNull Pet pet, UUID uuid) {
-        Objects.requireNonNull(Bukkit.getEntity(pet.getOwnUUID())).remove();
+        Pet pet = getCurrentPet(uuid);
+        activePetMap.values().stream().filter(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName())).forEach(pet1 -> {
+            Entity entity = Bukkit.getEntity(pet.getOwnUUID());
+            if (entity != null) {
+                entity.remove();
+            }
+            Database.getDatabase().removePet(uuid, pet);
+        });
         activePetMap.remove(uuid);
     }
 

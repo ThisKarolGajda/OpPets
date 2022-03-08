@@ -13,6 +13,7 @@ import dir.pets.OpPetsEntityTypes;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class PetsDatabase {
     private final HashMap<OpPetsEntityTypes.TypeOfEntity, PetDatabaseObject> map = new HashMap<>();
@@ -22,14 +23,18 @@ public class PetsDatabase {
         FileConfiguration config = Database.getInstance().getConfig();
         for (OpPetsEntityTypes.TypeOfEntity type : OpPetsEntityTypes.TypeOfEntity.values()) {
             iPath = "Pets." + type.toString() + ".";
-            boolean abilityEnabled = config.getBoolean(iPath + "special_ability");
-            float entitySpeed = (float) config.get(iPath + "speed");
-            float entityDistance = (float) config.get(iPath + "distance");
+            List<String> abilityEnabled = config.getStringList(iPath + "special_ability");
+            float entitySpeed = (float) config.getDouble(iPath + "speed");
+            float entityDistance = (float) config.getDouble(iPath + "distance");
             map.put(type, new PetDatabaseObject(abilityEnabled, entitySpeed, entityDistance));
         }
     }
 
     public PetDatabaseObject getObjectFromDatabase(OpPetsEntityTypes.TypeOfEntity entityType) {
         return map.get(entityType);
+    }
+
+    public HashMap<OpPetsEntityTypes.TypeOfEntity, PetDatabaseObject> getMap() {
+        return map;
     }
 }

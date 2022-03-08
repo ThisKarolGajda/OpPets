@@ -10,7 +10,7 @@ package me.opkarol.oppets.commands;
 
 import dir.databases.Database;
 import dir.pets.Pet;
-import me.opkarol.oppets.Messages;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
 import me.opkarol.oppets.utils.FormatUtils;
@@ -40,7 +40,6 @@ public class RenameCommand implements ICommand {
         } else if (args.length == 2) {
             String petName = args[1];
             List<Pet> list = Database.getDatabase().getPetList(uuid);
-
             for (Pet pet : list) {
                 assert pet.getPetName() != null;
                 if (FormatUtils.getNameString(pet.getPetName()).equals(FormatUtils.getNameString(petName))) {

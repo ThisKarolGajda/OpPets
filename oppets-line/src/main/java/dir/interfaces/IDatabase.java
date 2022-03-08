@@ -9,7 +9,6 @@ package dir.interfaces;
  */
 
 import dir.pets.Pet;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +38,6 @@ public interface IDatabase {
     default void removePet(UUID uniqueId, Pet pet) {}
 
     void removeCurrentPet(UUID uuid);
-
-    void removeCurrentPet(@NotNull Pet pet, UUID uuid);
 
     void setPets(UUID uuid, List<Pet> objects);
 

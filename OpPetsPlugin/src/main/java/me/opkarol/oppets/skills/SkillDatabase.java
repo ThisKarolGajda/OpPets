@@ -79,10 +79,11 @@ public class SkillDatabase {
         return list;
     }
 
-    public void addPoint(SkillEnums.SkillsAdders skillEnums, @NotNull Pet pet, Player player) {
+    public void addPoint(SkillEnums.SkillsAdders skillEnums, @NotNull Pet pet, @NotNull Player player) {
         double experience = pet.getPetExperience();
         double grantedPoints = utils.getGrantedPointsFromEnum(pet, skillEnums);
-        pet.setPetExperience(experience + grantedPoints);
+        double multiplier = OpPets.getBoosterProvider().getMultiplier(player.getUniqueId().toString());
+        pet.setPetExperience(experience + grantedPoints * multiplier);
         double maxPoints = utils.getMaxPointsFromEnum(pet, skillEnums);
         final boolean[] requirementPetLevel = {false};
         OpPets.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getC().forEach(requirement -> {

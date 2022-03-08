@@ -29,8 +29,8 @@ import v1_16_3R.PlayerSteerVehicleEvent_v1_16_3;
 import v1_16_5R.PacketPlayInSteerVehicleEvent_v1_16_5;
 import v1_16_5R.PlayerSteerVehicleEvent_v1_16_5;
 import v1_17R.PacketPlayInSteerVehicleEvent_v1_17;
-import v1_17_1R.PacketPlayInSteerVehicleEvent_v1_17_1;
 import v1_17R.PlayerSteerVehicleEvent_v1_17;
+import v1_17_1R.PacketPlayInSteerVehicleEvent_v1_17_1;
 import v1_17_1R.PlayerSteerVehicleEvent_v1_17_1;
 import v1_18_1R.PacketPlayInSteerVehicleEvent_v1_18_1;
 import v1_18_1R.PlayerSteerVehicleEvent_v1_18_1;
@@ -101,12 +101,12 @@ public class PetPluginController {
      */
     public void saveFiles() {
         if (!Database.mySQLAccess) {
-            FileManager.saveObject(localPath + "/PetsMap.db", Database.getDatabase().getPetsMap());
-            FileManager.saveObject(localPath + "/ActivePetMap.db", Database.getDatabase().getActivePetMap());
+            new FileManager<HashMap<UUID, List<Pet>>>().saveObject(localPath + "/PetsMap.db", Database.getDatabase().getPetsMap());
+            new FileManager<HashMap<UUID, Pet>>().saveObject(localPath + "/ActivePetMap.db", Database.getDatabase().getActivePetMap());
         } else {
             Bukkit.getOnlinePlayers().forEach(player -> new MySQLMiniPetsDatabase().databaseUUIDSaver(player.getUniqueId()));
         }
-        removeAllPets();
+        killAllPets();
     }
 
     /**
@@ -118,10 +118,8 @@ public class PetPluginController {
      */
     public void loadFiles() {
         if (!Database.mySQLAccess) {
-            Object activeMap = FileManager.loadObject(localPath + "/ActivePetMap.db");
-            Object map = FileManager.loadObject(localPath + "/PetsMap.db");
-            Database.getDatabase().setPetsMap((HashMap<UUID, List<Pet>>) map);
-            Database.getDatabase().setActivePetMap((HashMap<UUID, Pet>) activeMap);
+            Database.getDatabase().setPetsMap(new FileManager<HashMap<UUID, List<Pet>>>().loadObject(localPath + "/PetsMap.db"));
+            Database.getDatabase().setActivePetMap(new FileManager<HashMap<UUID, Pet>>().loadObject(localPath + "/ActivePetMap.db"));
         }
     }
 
@@ -138,6 +136,7 @@ public class PetPluginController {
         manager.registerEvents(new SkillsListeners(), instance);
         manager.registerEvents(new PetListeners(), instance);
         manager.registerEvents(new ChatReceiver(), instance);
+        manager.registerEvents(new PetAbilities(), instance);
     }
 
     /**
@@ -156,13 +155,8 @@ public class PetPluginController {
      * and checks if it's valid.
      * If result is valid, it can be successfully removed using Bukkit method.
      */
-    public void removeAllPets() {
-        for (UUID uuid : Database.getDatabase().getActivePetMap().keySet()) {
-            if (Database.getDatabase().getCurrentPet(uuid).getOwnUUID() == null) {
-                continue;
-            }
-            OpPets.getUtils().removeEntity(OpPets.getUtils().getEntityByUniqueId(Database.getDatabase().getCurrentPet(uuid).getOwnUUID()));
-        }
+    public void killAllPets() {
+        Database.getDatabase().getActivePetMap().keySet().forEach(uuid -> OpPets.getUtils().killPetFromPlayerUUID(uuid));
     }
 
     /**

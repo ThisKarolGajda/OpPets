@@ -334,38 +334,126 @@ Commands:
   summonedPet: "&7You have summoned pet &f&l%pet_name%&7!"
   cantPrestige: "&cYour pet cannot prestige now. Need &f&l%more_levels% &cmore levels to be able to!"
   changedAdminValue: "&7Set value: &f&l%value%&7 for object: &f&l%key%&7, for &f&l%player_name%&7 pet: &f&l%pet_name%&7!"
+  calledSuccessfully: "&7Your pet has been called successfully!"
+  boostersListFormat: "%name% - %type% - %multiplier% - %running%"
+  invalidBooster: "&cInvalid booster."
+  invalidObjectProvided: "&cProvided object / argument is invalid."
 Messages:
   petLevelUpMessage: "&2-------------------------------%newline%&eNew level &6&l%pet_name%&e!%newline%&eYour pet is now level &6&l%current_level%&e!%newline%Your pet needs &6&l%experience_level% &eexp &eto reach next level.%newline%&2-------------------------------%newline%"
   prestigeUpMessage: "&2-------------------------------%newline%&eNew prestige &6&l%pet_name%&e!%newline%&eYour pet is now on prestige &6&l%current_prestige%&e!%newline%Your pet needs &6&l%max_level% &elevels &eto reach next prestige.%newline%&2-------------------------------%newline%"
 Pets:
   # AXOLOTL (1.17+)
   AXOLOTL:
-    special_ability: true
-    speed: 1.9f
+    special_ability:
+      - STOP_ATTACK
+    speed: 1.9
     # Distance is a float value after which a^2 from player distance, entity will be teleported.
-    # Example: entityDistance = 15, a^2 = 225, entity will be teleported after 225 blocks distance.
-    distance: 15f
+    # Example: entityDistance = 15, a^2 = 225, entity will be teleported after gap of 225 blocks distance between player and itself.
+    distance: 15
   CAT:
+    special_ability:
+      - ACTIONBAR:&7Your pet likes fish!
+      - ADD_FOOD:10
+    speed: 1.9
+    distance: 15
   CHICKEN:
+    special_ability:
+      - STOP_FALL_DAMAGE
+    speed: 1.9
+    distance: 15
   COW:
+    special_ability:
+      - CURE
+      - ACTIONBAR:&7Your pet cured you!
+    speed: 1.9
+    distance: 15
   DONKEY:
+    special_ability:
+      - STOP_KNOCKBACK
+    speed: 1.9
+    distance: 15
   FOX:
+    special_ability:
+      - INVINCIBLE:100
+      - ACTIONBAR:&7Your pet gives you invincibility!
+    speed: 1.9
+    distance: 15
   # GOAT (1.17+)
   GOAT:
+    special_ability:
+      - EXP:100
+    speed: 1.9
+    distance: 15
   HORSE:
+    special_ability:
+      - ADD_HEALTH:5
+      - ACTIONBAR:&7Your pet supported your health!
+    speed: 1.9
+    distance: 15
   LLAMA:
+    special_ability:
+      - STOP_ATTACK
+    speed: 1.9
+    distance: 15
   MULE:
+    special_ability:
+      - FLAME:100
+    speed: 1.9
+    distance: 15
   MUSHROOM_COW:
+    special_ability:
+      - ADD_FOOD:10
+      - ACTIONBAR:&7Your pet cooked some food for you!
+    speed: 1.9
+    distance: 15
   OCELOT:
+    special_ability:
+      - FIREBALL
+      - ACTIONBAR:&7Your pet exploded!
+    speed: 1.9
+    distance: 15
   PANDA:
+    special_ability:
+      - EXP:100
+    speed: 1.9
+    distance: 15
   PARROT:
+    special_ability:
+      - LIGHTING
+    speed: 1.9
+    distance: 15
   PIG:
+    special_ability:
+      - ADD_HEALTH:10
+      - ACTIONBAR:&7Your pet gave you a lot of health!
+    speed: 1.9
+    distance: 15
   POLAR_BEAR:
+    special_ability:
+      - STEAL_HEALTH:3
+    speed: 1.9
+    distance: 15
   RABBIT:
+    special_ability:
+      - STOP_FALL_DAMAGE
+    speed: 1.9
+    distance: 15
   SHEEP:
+    special_ability:
+      - ADD_FOOD:10
+      - ACTIONBAR:&7Your pet gave you fish!
+    speed: 1.9
+    distance: 15
   TURTLE:
+    special_ability:
+      - STOP_ATTACK
+    speed: 1.9
+    distance: 15
   WOLF:
-
+    special_ability:
+      - STEAL_HEALTH:3
+    speed: 1.9
+    distance: 15
 
 # ------------------------- #
 #  Currently not working    #

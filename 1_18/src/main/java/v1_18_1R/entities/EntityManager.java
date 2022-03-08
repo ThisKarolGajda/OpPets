@@ -24,9 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import v1_18_1R.PathfinderGoalPet_1_18_1;
 import v1_18_1R.Utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 
 public class EntityManager implements IEntityManager {
 
@@ -59,8 +58,8 @@ public class EntityManager implements IEntityManager {
     }
 
     @Override
-    public List<String> getAllowedEntities() {
-        return new ArrayList<>(Arrays.asList("Axolotl", "Cat", "Chicken", "Cow", "Donkey", "Fox", "Goat", "Zoglin", "Horse", "Llama", "Mule", "Mushroom_Cow", "Ocelot", "Panda", "Parrot", "Pig", "PolarBear", "Rabbit", "Sheep", "Turtle", "Wolf"));
+    public HashSet<String> getAllowedEntities() {
+        return new HashSet<>(Arrays.asList("Axolotl", "Cat", "Chicken", "Cow", "Donkey", "Fox", "Goat", "Horse", "Llama", "Mule", "Mushroom_Cow", "Ocelot", "Panda", "Parrot", "Pig", "PolarBear", "Rabbit", "Sheep", "Turtle", "Wolf"));
     }
 
 }

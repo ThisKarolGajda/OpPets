@@ -10,7 +10,7 @@ package v1_16_1R;
 
 import dir.databases.Database;
 import dir.pets.Pet;
-import net.md_5.bungee.api.ChatColor;
+import dir.pets.PetsUtils;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 
@@ -42,7 +42,7 @@ public class PathfinderGoalPet_1_16_1 extends PathfinderGoal {
             return false;
         } else if (l != null && l == b.getBukkitEntity().getLocation()) {
             return false;
-        } else if (!(this.a.getDisplayName().getString().equals(ChatColor.translateAlternateColorCodes('&', pet.getPetName())))) {
+        } else if (!(this.a.getDisplayName().getString().equals(PetsUtils.getPetFormattedName(pet)))) {
             return false;
         } else if (this.b.h(this.a) > (this.g * this.g)) {
             if (pet.isTeleportingToPlayer()) this.a.setPosition(this.b.locX(), b.locY(), b.locZ());

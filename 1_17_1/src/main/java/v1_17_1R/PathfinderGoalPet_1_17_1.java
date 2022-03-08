@@ -10,6 +10,7 @@ package v1_17_1R;
 
 import dir.databases.Database;
 import dir.pets.Pet;
+import dir.pets.PetsUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
@@ -47,7 +48,7 @@ public class PathfinderGoalPet_1_17_1 extends Goal {
         }
         else if (l != null && l == b.getBukkitEntity().getLocation()) {
             return;
-        } else if (!(this.a.getName().getString().equals(p.getPetName()))) {
+        } else if (!(this.a.getDisplayName().getString().equals(PetsUtils.getPetFormattedName(p)))) {
             return;
         } else if (b.distanceTo(this.a) >= (this.g * this.g)) {
             if (p.isTeleportingToPlayer()) this.a.teleportTo(b.getX(), b.getY(), b.getZ());

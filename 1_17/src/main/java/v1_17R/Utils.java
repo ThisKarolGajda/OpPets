@@ -66,15 +66,16 @@ public class Utils implements IUtils {
 
     @Override
     public void killPetFromPlayerUUID(UUID playerUUID) {
-        if (Database.getDatabase().getCurrentPet(playerUUID) == null) {
+        Pet pet = Database.getDatabase().getCurrentPet(playerUUID);
+        if (pet == null) {
             return;
         }
-        if (getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()) == null) {
-            return;
-        }
-        Entity entity = Objects.requireNonNull(getEntityByUniqueId(Database.getDatabase().getCurrentPet(playerUUID).getOwnUUID()));
-        entity.remove();
-
+        Database.getDatabase().getActivePetMap().values().stream().filter(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName())).forEach(pet1 -> {
+            Entity entity = Bukkit.getEntity(pet.getOwnUUID());
+            if (entity != null) {
+                entity.remove();
+            }
+        });
     }
 
     @Override
@@ -98,24 +99,19 @@ public class Utils implements IUtils {
         try {
             dField = PathfinderGoalSelector.class.getDeclaredField("d");
             dField.setAccessible(true);
-            dField.set(goalSelector, new LinkedHashSet());
+            dField.set(goalSelector, new LinkedHashSet<>());
             cField = PathfinderGoalSelector.class.getDeclaredField("c");
             cField.setAccessible(true);
-            cField.set(goalSelector, new EnumMap(PathfinderGoal.Type.class));
+            cField.set(goalSelector, new EnumMap<>(PathfinderGoal.Type.class));
             fField = PathfinderGoalSelector.class.getDeclaredField("f");
             fField.setAccessible(true);
             fField.set(goalSelector, EnumSet.noneOf(PathfinderGoal.Type.class));
-        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException var9) {
-            var9.printStackTrace();
-        }
-
-        try {
             dField = PathfinderGoalSelector.class.getDeclaredField("d");
             dField.setAccessible(true);
-            dField.set(targetSelector, new LinkedHashSet());
+            dField.set(targetSelector, new LinkedHashSet<>());
             cField = PathfinderGoalSelector.class.getDeclaredField("c");
             cField.setAccessible(true);
-            cField.set(targetSelector, new EnumMap(PathfinderGoal.Type.class));
+            cField.set(targetSelector, new EnumMap<>(PathfinderGoal.Type.class));
             fField = PathfinderGoalSelector.class.getDeclaredField("f");
             fField.setAccessible(true);
             fField.set(targetSelector, EnumSet.noneOf(PathfinderGoal.Type.class));
@@ -123,12 +119,6 @@ public class Utils implements IUtils {
             var8.printStackTrace();
         }
 
-    }
-
-    @Override
-    public void removeEntity(Object obj1) {
-        org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity entity = (org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity) obj1;
-        if (entity != null) entity.remove();
     }
 
     @Override
@@ -142,11 +132,9 @@ public class Utils implements IUtils {
     }
 
     @Override
-    public boolean rideEventRegister(Object event, Object packet, Player player) {
+    public void rideEventRegister(Object event, Object packet, Player player) {
         if (packet instanceof PacketPlayInSteerVehicle) {
             Bukkit.getPluginManager().callEvent((Event) ((IPacketPlayInSteerVehicleEvent) event).initialize(packet, player));
-            return true;
         }
-        return false;
     }
 }

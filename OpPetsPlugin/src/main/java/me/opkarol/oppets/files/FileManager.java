@@ -12,17 +12,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 
-public class FileManager {
+public class FileManager<K> {
 
     @Nullable
-    public static Object loadObject(String path) {
-        try {
-            File file = new File(path);
-            if (!file.isFile() || !file.exists()) {
-                file.createNewFile();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    public K loadObject(String path) {
+        File file = new File(path);
+        if (!file.isFile() || !file.exists()) {
+            return null;
         }
         try {
             return readFile(path);
@@ -32,7 +28,7 @@ public class FileManager {
         return null;
     }
 
-    public static void saveObject(String path, Object objectToSave) {
+    public void saveObject(String path, K objectToSave) {
         try {
             saveFile(objectToSave, path);
         } catch (IOException e) {
@@ -40,17 +36,17 @@ public class FileManager {
         }
     }
 
-    private static void saveFile(Object object, String path)
+    private void saveFile(K object, String path)
             throws IOException {
         try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(path))) {
             os.writeObject(object);
         }
     }
 
-    private static Object readFile(String path)
+    private K readFile(String path)
             throws ClassNotFoundException, IOException {
         try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(path))) {
-            return is.readObject();
+            return (K) is.readObject();
         }
     }
 }

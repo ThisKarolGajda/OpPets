@@ -9,7 +9,7 @@ package me.opkarol.oppets.commands;
  */
 
 import dir.pets.Pet;
-import me.opkarol.oppets.Messages;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.command.CommandSender;
@@ -51,7 +51,9 @@ public class SummonCommand implements ICommand {
                 if (activePet == pet) {
                     return returnMessage(sender, Messages.stringMessage("samePet"));
                 } else {
-                    OpPets.getUtils().killPetFromPlayerUUID(playerUUID);
+                    if (activePet != null) {
+                        OpPets.getUtils().killPetFromPlayerUUID(playerUUID);
+                    }
                     OpPets.getCreator().spawnMiniPet(pet, player);
                     return returnMessage(sender, Messages.stringMessage("summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
                 }

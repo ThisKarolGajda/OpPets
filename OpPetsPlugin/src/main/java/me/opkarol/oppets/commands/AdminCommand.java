@@ -11,7 +11,7 @@ package me.opkarol.oppets.commands;
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import dir.pets.PetsUtils;
-import me.opkarol.oppets.Messages;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;

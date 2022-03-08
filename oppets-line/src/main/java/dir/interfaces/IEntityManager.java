@@ -11,7 +11,7 @@ package dir.interfaces;
 import dir.pets.OpPetsEntityTypes;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.HashSet;
 
 public interface IEntityManager {
 
@@ -37,5 +37,5 @@ public interface IEntityManager {
      *
      * @return list of string containing - specific version - available pets
      */
-    List<String> getAllowedEntities();
+    HashSet<String> getAllowedEntities();
 }

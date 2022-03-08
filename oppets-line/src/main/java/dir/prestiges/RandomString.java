@@ -25,7 +25,7 @@ public class RandomString {
                 break;
             }
             case ALPHANUMERIC: {
-                string = getString(Mode.ALPHA.toString().length(), Mode.ALPHA) + getString(Mode.NUMERIC.toString().length(), Mode.NUMERIC);
+                string = "ABCDEFGHIJKLMNOPQRSTUVWXYZqwertyuiopasdfghjklzxcvbnm1234567890";
                 break;
             }
             case CODES: {

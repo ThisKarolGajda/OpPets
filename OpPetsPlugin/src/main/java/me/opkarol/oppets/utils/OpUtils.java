@@ -12,6 +12,7 @@ import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.skills.Adder;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -163,7 +164,8 @@ public class OpUtils {
         return pet.getLevel() >= getMaxLevel(pet);
     }
 
-    public static String getRewardMessage(@NotNull Pet pet) {
+    @Contract(pure = true)
+    public static @NotNull String getRewardMessage(@NotNull Pet pet) {
         return "";
     }
 

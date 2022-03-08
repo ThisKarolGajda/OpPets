@@ -9,7 +9,7 @@ package me.opkarol.oppets.commands;
  */
 
 import dir.databases.Database;
-import me.opkarol.oppets.Messages;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.inventories.PetMainInventory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

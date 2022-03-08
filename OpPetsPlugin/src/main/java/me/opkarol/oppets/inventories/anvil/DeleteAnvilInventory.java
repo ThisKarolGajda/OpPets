@@ -9,7 +9,7 @@ package me.opkarol.oppets.inventories.anvil;
  */
 
 import dir.pets.Pet;
-import me.opkarol.oppets.Messages;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.utils.FormatUtils;
 import net.wesjd.anvilgui.AnvilGUI;

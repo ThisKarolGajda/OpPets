@@ -9,11 +9,15 @@ package me.opkarol.oppets;
  */
 
 import dir.databases.Database;
+import dir.databases.PetsDatabase;
 import dir.interfaces.IBabyEntityCreator;
 import dir.interfaces.IDatabase;
 import dir.interfaces.IEntityManager;
 import dir.interfaces.IUtils;
 import dir.prestiges.PrestigeManager;
+import me.opkarol.oppets.abilities.AbilitiesDatabase;
+import me.opkarol.oppets.boosters.BoosterProvider;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.skills.SkillDatabase;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,8 +40,11 @@ public final class OpPets extends JavaPlugin {
     private static IUtils utils;
     private static SkillDatabase skillDatabase;
     private static PrestigeManager prestigeManager;
-    private Messages messages;
+    private static Messages messages;
+    private static PetsDatabase petsDatabase;
+    private static AbilitiesDatabase abilitiesDatabase;
     //private static Economy economy;
+    private static BoosterProvider boosterProvider;
 
     public static IEntityManager getEntityManager() {
         return entityManager;
@@ -83,16 +90,31 @@ public final class OpPets extends JavaPlugin {
         return prestigeManager;
     }
 
+    public static PetsDatabase getPetsDatabase() {
+        return petsDatabase;
+    }
+
+    public static AbilitiesDatabase getAbilitiesDatabase() {
+        return abilitiesDatabase;
+    }
+
+    public static BoosterProvider getBoosterProvider() {
+        return boosterProvider;
+    }
+
     @Override
     public void onEnable() {
         opPets = this;
         Database.setInstance(opPets);
+        petsDatabase = new PetsDatabase();
+        abilitiesDatabase = new AbilitiesDatabase();
         controller = new PetPluginController(opPets);
         skillDatabase = new SkillDatabase();
         this.setEnabled(getController().setupVersion());
         messages = new Messages().onEnable();
         prestigeManager = new PrestigeManager();
         //economy = controller.setupEconomy();
+        boosterProvider = new BoosterProvider();
 
     }
 
@@ -108,6 +130,7 @@ public final class OpPets extends JavaPlugin {
         messages = null;
         prestigeManager = null;
         //economy = null;
+        boosterProvider = null;
     }
 
     //public static Economy getEconomy() {
@@ -126,3 +149,4 @@ public final class OpPets extends JavaPlugin {
     }
 
 }
+//TODO: add a way to permanent store a pet, like in a head, prestige gui, leaderboards, broadcasts/ announcements, boosters, panel for oppets, addons (Discord integration panel), mysql working

@@ -10,7 +10,7 @@ package me.opkarol.oppets.listeners;
 
 import dir.pets.Pet;
 import dir.prestiges.PrestigeManager;
-import me.opkarol.oppets.Messages;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.events.PrestigeChangeEvent;
@@ -19,13 +19,18 @@ import me.opkarol.oppets.skills.Ability;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 public class PetListeners implements Listener {
 
@@ -92,4 +97,40 @@ public class PetListeners implements Listener {
             ParticlesManager.prestigeChangeEffect(player, OpPets.getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
         }
     }
+
+    @EventHandler
+    public void onChunkUnload(@NotNull ChunkUnloadEvent event) {
+        checkForEntitiesByPlayer(event.getChunk().getEntities(), false);
+    }
+
+    @EventHandler
+    public void onWorldChange(@NotNull PlayerChangedWorldEvent event) {
+        checkForEntitiesByPlayer(event.getPlayer().getLocation().getChunk().getEntities(), true);
+    }
+
+    private void checkForEntitiesByPlayer(Object @NotNull [] entities, boolean portalCooldown) {
+        for (Object entityObject : entities) {
+            if (!(entityObject instanceof Entity entity)) {
+                continue;
+            }
+            if (!entity.getType().equals(EntityType.PLAYER)) {
+                continue;
+            }
+            Player player = (Player) entity;
+            UUID uuid = player.getUniqueId();
+            Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
+            if (pet == null) {
+                continue;
+            }
+            Entity entityPet = Bukkit.getEntity(pet.getOwnUUID());
+            if (entityPet == null) {
+                continue;
+            }
+            entityPet.teleport(player.getLocation());
+            if (portalCooldown) {
+                entityPet.setPortalCooldown(300);
+            }
+        }
+    }
+
 }

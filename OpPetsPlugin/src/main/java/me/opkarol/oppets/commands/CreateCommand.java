@@ -10,7 +10,7 @@ package me.opkarol.oppets.commands;
 
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
-import me.opkarol.oppets.Messages;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.skills.SkillUtils;
 import org.bukkit.command.CommandSender;
@@ -34,9 +34,9 @@ public class CreateCommand implements ICommand {
 
         UUID playerUUID = player.getUniqueId();
         String petType = args[1];
-        if (petType.toLowerCase().equals("polarbear")) {
+        if (petType.equalsIgnoreCase("polarbear")) {
             petType = "Polar_Bear";
-        } else if (petType.toLowerCase().equals("mushroom")) {
+        } else if (petType.equalsIgnoreCase("mushroom")) {
             petType = "Mushroom_Cow";
         } else if (!(OpPets.getEntityManager().getAllowedEntities()
                 .stream()
