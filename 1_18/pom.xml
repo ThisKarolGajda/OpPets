@@ -26,8 +26,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <target>16</target>
-                    <source>16</source>
+                    <target>1.8</target>
+                    <source>1.8</source>
                 </configuration>
             </plugin>
             <plugin>
@@ -89,6 +89,15 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <environmentVariables>
+                        <JITPACK>false</JITPACK>
+                    </environmentVariables>
+                </configuration>
             </plugin>
         </plugins>
     </build>
