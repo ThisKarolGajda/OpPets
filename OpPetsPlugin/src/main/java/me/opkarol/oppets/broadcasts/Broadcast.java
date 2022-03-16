@@ -1,4 +1,4 @@
-package dir.databases.misc;
+package me.opkarol.oppets.broadcasts;
 
 /*
  = Copyright (c) 2021-2022.
@@ -8,15 +8,17 @@ package dir.databases.misc;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-public class AbilitiesEnums {
-    public enum AbilityCategory {
-        PASSIVE, AGGRESSIVE, HOSTILE, NEUTRAL
+import me.opkarol.oppets.utils.FormatUtils;
+import org.bukkit.Bukkit;
+
+public record Broadcast(String prefix, String format,
+                        me.opkarol.oppets.broadcasts.Broadcast.BROADCAST_TYPE type) {
+
+    public void broadcastMessage(String message) {
+        Bukkit.broadcastMessage(FormatUtils.formatMessage(format.replace("%prefix%", prefix).replace("%message%", message).replace("%type%", type.name())));
     }
 
-    public enum AbilityType {
-        ACTIONBAR, ACTIONBAR_AFTER, ADD_FOOD, ADD_HEALTH, CONSOLE_COMMAND, CURE, LIGHTING, POTION, MESSAGE, MESSAGE_AFTER, REVIVE, STOP_ATTACK, STOP_KNOCKBACK, EXP, STEAL_HEALTH, PARTICLE, INVINCIBLE, PLAYER_COMMAND, FLAME, FIREBALL, STOP_FALL_DAMAGE
+    public enum BROADCAST_TYPE {
+        INFORMATION, WARNING, ANNOUNCEMENT, BOOSTER
     }
 }
-
-
-

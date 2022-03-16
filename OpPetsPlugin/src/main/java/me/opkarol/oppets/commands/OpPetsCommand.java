@@ -8,9 +8,10 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.boosters.Booster;
-import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.OpPets;
+import me.opkarol.oppets.boosters.Booster;
+import me.opkarol.oppets.broadcasts.Broadcast;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
@@ -45,6 +47,8 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
         commands.add(new AdminCommand());
         commands.add(new CallCommand());
         commands.add(new BoosterCommand());
+        commands.add(new LeaderboardCommand());
+        commands.add(new BroadcastCommand());
     }
 
     @Override
@@ -60,21 +64,21 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
         }
         switch (args.length) {
             case 2 -> {
-                switch (args[0]) {
+                switch (args[0].toLowerCase()) {
                     case "delete", "summon", "rename", "gift" -> result.addAll(getCompletedPetList(player.getUniqueId(), args[1]));
                     case "create" -> {
                         HashSet<String> completions = OpPets.getEntityManager().getAllowedEntities();
                         StringUtil.copyPartialMatches(args[1], completions, result);
                     }
                     case "admin" -> result.addAll(getPlayers(args[1]));
-                    case "booster" -> {
+                    case "booster", "broadcast" -> {
                         List<String> completions = new ArrayList<>(Arrays.asList("add", "remove", "list"));
                         StringUtil.copyPartialMatches(args[1], completions, result);
                     }
                 }
             }
             case 3 -> {
-                switch (args[0]) {
+                switch (args[0].toLowerCase()) {
                     case "gift" -> result.addAll(getPlayers(args[2]));
                     case "admin" -> result.addAll(getCompletedPetList(OpUtils.getUUIDFromName(args[1]), args[2]));
                     case "booster" -> {
@@ -87,35 +91,39 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
                         }
                     }
                     case "create" -> StringUtil.copyPartialMatches(args[2], List.of("(name)"), result);
+                    case "broadcast" -> {
+                        switch (args[1].toLowerCase()) {
+                            case "remove" -> StringUtil.copyPartialMatches(args[2], List.of("(type)"), result);
+                            case "add" -> StringUtil.copyPartialMatches(args[2], List.of("(prefix)"), result);
+                        }
+                    }
                 }
             }
             case 4 -> {
-                if (args[0].equals("admin")) {
-                    StringUtil.copyPartialMatches(args[3], Arrays.asList("level", "xp", "prestige", "name", "settings", "type", "skill"), result);
-                }
-                if (args[0].equalsIgnoreCase("booster")) {
-                    StringUtil.copyPartialMatches(args[3], Arrays.asList("SERVER", "PLAYER"), result);
+                switch (args[0].toLowerCase()) {
+                    case "admin" -> StringUtil.copyPartialMatches(args[3], Arrays.asList("level", "xp", "prestige", "name", "settings", "type", "skill"), result);
+                    case "booster" -> StringUtil.copyPartialMatches(args[3], Arrays.asList("SERVER", "PLAYER"), result);
+                    case "broadcast" -> {
+                        List<String> values = Arrays.stream(Broadcast.BROADCAST_TYPE.values()).map(Broadcast.BROADCAST_TYPE::name).toList();
+                        StringUtil.copyPartialMatches(args[3], values, result);
+                    }
                 }
             }
             case 5 -> {
-                if (args[0].equals("admin")) {
-                    OpPets.getDatabase().getPetList(OpUtils.getUUIDFromName(args[1])).forEach(pet -> {
-                        if (Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(args[2]))) {
-                            switch (args[3]) {
-                                case "level" -> result.add(String.valueOf(pet.getLevel()));
-                                case "xp" -> result.add(String.valueOf(pet.getPetExperience()));
-                                case "prestige" -> result.add(pet.getPrestige());
-                                case "name" -> result.add(pet.getPetName());
-                                case "settings" -> result.add(pet.getSettingsSerialized());
-                                case "type" -> result.add(String.valueOf(pet.getPetType()));
-                                case "skill" -> result.add(pet.getSkillName());
-                                default -> throw new IllegalStateException("Unexpected value: " + args[3]);
-                            }
+                switch (args[0].toLowerCase()) {
+                    case "booster" -> StringUtil.copyPartialMatches(args[4], List.of("(multiplier)"), result);
+                    case "admin" -> OpPets.getDatabase().getPetList(OpUtils.getUUIDFromName(args[1])).stream().filter(pet -> Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(args[2]))).collect(Collectors.toList()).forEach(pet -> {
+                        switch (args[3]) {
+                            case "level" -> result.add(String.valueOf(pet.getLevel()));
+                            case "xp" -> result.add(String.valueOf(pet.getPetExperience()));
+                            case "prestige" -> result.add(pet.getPrestige());
+                            case "name" -> result.add(pet.getPetName());
+                            case "settings" -> result.add(pet.getSettingsSerialized());
+                            case "type" -> result.add(String.valueOf(pet.getPetType()));
+                            case "skill" -> result.add(pet.getSkillName());
+                            default -> throw new IllegalStateException("Unexpected value: " + args[3]);
                         }
                     });
-                }
-                if (args[0].equalsIgnoreCase("booster")) {
-                    StringUtil.copyPartialMatches(args[4], List.of("(multiplier)"), result);
                 }
             }
             case 6 -> {
@@ -128,6 +136,9 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
                     StringUtil.copyPartialMatches(args[6], getPlayers(args[6]), result);
                 }
             }
+        }
+        if (args.length > 4 && args[0].equalsIgnoreCase("broadcast")) {
+            StringUtil.copyPartialMatches(args[args.length - 1], List.of("message"), result);
         }
         Collections.sort(result);
         return result;

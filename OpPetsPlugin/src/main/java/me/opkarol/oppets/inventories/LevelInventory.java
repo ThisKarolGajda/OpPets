@@ -18,9 +18,9 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
@@ -52,16 +52,15 @@ public class LevelInventory implements IInventory {
     @Override
     @Contract(pure = true)
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
-        List<String> list = new ArrayList<>();
-
         String maxLevel = String.valueOf(OpUtils.getMaxLevel(pet));
         String percentageOfNext = OpUtils.getPercentageOfNextLevel(pet);
         String petExperience = String.valueOf(OpUtils.getPetLevelExperience(pet));
-
-        for (String sI : lore) {
-            list.add(FormatUtils.formatMessage(sI.replace("%max_pet_level%", maxLevel).replace("%percentage_of_next_experience%", percentageOfNext).replace("%pet_experience_next%", petExperience).replace("%pet_level%", String.valueOf(OpUtils.getLevel(pet)))));
-        }
-        return list;
+        return lore.stream().map(s -> FormatUtils.formatMessage(s
+                .replace("%max_pet_level%", maxLevel)
+                .replace("%percentage_of_next_experience%", percentageOfNext)
+                .replace("%pet_experience_next%", petExperience)
+                .replace("%pet_level%", String.valueOf(OpUtils.getLevel(pet)))))
+                .collect(Collectors.toList());
     }
 
 

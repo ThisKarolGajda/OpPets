@@ -18,8 +18,8 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.ConfigUtils.getInt;
 import static me.opkarol.oppets.utils.ConfigUtils.getString;
@@ -62,13 +62,11 @@ public class ShopInventory implements IInventory {
     @Override
     @Contract(pure = true)
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
-        List<String> list = new ArrayList<>();
         String type = getString(path + ".options.type");
         String price = String.valueOf(getInt(path + ".options.price"));
-
-        for (String sI : lore) {
-            list.add(FormatUtils.formatMessage(sI.replace("%type%", type).replace("%price%", price)));
-        }
-        return list;
+        return lore.stream().map(s -> FormatUtils.formatMessage(s
+                .replace("%type%", type)
+                .replace("%price%", price)))
+                .collect(Collectors.toList());
     }
 }

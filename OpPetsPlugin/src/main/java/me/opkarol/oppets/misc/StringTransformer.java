@@ -27,8 +27,16 @@ public class StringTransformer {
     }
 
     public Enum getEnumFromString(String s, Class e) {
-        return Enum.valueOf(e, s);
-
+        Enum anEnum;
+        try {
+            anEnum = Enum.valueOf(e, s);
+        } catch (IllegalArgumentException ignore) {
+            return null;
+        }
+        if (anEnum.getClass().equals(e)) {
+            return anEnum;
+        }
+        return null;
     }
 
     public boolean containsNotNumbers(@NotNull String s) {

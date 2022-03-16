@@ -14,11 +14,14 @@ import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import dir.pets.PetsUtils;
 import me.opkarol.oppets.OpPets;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.inventories.*;
+import me.opkarol.oppets.inventories.anvil.PrestigeConfirmAnvilInventory;
 import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
 import me.opkarol.oppets.inventories.holders.*;
 import me.opkarol.oppets.skills.SkillUtils;
 import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
+import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.*;
 
 public class PlayerInteract implements Listener {
@@ -51,21 +55,22 @@ public class PlayerInteract implements Listener {
                 event.setCancelled(true);
                 player.openInventory(new PetMainInventory().getInventory());
                 event.getPlayer().updateInventory();
-            }
-        } else {
-            for (UUID uuid : OpPets.getDatabase().getActivePetMap().keySet()) {
-                Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
-                if (pet == null || pet.getOwnUUID() == null) {
-                    return;
-                }
-                if (!pet.getOwnUUID().equals(event.getRightClicked().getUniqueId())) {
-                    return;
-                }
-                event.setCancelled(true);
-                Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).openInventory(new GuestInventory(pet).getInventory());
-                event.getPlayer().updateInventory();
+                return;
             }
         }
+        for (UUID uuid : OpPets.getDatabase().getActivePetMap().keySet()) {
+            Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
+            if (pet == null || pet.getOwnUUID() == null) {
+                return;
+            }
+            if (!pet.getOwnUUID().equals(event.getRightClicked().getUniqueId())) {
+                return;
+            }
+            event.setCancelled(true);
+            Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).openInventory(new GuestInventory(pet).getInventory());
+            event.getPlayer().updateInventory();
+        }
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -87,19 +92,19 @@ public class PlayerInteract implements Listener {
 
         if (holder instanceof SettingsInventoryHolder) {
             switch (slot) {
-                case 9 -> pet.setVisibleToOthers(getOppositeBoolean(pet.isVisibleToOthers()));
-                case 10 -> pet.setGiftable(getOppositeBoolean(pet.isGiftable()));
-                case 11 -> pet.setGlow(getOppositeBoolean(pet.isGlowing()));
-                case 12 -> pet.setFollowPlayer(getOppositeBoolean(pet.isFollowingPlayer()));
-                case 13 -> pet.setTeleportingToPlayer(getOppositeBoolean(pet.isTeleportingToPlayer()));
-                case 14 -> pet.setRideable(getOppositeBoolean(pet.isRideable()));
-                case 15 -> pet.setOtherRideable(getOppositeBoolean(pet.isOtherRideable()));
-                case 16 -> pet.setParticlesEnabled(getOppositeBoolean(pet.areParticlesEnabled()));
+                case 9 -> pet.setVisibleToOthers(!pet.isVisibleToOthers());
+                case 10 -> pet.setGiftable(!pet.isGiftable());
+                case 11 -> pet.setGlow(!pet.isGlowing());
+                case 12 -> pet.setFollowPlayer(!pet.isFollowingPlayer());
+                case 13 -> pet.setTeleportingToPlayer(!pet.isTeleportingToPlayer());
+                case 14 -> pet.setRideable(!pet.isRideable());
+                case 15 -> pet.setOtherRideable(!pet.isOtherRideable());
+                case 16 -> pet.setParticlesEnabled(!pet.areParticlesEnabled());
                 case 17 -> pet.resetSettings();
             }
             utils.respawnPet(pet, player);
             PetsUtils.savePetProgress(pet, uuid);
-            openSettingsInventory(player, pet);
+            player.openInventory(new SettingsInventory(pet).getInventory());;
         } else if (holder instanceof PetMainInventoryHolder) {
             switch (slot) {
                 case 10 -> player.openInventory(new LevelInventory(pet).getInventory());
@@ -157,15 +162,16 @@ public class PlayerInteract implements Listener {
                     player.closeInventory();
                 }
             }
+        } else if (holder instanceof PrestigeInventoryHolder) {
+            if (slot == 15) {
+                if (!OpUtils.canPrestige(pet)) {
+                    returnMessage(player, Messages.stringMessage("cantPrestige").replace("%more_levels%", String.valueOf(OpUtils.getLevelsForPrestige(pet))));
+                    return;
+                }
+                player.closeInventory();
+                new PrestigeConfirmAnvilInventory(pet, player);
+            }
         }
-    }
-
-    private boolean getOppositeBoolean(boolean b) {
-        return !b;
-    }
-
-    private void openSettingsInventory(@NotNull Player player, @NotNull Pet pet) {
-        player.openInventory(new SettingsInventory(pet).getInventory());
     }
 
 }

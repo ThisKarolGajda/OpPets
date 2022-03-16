@@ -8,7 +8,6 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.misc.AbilitiesEnums;
 import dir.databases.misc.PetDatabaseObject;
 import dir.pets.Pet;
 import me.opkarol.oppets.OpPets;
@@ -26,6 +25,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -41,10 +41,13 @@ public class PetAbilities implements Listener {
     @EventHandler
     public void playerInteract(@NotNull PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+        if (OpPets.getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
+            return;
+        }
         if (!player.isSneaking()) {
             return;
         }
-        UUID uuid = player.getUniqueId();
         Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
         if (pet == null) {
             return;
@@ -59,9 +62,6 @@ public class PetAbilities implements Listener {
         PetDatabaseObject object = OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType());
         for (String s : object.getAbilities()) {
             String[] abilityArgs = object.getAbilityArgs(s);
-            if (OpPets.getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
-                return;
-            }
             switch (object.getAbility(s)) {
                 case ACTIONBAR -> functions.sendActionbar(player, abilityArgs[1]);
                 case ADD_FOOD -> functions.addFood(player, Integer.parseInt(abilityArgs[1]));
@@ -91,23 +91,31 @@ public class PetAbilities implements Listener {
             return;
         }
         Player player = (Player) event.getEntity();
+        UUID uuid = player.getUniqueId();
+        if (OpPets.getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
+            return;
+        }
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL){
-            UUID uuid = player.getUniqueId();
             Pet pet = OpPets.getDatabase().getCurrentPet(player.getUniqueId());
             if (pet == null) {
                 return;
             }
-            for (String s : OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType()).getAbilities()) {
-                if (OpPets.getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
-                    return;
-                }
-                if (!OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType()).getAbility(s).equals(AbilitiesEnums.AbilityType.STOP_FALL_DAMAGE)) {
-                    return;
-                }
-                player.setFallDistance(0);
-                abilitiesDatabase.cooldownMap.addCooldown(uuid);
-                event.setCancelled(true);
+            List<String> abilities = OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType()).getAbilities();
+            if (!abilities.contains("STOP_FALL_DAMAGE")) {
+                return;
             }
+            abilities.forEach(string -> {
+                String[] abilityArgs = OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType()).getAbilityArgs(string);
+                if (abilities.contains("MESSAGE_AFTER")) {
+                    functions.message(player, abilityArgs[1]);
+                }
+                if (abilities.contains("ACTIONBAR_AFTER")) {
+                    functions.sendActionbar(player, abilityArgs[1]);
+                }
+            });
+            player.setFallDistance(0);
+            abilitiesDatabase.cooldownMap.addCooldown(uuid);
+            event.setCancelled(true);
         }
     }
 
@@ -117,21 +125,21 @@ public class PetAbilities implements Listener {
             return;
         }
         Player player = (Player) event.getDamager();
+        UUID uuid = player.getUniqueId();
+        if (OpPets.getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
+            return;
+        }
         Pet pet = OpPets.getDatabase().getCurrentPet(player.getUniqueId());
         if (pet == null) {
             return;
         }
         boolean activated = false;
-        UUID uuid = player.getUniqueId();
         LivingEntity damaged = (LivingEntity) event.getEntity();
         PetDatabaseObject object = OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType());
         for (String s : object.getAbilities()) {
             String[] abilityArgs = object.getAbilityArgs(s);
-            if (OpPets.getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
-                return;
-            }
             switch (object.getAbility(s)) {
-                case LIGHTING -> damaged.getWorld().spawnEntity(damaged.getLocation(), EntityType.LIGHTNING);
+                case LIGHTING -> functions.lighting(player);
                 case FLAME -> damaged.setFireTicks(Integer.parseInt(abilityArgs[1]));
                 case STOP_ATTACK -> event.setCancelled(true);
                 case STOP_KNOCKBACK -> {
@@ -149,6 +157,8 @@ public class PetAbilities implements Listener {
                     damaged.damage(healthSteal);
                     functions.addHealth(player, healthSteal);
                 }
+                case MESSAGE_AFTER -> functions.message(player, abilityArgs[1]);
+                case ACTIONBAR_AFTER -> functions.sendActionbar(player, abilityArgs[1]);
             }
             activated = true;
         }

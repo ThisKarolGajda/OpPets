@@ -10,7 +10,10 @@ package me.opkarol.oppets;
 
 import dir.databases.Database;
 import dir.databases.MySQLMiniPetsDatabase;
+import dir.interfaces.IBabyEntityCreator;
+import dir.interfaces.IEntityManager;
 import dir.interfaces.IPacketPlayInSteerVehicleEvent;
+import dir.interfaces.IUtils;
 import dir.packets.PacketManager;
 import dir.pets.Pet;
 import me.opkarol.oppets.commands.OpPetsCommand;
@@ -18,22 +21,8 @@ import me.opkarol.oppets.files.FileManager;
 import me.opkarol.oppets.listeners.*;
 import me.opkarol.oppets.misc.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
-import v1_16_1R.BabyEntityCreator;
-import v1_16_1R.PacketPlayInSteerVehicleEvent_v1_16_1;
-import v1_16_1R.PlayerSteerVehicleEvent_v1_16_1;
-import v1_16_1R.Utils;
-import v1_16_1R.entities.EntityManager;
-import v1_16_3R.PacketPlayInSteerVehicleEvent_v1_16_3;
-import v1_16_3R.PlayerSteerVehicleEvent_v1_16_3;
-import v1_16_5R.PacketPlayInSteerVehicleEvent_v1_16_5;
-import v1_16_5R.PlayerSteerVehicleEvent_v1_16_5;
-import v1_17R.PacketPlayInSteerVehicleEvent_v1_17;
-import v1_17R.PlayerSteerVehicleEvent_v1_17;
-import v1_17_1R.PacketPlayInSteerVehicleEvent_v1_17_1;
-import v1_17_1R.PlayerSteerVehicleEvent_v1_17_1;
-import v1_18_1R.PacketPlayInSteerVehicleEvent_v1_18_1;
-import v1_18_1R.PlayerSteerVehicleEvent_v1_18_1;
 
 import java.util.HashMap;
 import java.util.List;
@@ -175,77 +164,33 @@ public class PetPluginController {
 
         this.instance.getLogger().info("Your server is running version " + version);
         PluginManager manager = this.instance.getServer().getPluginManager();
-
+        String versionR;
         switch (getVersion()) {
-            case "1.16", "1.16.1", "1.16.2" -> {
-                OpPets.setEntityManager(new EntityManager());
-                OpPets.setCreator(new BabyEntityCreator());
-                OpPets.setUtils(new Utils());
-                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_16_1());
-                manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_1(), this.instance);
-                PacketManager.setUtils(new Utils());
-                if (Database.mySQLAccess) {
-                    Database.setUtils(OpPets.getUtils());
-                }
-            }
-            case "1.16.3", "1.16.4" -> {
-                OpPets.setEntityManager(new v1_16_3R.entities.EntityManager());
-                OpPets.setCreator(new v1_16_3R.BabyEntityCreator());
-                OpPets.setUtils(new v1_16_3R.Utils());
-                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_16_3());
-                manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_3(), this.instance);
-                PacketManager.setUtils(new v1_16_3R.Utils());
-                if (Database.mySQLAccess) {
-                    Database.setUtils(OpPets.getUtils());
-                }
-            }
-            case "1.16.5" -> {
-                OpPets.setEntityManager(new v1_16_5R.entities.EntityManager());
-                OpPets.setCreator(new v1_16_5R.BabyEntityCreator());
-                OpPets.setUtils(new v1_16_5R.Utils());
-                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_16_5());
-                manager.registerEvents(new PlayerSteerVehicleEvent_v1_16_5(), this.instance);
-                PacketManager.setUtils(new v1_16_5R.Utils());
-                if (Database.mySQLAccess) {
-                    Database.setUtils(OpPets.getUtils());
-                }
-            }
-            case "1.17" -> {
-                OpPets.setEntityManager(new v1_17R.entities.EntityManager());
-                OpPets.setCreator(new v1_17R.BabyEntityCreator());
-                OpPets.setUtils(new v1_17R.Utils());
-                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_17());
-                manager.registerEvents(new PlayerSteerVehicleEvent_v1_17(), this.instance);
-                if (Database.mySQLAccess) {
-                    Database.setUtils(OpPets.getUtils());
-                }
-                PacketManager.setUtils(new v1_17_1R.Utils());
-            }
-            case "1.17.1" -> {
-                OpPets.setEntityManager(new v1_17R.entities.EntityManager());
-                OpPets.setCreator(new v1_17_1R.BabyEntityCreator());
-                OpPets.setUtils(new v1_17_1R.Utils());
-                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_17_1());
-                manager.registerEvents(new PlayerSteerVehicleEvent_v1_17_1(), this.instance);
-                if (Database.mySQLAccess) {
-                    Database.setUtils(OpPets.getUtils());
-                }
-                PacketManager.setUtils(new v1_17_1R.Utils());
-            }
-            case "1.18" -> {
-                OpPets.setEntityManager(new v1_18_1R.entities.EntityManager());
-                OpPets.setCreator(new v1_18_1R.BabyEntityCreator());
-                OpPets.setUtils(new v1_18_1R.Utils());
-                PacketManager.setUtils(new v1_18_1R.Utils());
-                this.setPacketEvent(new PacketPlayInSteerVehicleEvent_v1_18_1());
-                manager.registerEvents(new PlayerSteerVehicleEvent_v1_18_1(), this.instance);
-                if (Database.mySQLAccess) {
-                    Database.setUtils(OpPets.getUtils());
-                }
-            }
+            case "1.16", "1.16.1", "1.16.2" -> versionR = "v1_16_1R.";
+            case "1.16.3", "1.16.4" -> versionR = "v1_16_3R.";
+            case "1.16.5" -> versionR = "v1_16_5R.";
+            case "1.17" -> versionR = "v1_17R.";
+            case "1.17.1" -> versionR = "v1_17_1R.";
+            case "1.18" -> versionR = "v1_18_1R.";
             default -> throw new IllegalStateException("Unexpected value: " + getVersion());
         }
-        PacketManager.setEvent(OpPets.getController().getPacketEvent());
+        String substring = versionR.substring(0, versionR.length() - 2);
+
+        try {
+            OpPets.setCreator((IBabyEntityCreator) Class.forName(versionR + "BabyEntityCreator").newInstance());
+            OpPets.setEntityManager((IEntityManager) Class.forName(versionR + "entities.EntityManager").newInstance());
+            this.setPacketEvent((IPacketPlayInSteerVehicleEvent) Class.forName(versionR + "PacketPlayInSteerVehicleEvent_" + substring).newInstance());
+            manager.registerEvents((Listener) Class.forName(versionR + "PlayerSteerVehicleEvent_" + substring).newInstance(), this.instance);
+            IUtils utils = (IUtils) Class.forName(versionR + "Utils").newInstance();
+            OpPets.setUtils(utils);
+            PacketManager.setUtils(utils);
+            if (Database.mySQLAccess) {
+                Database.setUtils(utils);
+            }
+            PacketManager.setEvent(OpPets.getController().getPacketEvent());
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         return true;
     }
 

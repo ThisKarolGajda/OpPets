@@ -19,26 +19,24 @@ import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.*;
 
 public class BuyerAdmitInventory implements IInventory {
-    private final Inventory inventory;
-    private final ItemStack itemStack;
-    private final ItemMeta meta;
-    private final String price;
-    private final String type;
-    private final String finalType;
+    private Inventory inventory;
+    private String price;
+    private String type;
 
-    public BuyerAdmitInventory(ItemStack item) {
-        this.itemStack = item;
-        meta = itemStack.getItemMeta();
+    public BuyerAdmitInventory(@NotNull ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return;
+        }
         price = String.valueOf(getValueFromKey(priceKey, meta, ItemTagType.INTEGER));
         type = (String) getValueFromKey(typeKey, meta, ItemTagType.STRING);
-        finalType = type != null ? type : "ERROR";
         inventory = Bukkit.createInventory(new BuyerAdmitInventoryHolder(), 27, getMessage("BuyerAdmitInventory.title"));
         setupInventory();
     }
@@ -53,18 +51,14 @@ public class BuyerAdmitInventory implements IInventory {
         inventory.setItem(13, itemCreator(path + "informationBook.", this));
         inventory.setItem(16, itemCreatorShop(type, Integer.parseInt(price), path + "confirm.", this));
         setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
-
     }
 
     @Override
     @Contract(pure = true)
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
-        List<String> list = new ArrayList<>();
-        if (meta == null) return lore;
-
-        for (String sI : lore) {
-            list.add(FormatUtils.formatMessage(sI.replace("%price%", price).replace("%type%", finalType)));
-        }
-        return list;
+        return lore.stream().map(s -> FormatUtils.formatMessage(s
+                .replace("%type%", type)
+                .replace("%price%", price)))
+                .collect(Collectors.toList());
     }
 }

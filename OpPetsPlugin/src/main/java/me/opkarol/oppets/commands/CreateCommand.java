@@ -27,11 +27,9 @@ public class CreateCommand implements ICommand {
         if (!(sender instanceof Player player)) {
             return returnMessage(sender, Messages.stringMessage("noConsole"));
         }
-
         if (args.length != 3) {
             return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets create <TYPE> <NAME>"));
         }
-
         UUID playerUUID = player.getUniqueId();
         String petType = args[1];
         if (petType.equalsIgnoreCase("polarbear")) {
@@ -44,7 +42,6 @@ public class CreateCommand implements ICommand {
                 .collect(Collectors.toList()).contains(petType.toLowerCase()))) {
             return returnMessage(sender, Messages.stringMessage("wrongType").replace("%pet_type%", petType));
         }
-
         String petName = args[2];
         if (OpPets.getDatabase().getPetList(playerUUID) != null) {
             for (Pet pet : OpPets.getDatabase().getPetList(playerUUID)) {
@@ -55,25 +52,21 @@ public class CreateCommand implements ICommand {
             }
         }
         OpPetsEntityTypes.TypeOfEntity type;
-
         try {
             type = OpPetsEntityTypes.TypeOfEntity.valueOf(petType.toUpperCase());
         } catch (IllegalArgumentException e) {
             return returnMessage(sender, Messages.stringMessage("wrongType").replace("%pet_type%", petType));
         }
-
         Pet pet = new Pet(petName, type, null, playerUUID, new SkillUtils().getRandomSkillName(type), true);
         if (OpPets.getDatabase().addPetToPetsList(playerUUID, pet)) {
             return returnMessage(sender, Messages.stringMessage("createdPet").replace("%pet_name%", petName).replace("%pet_type%", petType));
         }
-
         try {
             throw new Exception("Unexpected error: AddPetToPetsList ins't working");
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
-
     }
 
     @Override

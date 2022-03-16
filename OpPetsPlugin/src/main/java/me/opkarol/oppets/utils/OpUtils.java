@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -132,21 +131,26 @@ public class OpUtils {
      * Returns a UUID object that is being created
      * from Online of Offline player object.
      *
-     * In this method there is a use of catch ignore,
-     * which is only a representation and shouldn't be
-     * used in a normal circumstances.
-     *
      * @param  name string object which is equal to a player name
      * @return uuid not null value of resulted method
      */
-    public static UUID getUUIDFromName(String name) {
-        UUID uuid;
-        try {
-            uuid = Objects.requireNonNull(Bukkit.getPlayer(name)).getUniqueId();
-        } catch (Exception ignore) {
-            uuid = Bukkit.getOfflinePlayer(name).getUniqueId();
-        }
-        return uuid;
+    public static @NotNull UUID getUUIDFromName(String name) {
+        return Bukkit.getOfflinePlayer(name).getUniqueId();
+    }
+
+    /**
+     * Returns a name object that is being created
+     * from Online of Offline player object, using
+     * player uuid.
+     *
+     * Will return null if the player wasn't before
+     * on the server / hasn't been registered.
+     *
+     * @param  uuid value of resulted method
+     * @return name string object which is equal to a player name
+     */
+    public static String getNameFromUUID(UUID uuid) {
+        return Bukkit.getOfflinePlayer(uuid).getName();
     }
 
     /**

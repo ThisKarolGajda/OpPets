@@ -120,7 +120,7 @@ PetMainInventory:
         - "&7Respawn it now!"
       glow: true
 LevelInventory:
-  title: "&eCurrent Level of &l%pet_name%&e!"
+  title: "&e&lCurrent Level of %pet_name%&e&l!"
   items:
     level:
       material: "EXPERIENCE_BOTTLE"
@@ -152,7 +152,7 @@ LevelInventory:
         - "TO DO"
       glow: true
 SettingsInventory:
-  title: "&7%pet_name% &ebuilt-in settings."
+  title: "&e&l%pet_name% &e&lbuilt-in settings."
   items:
     visibleToOthers:
       material: "CUSTOM"
@@ -235,7 +235,7 @@ SettingsInventory:
         - "&8/ return to default settings."
       glow: true
 GuestInventory:
-  title: "&7%pet_name%&7`s stats!"
+  title: "&7%pet_name%&7`s profile!"
   items:
     level:
       material: "EXPERIENCE_BOTTLE"
@@ -259,7 +259,7 @@ GuestInventory:
         - "&7Prestige: &f&l%current_prestige%"
       glow: true
 ShopInventory:
-  title: "&7Shop."
+  title: "&e&lShop"
   items:
     cow:
       material: "COW_SPAWN_EGG"
@@ -279,15 +279,15 @@ BuyerAdmitInventory:
       material: "GREEN_WOOL"
       name: "&aConfirm"
       lore:
-        - "Press this button to confirm"
-        - "purchasing this pet"
+        - "&7Press this button to confirm"
+        - "&7purchasing this pet"
       glow: true
     decline:
       material: "RED_WOOL"
       name: "&cDecline"
       lore:
-        - "Press this button to decline"
-        - "purchasing this pet"
+        - "&7Press this button to decline"
+        - "&7purchasing this pet"
       glow: true
     informationBook:
       material: "KNOWLEDGE_BOOK"
@@ -296,11 +296,66 @@ BuyerAdmitInventory:
         - "&7Price: &f&l%price%"
         - "&7Type: &f&l%type%"
       glow: true
-
+PrestigeInventory:
+  title: "&e&lPrestige inventory!"
+  items:
+    informationBook:
+      material: "KNOWLEDGE_BOOK"
+      name: "&aInformation"
+      lore:
+        - "&7Prestige resets every statistic based on level"
+        - "&7to a default value, that means every level and skill"
+        - "&7will be removed and you will have a chance to"
+        - "&7get it again."
+        - "&7If you wish to prestige your pet, which will"
+        - "&7receive new random star color with new value"
+        - "&7press the green wool."
+        - "&7You cannot undo a prestige action."
+      glow: true
+    prestige:
+      material: "GREEN_WOOL"
+      name: "&aConfirm prestige"
+      lore:
+        - "&7Press this button to allow"
+        - "&7your pet to prestige"
+      glow: true
+LeaderboardInventory:
+  title: "&e&lLeaderboards!"
+  items:
+    top_level:
+      material: "GREEN_WOOL"
+      name: "&a&lTop level"
+      leaderboardName: "top_level"
+      lore:
+        - "&f1st place &7-&f&l %1_player_name% &7-&f&l %1_player_object% level"
+        - "&f2nd place &7-&f&l %2_player_name% &7-&f&l %2_player_object% level"
+      glow: true
+      slot: 10
+    top_experience:
+      material: "GREEN_WOOL"
+      name: "&a&lTop Experience"
+      leaderboardName: "top_experience"
+      lore:
+        - "&f1st place &7-&f&l %1_player_name% &7-&f&l %1_player_object% experience"
+        - "&f2nd place &7-&f&l %2_player_name% &7-&f&l %2_player_object% experience"
+      glow: true
+      slot: 13
+    top_prestige:
+      material: "GREEN_WOOL"
+      name: "&a&lTop Prestige"
+      leaderboardName: "top_prestige"
+      lore:
+        - "&f1st place &7-&f&l %1_player_name% &7-&f&l %1_player_object%"
+        - "&f2nd place &7-&f&l %2_player_name% &7-&f&l %2_player_object%"
+      glow: true
+      slot: 16
 # ------------------------- #
 # Messages section:         #
 # ------------------------- #
 
+Formats:
+  broadcastFormat: "&f&l%prefix% &7[&c&l%type%&7]: &f%message%"
+  boosterEnabledMessage: "&7Booster %name% has been activated for %time% seconds!"
 AnvilInventories:
   RenameInventory:
     titleRename: "&7Enter &f&lnew &7pet name!"
@@ -336,6 +391,7 @@ Commands:
   changedAdminValue: "&7Set value: &f&l%value%&7 for object: &f&l%key%&7, for &f&l%player_name%&7 pet: &f&l%pet_name%&7!"
   calledSuccessfully: "&7Your pet has been called successfully!"
   boostersListFormat: "%name% - %type% - %multiplier% - %running%"
+  broadcastListFormat: "%prefix% - %type% - %format%"
   invalidBooster: "&cInvalid booster."
   invalidObjectProvided: "&cProvided object / argument is invalid."
 Messages:
@@ -393,11 +449,13 @@ Pets:
   LLAMA:
     special_ability:
       - STOP_ATTACK
+      - ACTIONBAR_AFTER:&7You survived it!
     speed: 1.9
     distance: 15
   MULE:
     special_ability:
       - FLAME:100
+      - ACTIONBAR_AFTER:&7Die in flames!
     speed: 1.9
     distance: 15
   MUSHROOM_COW:
@@ -420,6 +478,7 @@ Pets:
   PARROT:
     special_ability:
       - LIGHTING
+      - ACTIONBAR_AFTER:&7Electrons!
     speed: 1.9
     distance: 15
   PIG:
@@ -431,11 +490,13 @@ Pets:
   POLAR_BEAR:
     special_ability:
       - STEAL_HEALTH:3
+      - ACTIONBAR_AFTER:&7You stole a lot of health!
     speed: 1.9
     distance: 15
   RABBIT:
     special_ability:
       - STOP_FALL_DAMAGE
+      - ACTIONBAR_AFTER:&7What a cat!
     speed: 1.9
     distance: 15
   SHEEP:
@@ -447,11 +508,13 @@ Pets:
   TURTLE:
     special_ability:
       - STOP_ATTACK
+      - ACTIONBAR_AFTER:&7Ninja's reflex!
     speed: 1.9
     distance: 15
   WOLF:
     special_ability:
       - STEAL_HEALTH:3
+      - ACTIONBAR_AFTER:&7You stole a lot of health!
     speed: 1.9
     distance: 15
 

@@ -22,9 +22,11 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
 public class BoosterCommand implements ICommand {
     private final StringTransformer transformer;
+    private final String format;
 
     public BoosterCommand() {
         transformer = new StringTransformer();
+        format = Messages.stringMessage("boostersListFormat");
     }
 
     @Override
@@ -36,16 +38,13 @@ public class BoosterCommand implements ICommand {
         String parameter = args[1];
         switch (args.length) {
             case 2 -> {
-                final String format = Messages.stringMessage("boostersListFormat");
                 List<Booster> boosterList = OpPets.getBoosterProvider().getBoosters().stream().toList();
                 StringBuilder builder = new StringBuilder();
                 for (Booster booster : boosterList) {
-                    builder.append(format
-                            .replace("%running%", String.valueOf(booster.isRunning()))
-                            .replace("%multiplier%", String.valueOf(booster.getMultiplier()))
-                            .replace("%type%", booster.getType().name())
-                            .replace("%name%", booster.getName()))
-                    .append("\n");
+                    builder.append(getFormatted(booster));
+                }
+                if (builder.isEmpty()) {
+                    builder.append("List is empty.");
                 }
                 sender.sendMessage(builder.toString());
             }
@@ -62,10 +61,14 @@ public class BoosterCommand implements ICommand {
             case 6, 7 -> {
                 if (parameter.equalsIgnoreCase("add")) {
                     String name = args[2];
-                    Booster.BOOSTER_TYPE type = (Booster.BOOSTER_TYPE) transformer.getEnumFromString(args[3], Booster.BOOSTER_TYPE.class);
+                    Object object = transformer.getEnumFromString(args[3], Booster.BOOSTER_TYPE.class);
+                    if (object == null) {
+                        return returnMessage(sender, Messages.stringMessage("invalidObjectProvided"));
+                    }
+                    Booster.BOOSTER_TYPE type = (Booster.BOOSTER_TYPE) object;
                     Double multiplier = transformer.getDoubleFromString(args[4]);
                     Integer time = transformer.getIntFromString(args[5]);
-                    if (name == null || type == null || multiplier == null || time == null) {
+                    if (name == null || multiplier == null || time == null) {
                         return returnMessage(sender, Messages.stringMessage("invalidObjectProvided"));
                     }
                     if (!type.equals(Booster.BOOSTER_TYPE.PLAYER)) {
@@ -88,5 +91,14 @@ public class BoosterCommand implements ICommand {
     @Override
     public String getSubCommand() {
         return "booster";
+    }
+
+    public @NotNull String getFormatted(@NotNull Booster booster) {
+        return format
+                .replace("%running%", String.valueOf(booster.isRunning()))
+                .replace("%multiplier%", String.valueOf(booster.getMultiplier()))
+                .replace("%type%", booster.getType().name())
+                .replace("%name%", booster.getName()) +
+                "\n";
     }
 }

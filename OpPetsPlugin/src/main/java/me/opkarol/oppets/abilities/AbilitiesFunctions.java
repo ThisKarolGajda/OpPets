@@ -25,20 +25,17 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.bukkit.potion.PotionEffectType.*;
 
 public class AbilitiesFunctions {
     private final ConsoleCommandSender sender;
-    private final List<PotionEffectType> negativeEffects;
+    private final HashSet<PotionEffectType> negativeEffects;
 
     public AbilitiesFunctions() {
         sender = Bukkit.getConsoleSender();
-        negativeEffects = new ArrayList<>(Arrays.asList(BLINDNESS, CONFUSION, HARM, HUNGER, POISON, SLOW, SLOW_DIGGING, WEAKNESS, WITHER, UNLUCK));
+        negativeEffects = new HashSet<>(Arrays.asList(BLINDNESS, CONFUSION, HARM, HUNGER, POISON, SLOW, SLOW_DIGGING, WEAKNESS, WITHER, UNLUCK));
     }
 
     public void sendActionbar(@NotNull Player player, String message) {
@@ -58,7 +55,12 @@ public class AbilitiesFunctions {
     }
 
     public void addHealth(@NotNull Player player, int toAdd) {
-        player.setHealth(player.getHealth() + toAdd);
+        double health = player.getHealth();
+        health += toAdd;
+        if (health > 20.0) {
+            health = 20.0;
+        }
+        player.setHealth(health);
     }
 
     public void consoleCommand(@NotNull Player player, @NotNull String command) {
@@ -74,7 +76,7 @@ public class AbilitiesFunctions {
     }
 
     public void lighting(@NotNull Player receiver) {
-        Objects.requireNonNull(receiver.getLocation().getWorld()).spawnEntity(receiver.getLocation(), EntityType.LIGHTNING);
+        receiver.getWorld().spawnEntity(receiver.getLocation(), EntityType.LIGHTNING);
     }
 
     public void potion(@NotNull Player player, @NotNull PotionEffectType type, int duration, int amplifier) {
@@ -113,16 +115,11 @@ public class AbilitiesFunctions {
         launch(player, 10, 5, Fireball.class);
     }
 
-    // Method comes from Schottky
     public void launch(@NotNull Player player, double distOverHead, double distToFacing, Class<? extends Projectile> projectileClass) {
         final Location start = player.getLocation().add(0, distOverHead, 0);
-        // Optionally, set y to zero at player.getLocation().getDirection().setY(0)
         final Vector facing = player.getEyeLocation().add(player.getLocation().getDirection().multiply(distToFacing)).toVector();
-        // multiply by a constant, if you want a higher velocity
         final Vector initialV = facing.subtract(start.toVector()).normalize();
         final Projectile projectile = player.getWorld().spawn(start, projectileClass);
         projectile.setVelocity(initialV);
     }
-
-
 }

@@ -1,4 +1,4 @@
-package dir.databases.misc;
+package me.opkarol.oppets.inventories.holders;
 
 /*
  = Copyright (c) 2021-2022.
@@ -8,15 +8,14 @@ package dir.databases.misc;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-public class AbilitiesEnums {
-    public enum AbilityCategory {
-        PASSIVE, AGGRESSIVE, HOSTILE, NEUTRAL
-    }
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 
-    public enum AbilityType {
-        ACTIONBAR, ACTIONBAR_AFTER, ADD_FOOD, ADD_HEALTH, CONSOLE_COMMAND, CURE, LIGHTING, POTION, MESSAGE, MESSAGE_AFTER, REVIVE, STOP_ATTACK, STOP_KNOCKBACK, EXP, STEAL_HEALTH, PARTICLE, INVINCIBLE, PLAYER_COMMAND, FLAME, FIREBALL, STOP_FALL_DAMAGE
+public class LeaderboardInventoryHolder implements InventoryHolder, IHolder {
+    @NotNull
+    @Override
+    public Inventory getInventory() {
+        return null;
     }
 }
-
-
-

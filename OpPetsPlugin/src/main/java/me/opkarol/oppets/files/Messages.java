@@ -26,6 +26,7 @@ public class Messages extends ConfigUtils {
      * @return formatted string message / basic message
      */
     public static @NotNull String stringMessage(String name) {
+        if (map == null) return name;
         if (map.containsKey(name)) return FormatUtils.formatMessage(map.get(name));
         try {
             throw new Exception("Database error - cannot find type: " + name);

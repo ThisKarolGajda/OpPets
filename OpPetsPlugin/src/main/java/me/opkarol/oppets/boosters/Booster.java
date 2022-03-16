@@ -9,10 +9,14 @@ package me.opkarol.oppets.boosters;
  */
 
 import me.opkarol.oppets.OpPets;
+import me.opkarol.oppets.broadcasts.Broadcast;
+import me.opkarol.oppets.broadcasts.BroadcastManager;
+import me.opkarol.oppets.utils.ConfigUtils;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 public class Booster {
@@ -22,13 +26,15 @@ public class Booster {
     private boolean running;
     private BOOSTER_TYPE type;
     private final String owner;
+    private final String message;
 
     public Booster(String name, double multiplier, long timeToEnd, boolean running, BOOSTER_TYPE type) {
         this.name = name;
         this.multiplier = multiplier;
-        this.timeToEnd = timeToEnd;
+        this.timeToEnd = timeToEnd * 20;
         this.running = running;
         this.type = type;
+        this.message = ConfigUtils.getString("Formats.boosterEnabledMessage");
         this.owner = "SERVER";
     }
 
@@ -36,20 +42,26 @@ public class Booster {
     public Booster(String name, double multiplier, long timeToEnd, boolean running, BOOSTER_TYPE type, @NotNull UUID owner) {
         this.name = name;
         this.multiplier = multiplier;
-        this.timeToEnd = timeToEnd;
+        this.timeToEnd = timeToEnd * 20;
         this.running = running;
         this.type = type;
         this.owner = owner.toString();
+        this.message = ConfigUtils.getString("Formats.boosterEnabledMessage");
     }
 
     public void run() {
         running = true;
+        BroadcastManager manager = OpPets.getBroadcastManager();
+        List<Broadcast> broadcast = manager.getBroadcast(Broadcast.BROADCAST_TYPE.BOOSTER);
+        if (owner.equalsIgnoreCase("SERVER") && broadcast.get(0) != null) {
+            broadcast.get(0).broadcastMessage(message.replace("%time%", String.valueOf(timeToEnd / 20)).replace("%name%", name));
+        }
         new BukkitRunnable() {
             @Override
             public void run() {
                 running = false;
             }
-        }.runTaskLaterAsynchronously(OpPets.getInstance(), 20 * timeToEnd);
+        }.runTaskLaterAsynchronously(OpPets.getInstance(), timeToEnd);
     }
 
     public String getName() {

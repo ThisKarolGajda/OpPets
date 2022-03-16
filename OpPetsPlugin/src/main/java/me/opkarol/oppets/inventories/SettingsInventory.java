@@ -17,9 +17,9 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.*;
@@ -73,10 +73,15 @@ public class SettingsInventory implements IInventory {
     @Override
     @Contract(pure = true)
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
-        List<String> list = new ArrayList<>();
-        for (String sI : lore) {
-            list.add(FormatUtils.formatMessage(sI.replace("%state_visibleToOthers%", String.valueOf(visibleToOthers)).replace("%state_giftable%", String.valueOf(giftable)).replace("%state_glows%", String.valueOf(glows)).replace("%state_followPlayer%", String.valueOf(followPlayer)).replace("%state_teleportToPlayer%", String.valueOf(teleportToPlayer)).replace("%state_rideable%", String.valueOf(rideable)).replace("%state_otherRideable%", String.valueOf(otherRideable)).replace("%state_particlesEnabled%", String.valueOf(particlesEnabled))));
-        }
-        return list;
+        return lore.stream().map(s -> FormatUtils.formatMessage(s
+                .replace("%state_visibleToOthers%", String.valueOf(visibleToOthers))
+                .replace("%state_giftable%", String.valueOf(giftable))
+                .replace("%state_glows%", String.valueOf(glows))
+                .replace("%state_followPlayer%", String.valueOf(followPlayer))
+                .replace("%state_teleportToPlayer%", String.valueOf(teleportToPlayer))
+                .replace("%state_rideable%", String.valueOf(rideable))
+                .replace("%state_otherRideable%", String.valueOf(otherRideable))
+                .replace("%state_particlesEnabled%", String.valueOf(particlesEnabled))))
+                .collect(Collectors.toList());
     }
 }

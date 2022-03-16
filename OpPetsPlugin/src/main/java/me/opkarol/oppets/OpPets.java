@@ -17,7 +17,9 @@ import dir.interfaces.IUtils;
 import dir.prestiges.PrestigeManager;
 import me.opkarol.oppets.abilities.AbilitiesDatabase;
 import me.opkarol.oppets.boosters.BoosterProvider;
+import me.opkarol.oppets.broadcasts.BroadcastManager;
 import me.opkarol.oppets.files.Messages;
+import me.opkarol.oppets.leaderboards.LeaderboardCounter;
 import me.opkarol.oppets.skills.SkillDatabase;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,6 +47,8 @@ public final class OpPets extends JavaPlugin {
     private static AbilitiesDatabase abilitiesDatabase;
     //private static Economy economy;
     private static BoosterProvider boosterProvider;
+    private static LeaderboardCounter leaderboard;
+    private static BroadcastManager broadcastManager;
 
     public static IEntityManager getEntityManager() {
         return entityManager;
@@ -102,20 +106,29 @@ public final class OpPets extends JavaPlugin {
         return boosterProvider;
     }
 
+    public static LeaderboardCounter getLeaderboard() {
+        return leaderboard;
+    }
+
+    public static BroadcastManager getBroadcastManager() {
+        return broadcastManager;
+    }
+
     @Override
     public void onEnable() {
         opPets = this;
+        messages = new Messages().onEnable();
         Database.setInstance(opPets);
         petsDatabase = new PetsDatabase();
         abilitiesDatabase = new AbilitiesDatabase();
         controller = new PetPluginController(opPets);
         skillDatabase = new SkillDatabase();
         this.setEnabled(getController().setupVersion());
-        messages = new Messages().onEnable();
         prestigeManager = new PrestigeManager();
         //economy = controller.setupEconomy();
         boosterProvider = new BoosterProvider();
-
+        leaderboard = new LeaderboardCounter();
+        broadcastManager = new BroadcastManager();
     }
 
     @Override
@@ -149,4 +162,4 @@ public final class OpPets extends JavaPlugin {
     }
 
 }
-//TODO: add a way to permanent store a pet, like in a head, prestige gui, leaderboards, broadcasts/ announcements, boosters, panel for oppets, addons (Discord integration panel), mysql working
+//TODO: panel for oppets, addons (Discord integration panel), mysql working

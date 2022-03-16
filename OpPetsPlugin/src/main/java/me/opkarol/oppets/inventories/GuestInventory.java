@@ -18,9 +18,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.ConfigUtils.getString;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
@@ -52,31 +51,27 @@ public class GuestInventory implements IInventory {
     @Override
     @NotNull
     public List<String> setPlaceHolders(@NotNull List<String> lore) {
-        List<String> list = new ArrayList<>();
-        String owner = FormatUtils.formatMessage(getPlayerName(pet.getOwnerUUID()));
+        String owner = FormatUtils.formatMessage(OpUtils.getNameFromUUID(pet.getOwnerUUID()));
         String petName = FormatUtils.formatMessage(pet.getPetName());
         String petType = pet.getPetType().name();
         String skillName = pet.getSkillName();
-
         String maxLevel = String.valueOf(OpUtils.getMaxLevel(pet));
+        String level = String.valueOf(OpUtils.getLevel(pet));
         String percentageOfNext = OpUtils.getPercentageOfNextLevel(pet);
         String petExperience = String.valueOf(OpUtils.getPetLevelExperience(pet));
-
-        for (String sI : lore) {
-            list.add(FormatUtils.formatMessage(sI.replace("%current_prestige%", OpPets.getPrestigeManager().getFilledPrestige(pet.getPrestige())).replace("%max_pet_level%", maxLevel).replace("%percentage_of_next_experience%", percentageOfNext).replace("%pet_experience_next%", petExperience)).replace("%pet_owner%", owner).replace("%pet_name%", petName).replace("%pet_experience%", petExperience).replace("%pet_level%", String.valueOf(OpUtils.getLevel(pet))).replace("%pet_type%", petType).replace("%pet_skill%", skillName));
-        }
-        return list;
-    }
-
-    private String getPlayerName(UUID uuid) {
-        String name;
-        try {
-            name = Bukkit.getPlayer(uuid).getName();
-        } catch (Exception ignore) {
-            name = Bukkit.getOfflinePlayer(uuid).getName();
-        }
-
-        return name;
+        String prestige = OpPets.getPrestigeManager().getFilledPrestige(pet.getPrestige());
+        return lore.stream().map(s -> FormatUtils.formatMessage(s
+                .replace("%current_prestige%", prestige)
+                .replace("%max_pet_level%", maxLevel)
+                .replace("%percentage_of_next_experience%", percentageOfNext)
+                .replace("%pet_experience_next%", petExperience)
+                .replace("%pet_owner%", owner)
+                .replace("%pet_name%", petName)
+                .replace("%pet_experience%", petExperience)
+                .replace("%pet_level%", level)
+                .replace("%pet_type%", petType)
+                .replace("%pet_skill%", skillName)))
+                .collect(Collectors.toList());
     }
 
 }
