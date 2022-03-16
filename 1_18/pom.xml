@@ -95,7 +95,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <environmentVariables>
-                        <JITPACK>false</JITPACK>
+                        <env>JITPACK=false</env>
                     </environmentVariables>
                 </configuration>
             </plugin>
