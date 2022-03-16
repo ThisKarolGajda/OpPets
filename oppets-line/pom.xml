@@ -69,4 +69,11 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>spigot</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+
 </project>
