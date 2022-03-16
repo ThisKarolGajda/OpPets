@@ -1,2 +1,2 @@
 env:
-  JITPACK=false
+  MYVAR: "JITPACK=false"
