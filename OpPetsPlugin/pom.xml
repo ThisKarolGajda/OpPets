@@ -38,7 +38,11 @@
     </repositories>
 
     <dependencies>
-
+        <dependency>
+            <groupId>net.wesjd</groupId>
+            <artifactId>anvilgui</artifactId>
+            <version>1.5.3-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>oppets-line</artifactId>
