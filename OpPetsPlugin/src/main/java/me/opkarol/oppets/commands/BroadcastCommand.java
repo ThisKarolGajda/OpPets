@@ -78,9 +78,9 @@ public class BroadcastCommand implements ICommand {
 
     public @NotNull String getFormatted(@NotNull Broadcast broadcast) {
         return format
-                .replace("%format%", String.valueOf(broadcast.format()))
-                .replace("%prefix%", String.valueOf(broadcast.prefix()))
-                .replace("%type%", broadcast.type().name()) +
+                .replace("%format%", String.valueOf(broadcast.getFormat()))
+                .replace("%prefix%", String.valueOf(broadcast.getPrefix()))
+                .replace("%type%", broadcast.getType().name()) +
                 "\n";
     }
 }

@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BoosterProvider {
     private final HashSet<Booster> boosters = new HashSet<>();
@@ -34,7 +35,7 @@ public class BoosterProvider {
     }
 
     public Booster getBooster(String name) {
-        return boosters.stream().filter(booster1 -> booster1.getName().equals(name)).toList().get(0);
+        return boosters.stream().filter(booster1 -> booster1.getName().equals(name)).collect(Collectors.toList()).get(0);
     }
 
     public HashSet<Booster> getBoosters() {
@@ -42,7 +43,7 @@ public class BoosterProvider {
     }
 
     public List<Booster> getActiveBoosters() {
-        return boosters.stream().filter(Booster::isRunning).toList();
+        return boosters.stream().filter(Booster::isRunning).collect(Collectors.toList());
     }
 
     public double getMultiplier(@NotNull String owner) {

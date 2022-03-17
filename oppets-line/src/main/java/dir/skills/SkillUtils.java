@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class SkillUtils {
     private final FileConfiguration config;
@@ -42,7 +43,7 @@ public class SkillUtils {
             for (String pseudoType : strings) {
                 if (pseudoType.equals("[]")) break;
                 if (pseudoType.equals("ALL")) {
-                    list.addAll(Arrays.stream(OpPetsEntityTypes.TypeOfEntity.values()).toList());
+                    list.addAll(Arrays.stream(OpPetsEntityTypes.TypeOfEntity.values()).collect(Collectors.toList()));
                     break;
                 }
                 list.add(OpPetsEntityTypes.TypeOfEntity.valueOf(pseudoType));

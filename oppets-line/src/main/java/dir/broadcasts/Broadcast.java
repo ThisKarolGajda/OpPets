@@ -12,9 +12,9 @@ import dir.utils.FormatUtils;
 import org.bukkit.Bukkit;
 
 public class Broadcast {
-    String prefix;
-    String format;
-    BROADCAST_TYPE type;
+    private String prefix;
+    private String format;
+    private BROADCAST_TYPE type;
 
     public Broadcast(String prefix, String format, BROADCAST_TYPE type) {
         this.prefix = prefix;
@@ -24,6 +24,18 @@ public class Broadcast {
 
     public void broadcastMessage(String message) {
         Bukkit.broadcastMessage(FormatUtils.formatMessage(format.replace("%prefix%", prefix).replace("%message%", message).replace("%type%", type.name())));
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public BROADCAST_TYPE getType() {
+        return type;
     }
 
     public enum BROADCAST_TYPE {

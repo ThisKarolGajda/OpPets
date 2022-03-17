@@ -9,10 +9,10 @@ package dir.skills;
  */
 
 import dir.databases.Database;
+import dir.events.PetLevelupEvent;
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import dir.pets.PetsUtils;
-import dir.events.PetLevelupEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -46,7 +46,7 @@ public class SkillDatabase {
     }
 
     public List<Skill> getSkills() {
-        return skillMap.values().stream().toList();
+        return new ArrayList<>(skillMap.values());
     }
 
     public Skill getSkillFromPath(@NotNull String skillName) {
@@ -137,7 +137,7 @@ public class SkillDatabase {
             for (Material material : types) {
                 builder.append(material.data.getName());
                 i++;
-                if (i != Arrays.stream(types).toList().size()) builder.append(", ");
+                if (i != Arrays.stream(types).count()) builder.append(", ");
             }
         }
         return builder.toString();
