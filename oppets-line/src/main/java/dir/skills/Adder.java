@@ -52,8 +52,12 @@ public class Adder {
             double toChange = number * getValue() / 100;
 
             switch (getIncrementChar()) {
-                case 'u' -> number += toChange;
-                case 'd' -> number -= toChange;
+                case 'u':
+                    number += toChange;
+                    break;
+                case 'd':
+                    number -= toChange;
+                    break;
             }
         }
         if (getRounded()) return Math.round(number);

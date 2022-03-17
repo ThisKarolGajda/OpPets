@@ -23,24 +23,23 @@ public class Ability {
         setAbility(ability);
         FileConfiguration config = Database.getInstance().getConfig();
         switch (ability) {
-            case CUSTOM_COMMAND -> {
+            case CUSTOM_COMMAND:
                 COMMAND = config.getString(iPath + "options.command");
-            }
-            case PLUGIN_CONNECTION -> {
+                break;
+            case PLUGIN_CONNECTION:
                 CONNECTION = config.getString(iPath + "connection");
                 pluginAction = config.getString(iPath + "options.action");
-            }
-            case VANILLA_EFFECT -> {
+                break;
+            case VANILLA_EFFECT:
                 StringBuilder stringBuilder = new StringBuilder();
                 iPath = iPath + "options.";
                 stringBuilder.append(config.getString(iPath + "effect")).append(";").append(config.getString(iPath + "duration")).append(";").append(config.getString(iPath + "amplifier"));
                 EFFECT = stringBuilder.toString();
-            }
-            case TREASURE -> {
+                break;
+            case TREASURE:
                 TREASURE = "";
                 //TODO: Add json support
-            }
-
+                break;
         }
     }
 
