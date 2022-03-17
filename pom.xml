@@ -17,13 +17,13 @@
     <version>1.0.0</version>
     <modules>
         <module>oppets-line</module>
+        <module>OpPetsPlugin</module>
         <module>1_18</module>
         <module>1_17_1</module>
         <module>1_17</module>
         <module>1_16_3</module>
         <module>1_16_2</module>
         <module>1_16_1</module>
-        <module>OpPetsPlugin</module>
     </modules>
     <packaging>pom</packaging>
 

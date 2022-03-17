@@ -92,17 +92,41 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <defaultGoal>clean install javadoc:javadoc</defaultGoal>
+    <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.2</version>
                 <configuration>
                     <outputDirectory>${project.basedir}/javadocs</outputDirectory>
                     <reportOutputDirectory>${project.basedir}/javadocs</reportOutputDirectory>
                     <destDir>${project.basedir}/javadocs</destDir>
                 </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <configuration>
+                        </configuration>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.1.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -119,6 +143,7 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <includes>
+                                        <include>me/opkarol/oppets/**</include>
                                         <include>META-INF/**</include>
                                         <include>dir/**</include>
                                         <include>v1_18_1R/**</include>
@@ -129,7 +154,6 @@
                                         <include>v1_16_5R/**</include>
                                         <include>plugin.yml</include>
                                         <include>config.yml</include>
-                                        <include>me/opkarol/oppets/**</include>
                                         <include>net/wesjd/anvilgui/**</include>
                                         <include>api/**</include>
                                     </includes>
