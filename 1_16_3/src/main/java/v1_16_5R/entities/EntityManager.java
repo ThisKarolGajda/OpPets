@@ -9,7 +9,7 @@ package v1_16_5R.entities;
  */
 
 import dir.databases.Database;
-import dir.databases.misc.PetDatabaseObject;
+import dir.misc.PetDatabaseObject;
 import dir.interfaces.IEntityManager;
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;

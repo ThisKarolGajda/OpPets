@@ -9,12 +9,13 @@ package me.opkarol.oppets.commands;
  */
 
 import dir.databases.Database;
-import me.opkarol.oppets.files.Messages;
+import dir.files.Messages;
+import dir.interfaces.ICommand;
 import me.opkarol.oppets.inventories.PetMainInventory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static dir.utils.FormatUtils.returnMessage;
 
 public class HelpCommand implements ICommand {
     @Override

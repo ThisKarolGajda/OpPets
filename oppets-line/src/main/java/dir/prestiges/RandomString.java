@@ -16,25 +16,11 @@ public class RandomString {
         StringBuilder builder = new StringBuilder();
         String string;
         switch (mode) {
-            case ALPHA: {
-                string = "ABCDEFGHIJKLMNOPQRSTUVWXYZqwertyuiopasdfghjklzxcvbnm";
-                break;
-            }
-            case NUMERIC: {
-                string = "1234567890";
-                break;
-            }
-            case ALPHANUMERIC: {
-                string = "ABCDEFGHIJKLMNOPQRSTUVWXYZqwertyuiopasdfghjklzxcvbnm1234567890";
-                break;
-            }
-            case CODES: {
-                string = "0123456789abcdef";
-                break;
-            }
-            default: {
-                throw new IllegalStateException("Unexpected value: " + mode);
-            }
+            case ALPHA -> string = "ABCDEFGHIJKLMNOPQRSTUVWXYZqwertyuiopasdfghjklzxcvbnm";
+            case NUMERIC -> string = "1234567890";
+            case ALPHANUMERIC -> string = "ABCDEFGHIJKLMNOPQRSTUVWXYZqwertyuiopasdfghjklzxcvbnm1234567890";
+            case CODES -> string = "0123456789abcdef";
+            default -> throw new IllegalStateException("Unexpected value: " + mode);
         }
 
         if (mode != Mode.CODES) {

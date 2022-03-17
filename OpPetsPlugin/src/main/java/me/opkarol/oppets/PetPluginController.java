@@ -10,16 +10,13 @@ package me.opkarol.oppets;
 
 import dir.databases.Database;
 import dir.databases.MySQLMiniPetsDatabase;
-import dir.interfaces.IBabyEntityCreator;
-import dir.interfaces.IEntityManager;
-import dir.interfaces.IPacketPlayInSteerVehicleEvent;
-import dir.interfaces.IUtils;
+import dir.interfaces.*;
 import dir.packets.PacketManager;
 import dir.pets.Pet;
 import me.opkarol.oppets.commands.OpPetsCommand;
-import me.opkarol.oppets.files.FileManager;
+import dir.files.FileManager;
 import me.opkarol.oppets.listeners.*;
-import me.opkarol.oppets.misc.Metrics;
+import dir.misc.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -41,7 +38,7 @@ import java.util.UUID;
 
 public class PetPluginController {
     private final OpPets instance;
-    private final String localPath = OpPets.getInstance().getDataFolder().getAbsolutePath();
+    private final String localPath = Database.getInstance().getDataFolder().getAbsolutePath();
     private IPacketPlayInSteerVehicleEvent packetEvent;
     private String version;
 
@@ -74,7 +71,7 @@ public class PetPluginController {
      * which also counts pet numbers in the server.
      *
      * @param pluginId plugin id used to connect with bStats site
-     * @see me.opkarol.oppets.misc.Metrics
+     * @see dir.misc.Metrics
      */
     public void bStatsActivation(int pluginId) {
         Metrics metrics = new Metrics(getInstance(), pluginId);
@@ -145,7 +142,7 @@ public class PetPluginController {
      * If result is valid, it can be successfully removed using Bukkit method.
      */
     public void killAllPets() {
-        Database.getDatabase().getActivePetMap().keySet().forEach(uuid -> OpPets.getUtils().killPetFromPlayerUUID(uuid));
+        Database.getDatabase().getActivePetMap().keySet().forEach(uuid -> Database.getUtils().killPetFromPlayerUUID(uuid));
     }
 
     /**
@@ -187,7 +184,7 @@ public class PetPluginController {
             if (Database.mySQLAccess) {
                 Database.setUtils(utils);
             }
-            PacketManager.setEvent(OpPets.getController().getPacketEvent());
+            PacketManager.setEvent(getPacketEvent());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
         }

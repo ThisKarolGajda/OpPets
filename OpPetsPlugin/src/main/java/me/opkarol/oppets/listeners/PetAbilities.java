@@ -8,11 +8,11 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.misc.PetDatabaseObject;
+import dir.abilities.AbilitiesDatabase;
+import dir.abilities.AbilitiesFunctions;
+import dir.databases.Database;
+import dir.misc.PetDatabaseObject;
 import dir.pets.Pet;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.abilities.AbilitiesDatabase;
-import me.opkarol.oppets.abilities.AbilitiesFunctions;
 import org.bukkit.Particle;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -34,7 +34,7 @@ public class PetAbilities implements Listener {
     private final AbilitiesFunctions functions;
 
     public PetAbilities() {
-        abilitiesDatabase = OpPets.getAbilitiesDatabase();
+        abilitiesDatabase = Database.getOpPets().getAbilitiesDatabase();
         functions = new AbilitiesFunctions();
     }
 
@@ -42,13 +42,13 @@ public class PetAbilities implements Listener {
     public void playerInteract(@NotNull PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        if (OpPets.getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
+        if (Database.getOpPets().getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
             return;
         }
         if (!player.isSneaking()) {
             return;
         }
-        Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
+        Pet pet = Database.getOpPets().getDatabase().getCurrentPet(uuid);
         if (pet == null) {
             return;
         }
@@ -59,7 +59,7 @@ public class PetAbilities implements Listener {
             return;
         }
         boolean activated = false;
-        PetDatabaseObject object = OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType());
+        PetDatabaseObject object = Database.getOpPets().getPetsDatabase().getObjectFromDatabase(pet.getPetType());
         for (String s : object.getAbilities()) {
             String[] abilityArgs = object.getAbilityArgs(s);
             switch (object.getAbility(s)) {
@@ -92,20 +92,20 @@ public class PetAbilities implements Listener {
         }
         Player player = (Player) event.getEntity();
         UUID uuid = player.getUniqueId();
-        if (OpPets.getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
+        if (Database.getOpPets().getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
             return;
         }
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL){
-            Pet pet = OpPets.getDatabase().getCurrentPet(player.getUniqueId());
+            Pet pet = Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId());
             if (pet == null) {
                 return;
             }
-            List<String> abilities = OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType()).getAbilities();
+            List<String> abilities = Database.getOpPets().getPetsDatabase().getObjectFromDatabase(pet.getPetType()).getAbilities();
             if (!abilities.contains("STOP_FALL_DAMAGE")) {
                 return;
             }
             abilities.forEach(string -> {
-                String[] abilityArgs = OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType()).getAbilityArgs(string);
+                String[] abilityArgs = Database.getOpPets().getPetsDatabase().getObjectFromDatabase(pet.getPetType()).getAbilityArgs(string);
                 if (abilities.contains("MESSAGE_AFTER")) {
                     functions.message(player, abilityArgs[1]);
                 }
@@ -126,16 +126,16 @@ public class PetAbilities implements Listener {
         }
         Player player = (Player) event.getDamager();
         UUID uuid = player.getUniqueId();
-        if (OpPets.getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
+        if (Database.getOpPets().getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
             return;
         }
-        Pet pet = OpPets.getDatabase().getCurrentPet(player.getUniqueId());
+        Pet pet = Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId());
         if (pet == null) {
             return;
         }
         boolean activated = false;
         LivingEntity damaged = (LivingEntity) event.getEntity();
-        PetDatabaseObject object = OpPets.getPetsDatabase().getObjectFromDatabase(pet.getPetType());
+        PetDatabaseObject object = Database.getOpPets().getPetsDatabase().getObjectFromDatabase(pet.getPetType());
         for (String s : object.getAbilities()) {
             String[] abilityArgs = object.getAbilityArgs(s);
             switch (object.getAbility(s)) {

@@ -8,7 +8,7 @@ package me.opkarol.oppets.particles;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.OpPets;
+import dir.databases.Database;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
@@ -31,7 +31,7 @@ public class ParticlesManager {
                     location.subtract(x, 0, z);
                 }
             }
-        }.runTaskAsynchronously(OpPets.getInstance());
+        }.runTaskAsynchronously(Database.getInstance());
     }
 
     public static void prestigeChangeEffect(Player player, Entity entity) {
@@ -48,6 +48,6 @@ public class ParticlesManager {
                     location.subtract(x, 0, z);
                 }
             }
-        }.runTaskAsynchronously(OpPets.getInstance());
+        }.runTaskAsynchronously(Database.getInstance());
     }
 }

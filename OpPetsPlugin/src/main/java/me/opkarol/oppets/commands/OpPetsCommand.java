@@ -8,12 +8,13 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.boosters.Booster;
-import me.opkarol.oppets.broadcasts.Broadcast;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.OpUtils;
+import dir.boosters.Booster;
+import dir.broadcasts.Broadcast;
+import dir.databases.Database;
+import dir.files.Messages;
+import dir.interfaces.ICommand;
+import dir.utils.FormatUtils;
+import dir.utils.OpUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static dir.utils.FormatUtils.returnMessage;
 
 public class OpPetsCommand implements CommandExecutor, TabCompleter {
     public static String noPetsString = "<NO-PETS>";
@@ -67,7 +68,7 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
                 switch (args[0].toLowerCase()) {
                     case "delete", "summon", "rename", "gift" -> result.addAll(getCompletedPetList(player.getUniqueId(), args[1]));
                     case "create" -> {
-                        HashSet<String> completions = OpPets.getEntityManager().getAllowedEntities();
+                        HashSet<String> completions = Database.getOpPets().getEntityManager().getAllowedEntities();
                         StringUtil.copyPartialMatches(args[1], completions, result);
                     }
                     case "admin" -> result.addAll(getPlayers(args[1]));
@@ -84,7 +85,7 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
                     case "booster" -> {
                         switch (args[1]) {
                             case "remove" -> {
-                                List<String> completions = new ArrayList<>(OpPets.getBoosterProvider().getBoosters().stream().map(Booster::getName).toList());
+                                List<String> completions = new ArrayList<>(Database.getOpPets().getBoosterProvider().getBoosters().stream().map(Booster::getName).toList());
                                 StringUtil.copyPartialMatches(args[2], completions, result);
                             }
                             case "add" -> StringUtil.copyPartialMatches(args[2], List.of("(name)"), result);
@@ -112,7 +113,7 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
             case 5 -> {
                 switch (args[0].toLowerCase()) {
                     case "booster" -> StringUtil.copyPartialMatches(args[4], List.of("(multiplier)"), result);
-                    case "admin" -> OpPets.getDatabase().getPetList(OpUtils.getUUIDFromName(args[1])).stream().filter(pet -> Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(args[2]))).collect(Collectors.toList()).forEach(pet -> {
+                    case "admin" -> Database.getOpPets().getDatabase().getPetList(OpUtils.getUUIDFromName(args[1])).stream().filter(pet -> Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(args[2]))).collect(Collectors.toList()).forEach(pet -> {
                         switch (args[3]) {
                             case "level" -> result.add(String.valueOf(pet.getLevel()));
                             case "xp" -> result.add(String.valueOf(pet.getPetExperience()));
@@ -156,9 +157,9 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
 
     private @NotNull @Unmodifiable List<String> getCompletedPetList(UUID uuid, String args) {
         List<String> list = new ArrayList<>();
-        if (OpPets.getDatabase().getPetList(uuid) == null) return Collections.singletonList(noPetsString);
+        if (Database.getOpPets().getDatabase().getPetList(uuid) == null) return Collections.singletonList(noPetsString);
         List<String> completions = new ArrayList<>();
-        OpPets.getDatabase().getPetList(uuid).forEach(pet -> completions.add(FormatUtils.getNameString(pet.getPetName())));
+        Database.getOpPets().getDatabase().getPetList(uuid).forEach(pet -> completions.add(FormatUtils.getNameString(pet.getPetName())));
         StringUtil.copyPartialMatches(args, completions, list);
         if (list.size() == 0) return Collections.singletonList(noPetsString);
         return list;

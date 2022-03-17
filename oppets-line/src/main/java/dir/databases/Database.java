@@ -9,6 +9,7 @@ package dir.databases;
  */
 
 import dir.interfaces.IDatabase;
+import dir.interfaces.IOpPets;
 import dir.interfaces.IUtils;
 import org.bukkit.plugin.Plugin;
 
@@ -18,6 +19,7 @@ public class Database {
     private static IDatabase database;
     private static IUtils utils;
     private static PetsDatabase petsDatabase;
+    private static IOpPets opPets;
 
     public static void setupDatabase() {
         // mySQLAccess = instance.getConfig().getBoolean("mysql.enabled");
@@ -29,6 +31,7 @@ public class Database {
             setDatabase(new MiniPetsDatabase());
         }
         petsDatabase = new PetsDatabase();
+
     }
 
     public static IDatabase getDatabase() {
@@ -43,8 +46,9 @@ public class Database {
         return instance;
     }
 
-    public static void setInstance(Plugin instance) {
+    public static void setInstance(Plugin instance, IOpPets oppets) {
         Database.instance = instance;
+        opPets = oppets;
         setupDatabase();
     }
 
@@ -58,5 +62,9 @@ public class Database {
 
     public static PetsDatabase getPetsDatabase() {
         return petsDatabase;
+    }
+
+    public static IOpPets getOpPets() {
+        return opPets;
     }
 }

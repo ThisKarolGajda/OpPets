@@ -8,18 +8,19 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import dir.databases.Database;
+import dir.files.Messages;
+import dir.interfaces.ICommand;
 import dir.pets.Pet;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.OpPets;
+import dir.utils.FormatUtils;
 import me.opkarol.oppets.inventories.anvil.DeleteAnvilInventory;
-import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
 import java.util.UUID;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static dir.utils.FormatUtils.returnMessage;
 
 public class DeleteCommand implements ICommand {
     @Override
@@ -53,7 +54,7 @@ public class DeleteCommand implements ICommand {
 
     private Pet getPetByName(UUID playerUUID, String petName) {
         final Pet[] petI = new Pet[1];
-        OpPets.getDatabase().getPetList(playerUUID).forEach(pet -> {
+        Database.getOpPets().getDatabase().getPetList(playerUUID).forEach(pet -> {
             if (Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(petName))) {
                 petI[0] = pet;
             }

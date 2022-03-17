@@ -8,23 +8,23 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.OpPets;
+import dir.databases.Database;
+import dir.interfaces.IInventory;
+import dir.utils.FormatUtils;
 import me.opkarol.oppets.inventories.holders.ShopInventoryHolder;
-import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.ConfigUtils.getInt;
-import static me.opkarol.oppets.utils.ConfigUtils.getString;
-import static me.opkarol.oppets.utils.InventoryUtils.itemCreatorShop;
-import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
+import static dir.utils.ConfigUtils.getInt;
+import static dir.utils.ConfigUtils.getString;
+import static dir.utils.InventoryUtils.itemCreatorShop;
+import static dir.utils.InventoryUtils.setupEmptyGlassPanes;
 
 public class ShopInventory implements IInventory {
 
@@ -43,7 +43,7 @@ public class ShopInventory implements IInventory {
 
     private void setupInventory() {
         String path = "ShopInventory.items.";
-        ConfigurationSection sec = OpPets.getInstance().getConfig().getConfigurationSection("ShopInventory.items");
+        ConfigurationSection sec = Database.getInstance().getConfig().getConfigurationSection("ShopInventory.items");
         if (sec == null) return;
 
         int i = 0;
@@ -60,7 +60,6 @@ public class ShopInventory implements IInventory {
     }
 
     @Override
-    @Contract(pure = true)
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         String type = getString(path + ".options.type");
         String price = String.valueOf(getInt(path + ".options.price"));

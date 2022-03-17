@@ -9,18 +9,18 @@ package me.opkarol.oppets.commands;
  */
 
 import dir.databases.Database;
+import dir.interfaces.ICommand;
 import dir.pets.Pet;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.OpPets;
+import dir.files.Messages;
 import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
-import me.opkarol.oppets.utils.FormatUtils;
+import dir.utils.FormatUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static dir.utils.FormatUtils.returnMessage;
 
 public class RenameCommand implements ICommand {
     @Override
@@ -30,7 +30,7 @@ public class RenameCommand implements ICommand {
         }
 
         UUID uuid = player.getUniqueId();
-        if (OpPets.getDatabase().getPetList(uuid) == null) {
+        if (Database.getOpPets().getDatabase().getPetList(uuid) == null) {
             return returnMessage(sender, Messages.stringMessage("invalidPet"));
         }
 

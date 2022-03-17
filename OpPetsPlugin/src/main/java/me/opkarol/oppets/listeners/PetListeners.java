@@ -8,16 +8,16 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import dir.databases.Database;
+import dir.events.PetLevelupEvent;
+import dir.events.PrestigeChangeEvent;
+import dir.files.Messages;
 import dir.pets.Pet;
 import dir.prestiges.PrestigeManager;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.events.PetLevelupEvent;
-import me.opkarol.oppets.events.PrestigeChangeEvent;
+import dir.skills.Ability;
+import dir.utils.FormatUtils;
+import dir.utils.OpUtils;
 import me.opkarol.oppets.particles.ParticlesManager;
-import me.opkarol.oppets.skills.Ability;
-import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -47,10 +47,10 @@ public class PetListeners implements Listener {
 
         player.sendMessage(Messages.stringMessage("petLevelUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_level%", String.valueOf(OpUtils.getLevel(pet))).replace("%max_level%", String.valueOf(OpUtils.getMaxLevel(pet))).replace("%experience_level%", String.valueOf(OpUtils.getPetLevelExperience(pet))));
         if (pet.areParticlesEnabled()) {
-            ParticlesManager.spawnLevelUpPetEffect(player, OpPets.getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
+            ParticlesManager.spawnLevelUpPetEffect(player, Database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
         }
 
-        List<Ability> abilities = OpPets.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getB();
+        List<Ability> abilities = Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getB();
         for (Ability ability : abilities) {
             switch (ability.getAbility()) {
                 case PLUGIN_CONNECTION -> {
@@ -85,16 +85,16 @@ public class PetListeners implements Listener {
 
     @EventHandler
     public void prestigeChange(PrestigeChangeEvent event) {
-        PrestigeManager pm = OpPets.getPrestigeManager();
+        PrestigeManager pm = Database.getOpPets().getPrestigeManager();
         if (event.isCancelled() || pm.format == null) return;
         Pet pet = event.getPet();
         pet.setLevel(0);
         pet.setPrestige(pm.getFormatForNumber(pm.getPrestigeLevel(pet.getPrestige()) + 1));
         Player player = event.getPlayer();
         player.sendMessage(Messages.stringMessage("prestigeUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_prestige%", pm.getFilledPrestige(pet.getPrestige())).replace("%max_level%", String.valueOf(OpUtils.getMaxLevel(pet))));
-        OpPets.getUtils().respawnPet(pet, player);
+        Database.getOpPets().getUtils().respawnPet(pet, player);
         if (pet.areParticlesEnabled()) {
-            ParticlesManager.prestigeChangeEffect(player, OpPets.getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
+            ParticlesManager.prestigeChangeEffect(player, Database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
         }
     }
 
@@ -118,7 +118,7 @@ public class PetListeners implements Listener {
             }
             Player player = (Player) entity;
             UUID uuid = player.getUniqueId();
-            Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
+            Pet pet = Database.getOpPets().getDatabase().getCurrentPet(uuid);
             if (pet == null) {
                 continue;
             }

@@ -8,14 +8,15 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.broadcasts.Broadcast;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.misc.StringTransformer;
+import dir.broadcasts.Broadcast;
+import dir.databases.Database;
+import dir.files.Messages;
+import dir.interfaces.ICommand;
+import dir.misc.StringTransformer;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static dir.utils.FormatUtils.returnMessage;
 
 public class BroadcastCommand implements ICommand {
     final String format;
@@ -31,7 +32,7 @@ public class BroadcastCommand implements ICommand {
         }
         if (args.length == 2 && args[1].equalsIgnoreCase("list")) {
             StringBuilder builder = new StringBuilder();
-            for (Broadcast broadcast : OpPets.getBroadcastManager().getBroadcastList()) {
+            for (Broadcast broadcast : Database.getOpPets().getBroadcastManager().getBroadcastList()) {
                 builder.append(getFormatted(broadcast));
             }
             if (builder.isEmpty()) {
@@ -45,7 +46,7 @@ public class BroadcastCommand implements ICommand {
                 return returnMessage(sender, Messages.stringMessage("invalidObjectProvided"));
             }
             Broadcast.BROADCAST_TYPE type = (Broadcast.BROADCAST_TYPE) object;
-            OpPets.getBroadcastManager().removeBroadcast(type);
+            Database.getOpPets().getBroadcastManager().removeBroadcast(type);
         }
         if (args.length >= 4 && args[1].equalsIgnoreCase("add")) {
             String prefix = args[2];
@@ -60,7 +61,7 @@ public class BroadcastCommand implements ICommand {
             }
             String message = builder.toString();
             // name is being ignored since it will play as a temporary broadcast
-            OpPets.getBroadcastManager().broadcastTemp(prefix, OpPets.getBroadcastManager().getFormat(), type, message);
+            Database.getOpPets().getBroadcastManager().broadcastTemp(prefix, Database.getOpPets().getBroadcastManager().getFormat(), type, message);
         }
         return true;
     }

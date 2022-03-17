@@ -8,20 +8,21 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import dir.databases.Database;
+import dir.files.Messages;
+import dir.interfaces.ICommand;
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import dir.pets.PetsUtils;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.OpUtils;
+import dir.utils.FormatUtils;
+import dir.utils.OpUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static dir.utils.FormatUtils.returnMessage;
 
 public class AdminCommand implements ICommand {
     @Override
@@ -37,7 +38,7 @@ public class AdminCommand implements ICommand {
         String name = args[1];
         UUID uuid = OpUtils.getUUIDFromName(name);
 
-        List<Pet> petList = OpPets.getDatabase().getPetList(uuid);
+        List<Pet> petList = Database.getOpPets().getDatabase().getPetList(uuid);
         if (petList.size() == 0) {
             return returnMessage(sender, Messages.stringMessage("petListEmpty"));
         }
@@ -70,7 +71,7 @@ public class AdminCommand implements ICommand {
         }
 
         petList.add(pet);
-        OpPets.getDatabase().setPets(uuid, petList);
+        Database.getOpPets().getDatabase().setPets(uuid, petList);
 
         PetsUtils.savePetProgress(pet, uuid);
 

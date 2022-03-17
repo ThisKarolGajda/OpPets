@@ -8,10 +8,11 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import dir.databases.Database;
+import dir.files.Messages;
+import dir.interfaces.ICommand;
 import dir.pets.Pet;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.utils.FormatUtils;
+import dir.utils.FormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -19,7 +20,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static dir.utils.FormatUtils.returnMessage;
 
 public class GiftCommand implements ICommand {
     @Override
@@ -36,7 +37,7 @@ public class GiftCommand implements ICommand {
         String petName = args[1];
         Pet pet = null;
 
-        for (Pet pet1 : OpPets.getDatabase().getPetList(uuid)) {
+        for (Pet pet1 : Database.getOpPets().getDatabase().getPetList(uuid)) {
             assert pet1.getPetName() != null;
             if (FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName))) {
                 pet = pet1;
@@ -68,7 +69,7 @@ public class GiftCommand implements ICommand {
             playerIName = playerI.getName();
         }
 
-        if (OpPets.getDatabase().getPetList(uuid1).stream().anyMatch(pet1 -> FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName)))) {
+        if (Database.getOpPets().getDatabase().getPetList(uuid1).stream().anyMatch(pet1 -> FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName)))) {
             return returnMessage(sender, Messages.stringMessage("receiverSameNamedPet").replace("%pet_name%", petName));
         }
 
@@ -76,8 +77,8 @@ public class GiftCommand implements ICommand {
             return returnMessage(sender, Messages.stringMessage("receiverInvalid"));
         }
 
-        OpPets.getDatabase().removePet(uuid, pet);
-        OpPets.getDatabase().addPetToPetsList(uuid1, pet);
+        Database.getOpPets().getDatabase().removePet(uuid, pet);
+        Database.getOpPets().getDatabase().addPetToPetsList(uuid1, pet);
 
         return returnMessage(sender, Messages.stringMessage("petGifted").replace("%pet_name%", petName).replace("%player_name%", playerIName));
     }

@@ -8,11 +8,12 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import dir.databases.Database;
+import dir.interfaces.IInventory;
 import dir.pets.Pet;
-import me.opkarol.oppets.OpPets;
+import dir.utils.FormatUtils;
+import dir.utils.OpUtils;
 import me.opkarol.oppets.inventories.holders.GuestInventoryHolder;
-import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -21,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.ConfigUtils.getString;
-import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
-import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
+import static dir.utils.ConfigUtils.getString;
+import static dir.utils.InventoryUtils.itemCreator;
+import static dir.utils.InventoryUtils.setupEmptyGlassPanes;
 
 public class GuestInventory implements IInventory {
     final String guiTitle = getString("GuestInventory.title");
@@ -59,7 +60,7 @@ public class GuestInventory implements IInventory {
         String level = String.valueOf(OpUtils.getLevel(pet));
         String percentageOfNext = OpUtils.getPercentageOfNextLevel(pet);
         String petExperience = String.valueOf(OpUtils.getPetLevelExperience(pet));
-        String prestige = OpPets.getPrestigeManager().getFilledPrestige(pet.getPrestige());
+        String prestige = Database.getOpPets().getPrestigeManager().getFilledPrestige(pet.getPrestige());
         return lore.stream().map(s -> FormatUtils.formatMessage(s
                 .replace("%current_prestige%", prestige)
                 .replace("%max_pet_level%", maxLevel)

@@ -8,8 +8,8 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import dir.databases.Database;
 import dir.pets.Pet;
-import me.opkarol.oppets.OpPets;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,24 +27,24 @@ public class PlayerJoin implements Listener {
     public void playerJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        if (OpPets.getDatabase().getPetList(uuid) == null) {
-            OpPets.getDatabase().setPets(uuid, new ArrayList<>());
+        if (Database.getOpPets().getDatabase().getPetList(uuid) == null) {
+            Database.getOpPets().getDatabase().setPets(uuid, new ArrayList<>());
             return;
         }
-        Pet currentPet = OpPets.getDatabase().getCurrentPet(uuid);
+        Pet currentPet = Database.getOpPets().getDatabase().getCurrentPet(uuid);
         if (currentPet != null) {
-            OpPets.getCreator().spawnMiniPet(currentPet, player);
+            Database.getOpPets().getCreator().spawnMiniPet(currentPet, player);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerJoin2(@NotNull PlayerJoinEvent event) {
-        OpPets.getDatabase().getActivePetMap().keySet().forEach(uuid -> {
+        Database.getOpPets().getDatabase().getActivePetMap().keySet().forEach(uuid -> {
             if (Bukkit.getPlayer(uuid) == null) return;
-            if (OpPets.getDatabase().getCurrentPet(uuid) == null) return;
-            if (!OpPets.getDatabase().getCurrentPet(uuid).isVisibleToOthers()) {
-                if (OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID() == null) return;
-                OpPets.getUtils().hideEntityFromPlayer(event.getPlayer(), OpPets.getDatabase().getIdPet(OpPets.getDatabase().getCurrentPet(uuid).getOwnUUID()));
+            if (Database.getOpPets().getDatabase().getCurrentPet(uuid) == null) return;
+            if (!Database.getOpPets().getDatabase().getCurrentPet(uuid).isVisibleToOthers()) {
+                if (Database.getOpPets().getDatabase().getCurrentPet(uuid).getOwnUUID() == null) return;
+                Database.getOpPets().getUtils().hideEntityFromPlayer(event.getPlayer(), Database.getOpPets().getDatabase().getIdPet(Database.getOpPets().getDatabase().getCurrentPet(uuid).getOwnUUID()));
             }
         });
     }

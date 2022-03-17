@@ -9,11 +9,10 @@ package me.opkarol.oppets.inventories.anvil;
  */
 
 import dir.databases.Database;
+import dir.files.Messages;
 import dir.pets.Pet;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.OpPets;
+import dir.utils.FormatUtils;
 import me.opkarol.oppets.commands.OpPetsCommand;
-import me.opkarol.oppets.utils.FormatUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -41,7 +40,7 @@ public class RenameAnvilInventory {
                                 return AnvilGUI.Response.text(Messages.stringMessage("nameWithSpaces"));
                             }
                         }
-                        OpPets.getUtils().killPetFromPlayerUUID(player.getUniqueId());
+                        Database.getOpPets().getUtils().killPetFromPlayerUUID(player.getUniqueId());
 
                         /*
                             If formatted message (s) has not equal length to not-formatted one
@@ -68,10 +67,10 @@ public class RenameAnvilInventory {
                             player.sendMessage(Messages.stringMessage("changedName").replace("%new_pet_name%", s));
                         }
 
-                        OpPets.getCreator().spawnMiniPet(pet, player);
-                        List<Pet> petList = OpPets.getDatabase().getPetList(uuid);
+                        Database.getOpPets().getCreator().spawnMiniPet(pet, player);
+                        List<Pet> petList = Database.getOpPets().getDatabase().getPetList(uuid);
                         petList.add(pet);
-                        OpPets.getDatabase().setPets(uuid, petList);
+                        Database.getOpPets().getDatabase().setPets(uuid, petList);
                         return AnvilGUI.Response.close();
                     } else {
                         return AnvilGUI.Response.text(Messages.stringMessage("incorrectValueName"));
@@ -79,7 +78,7 @@ public class RenameAnvilInventory {
                 }))
                 .text(petName)
                 .title(title)
-                .plugin(OpPets.getInstance())
+                .plugin(Database.getInstance())
                 .open(playerOpened);
     }
 

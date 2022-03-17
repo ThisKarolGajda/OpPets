@@ -8,9 +8,10 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import dir.interfaces.IInventory;
 import dir.pets.Pet;
 import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
-import me.opkarol.oppets.utils.FormatUtils;
+import dir.utils.FormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -21,8 +22,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
-import static me.opkarol.oppets.utils.InventoryUtils.*;
+import static dir.utils.ConfigUtils.getMessage;
+import static dir.utils.InventoryUtils.*;
 
 public class SettingsInventory implements IInventory {
     private final Inventory inventory;

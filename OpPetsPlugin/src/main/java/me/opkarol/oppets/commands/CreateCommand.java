@@ -8,18 +8,19 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import dir.databases.Database;
+import dir.files.Messages;
+import dir.interfaces.ICommand;
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.skills.SkillUtils;
+import dir.skills.SkillUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static dir.utils.FormatUtils.returnMessage;
 
 public class CreateCommand implements ICommand {
     @Override
@@ -36,15 +37,15 @@ public class CreateCommand implements ICommand {
             petType = "Polar_Bear";
         } else if (petType.equalsIgnoreCase("mushroom")) {
             petType = "Mushroom_Cow";
-        } else if (!(OpPets.getEntityManager().getAllowedEntities()
+        } else if (!(Database.getOpPets().getEntityManager().getAllowedEntities()
                 .stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toList()).contains(petType.toLowerCase()))) {
             return returnMessage(sender, Messages.stringMessage("wrongType").replace("%pet_type%", petType));
         }
         String petName = args[2];
-        if (OpPets.getDatabase().getPetList(playerUUID) != null) {
-            for (Pet pet : OpPets.getDatabase().getPetList(playerUUID)) {
+        if (Database.getOpPets().getDatabase().getPetList(playerUUID) != null) {
+            for (Pet pet : Database.getOpPets().getDatabase().getPetList(playerUUID)) {
                 assert pet.getPetName() != null;
                 if (pet.getPetName().equals(petName)) {
                     return returnMessage(sender, Messages.stringMessage("petWithSameName").replace("%pet_name%", petName));
@@ -58,7 +59,7 @@ public class CreateCommand implements ICommand {
             return returnMessage(sender, Messages.stringMessage("wrongType").replace("%pet_type%", petType));
         }
         Pet pet = new Pet(petName, type, null, playerUUID, new SkillUtils().getRandomSkillName(type), true);
-        if (OpPets.getDatabase().addPetToPetsList(playerUUID, pet)) {
+        if (Database.getOpPets().getDatabase().addPetToPetsList(playerUUID, pet)) {
             return returnMessage(sender, Messages.stringMessage("createdPet").replace("%pet_name%", petName).replace("%pet_type%", petType));
         }
         try {

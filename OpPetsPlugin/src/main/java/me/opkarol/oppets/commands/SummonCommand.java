@@ -8,10 +8,11 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import dir.databases.Database;
+import dir.files.Messages;
+import dir.interfaces.ICommand;
 import dir.pets.Pet;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.utils.FormatUtils;
+import dir.utils.FormatUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,8 +20,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static dir.utils.FormatUtils.returnMessage;
 import static me.opkarol.oppets.commands.OpPetsCommand.noPetsString;
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
 public class SummonCommand implements ICommand {
 
@@ -35,8 +36,8 @@ public class SummonCommand implements ICommand {
         }
 
         UUID playerUUID = player.getUniqueId();
-        List<Pet> playerPets = OpPets.getDatabase().getPetList(playerUUID);
-        Pet activePet = OpPets.getDatabase().getCurrentPet(playerUUID);
+        List<Pet> playerPets = Database.getOpPets().getDatabase().getPetList(playerUUID);
+        Pet activePet = Database.getOpPets().getDatabase().getCurrentPet(playerUUID);
 
         if (args[1].equals(noPetsString)) {
             return returnMessage(sender, Messages.stringMessage("petBlockedName").replace("%blocked_word%", noPetsString));
@@ -52,9 +53,9 @@ public class SummonCommand implements ICommand {
                     return returnMessage(sender, Messages.stringMessage("samePet"));
                 } else {
                     if (activePet != null) {
-                        OpPets.getUtils().killPetFromPlayerUUID(playerUUID);
+                        Database.getOpPets().getUtils().killPetFromPlayerUUID(playerUUID);
                     }
-                    OpPets.getCreator().spawnMiniPet(pet, player);
+                    Database.getOpPets().getCreator().spawnMiniPet(pet, player);
                     return returnMessage(sender, Messages.stringMessage("summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
                 }
             }

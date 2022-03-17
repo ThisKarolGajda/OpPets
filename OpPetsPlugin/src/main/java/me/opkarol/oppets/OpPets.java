@@ -10,17 +10,14 @@ package me.opkarol.oppets;
 
 import dir.databases.Database;
 import dir.databases.PetsDatabase;
-import dir.interfaces.IBabyEntityCreator;
-import dir.interfaces.IDatabase;
-import dir.interfaces.IEntityManager;
-import dir.interfaces.IUtils;
+import dir.interfaces.*;
 import dir.prestiges.PrestigeManager;
-import me.opkarol.oppets.abilities.AbilitiesDatabase;
-import me.opkarol.oppets.boosters.BoosterProvider;
-import me.opkarol.oppets.broadcasts.BroadcastManager;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.leaderboards.LeaderboardCounter;
-import me.opkarol.oppets.skills.SkillDatabase;
+import dir.abilities.AbilitiesDatabase;
+import dir.boosters.BoosterProvider;
+import dir.broadcasts.BroadcastManager;
+import dir.files.Messages;
+import dir.leaderboards.LeaderboardCounter;
+import dir.skills.SkillDatabase;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -34,7 +31,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * which can be used to disable OpPets functionality.
  */
 
-public final class OpPets extends JavaPlugin {
+public final class OpPets extends JavaPlugin implements IOpPets {
     private static OpPets opPets;
     private static PetPluginController controller;
     private static IBabyEntityCreator creator;
@@ -50,67 +47,62 @@ public final class OpPets extends JavaPlugin {
     private static LeaderboardCounter leaderboard;
     private static BroadcastManager broadcastManager;
 
-    public static IEntityManager getEntityManager() {
+    @Override
+    public IEntityManager getEntityManager() {
         return entityManager;
     }
-
     public static void setEntityManager(IEntityManager entityManager) {
         OpPets.entityManager = entityManager;
     }
-
-    public static IUtils getUtils() {
+    @Override
+    public IUtils getUtils() {
         return utils;
     }
-
     public static void setUtils(IUtils utils) {
         OpPets.utils = utils;
     }
-
-    public static PetPluginController getController() {
+    public PetPluginController getController() {
         return controller;
     }
-
-    public static OpPets getInstance() {
+    public OpPets getInstance() {
         return opPets;
     }
-
-    public static IBabyEntityCreator getCreator() {
+    @Override
+    public IBabyEntityCreator getCreator() {
         return creator;
     }
-
     public static void setCreator(IBabyEntityCreator creator2) {
         OpPets.creator = creator2;
     }
-
-    public static IDatabase getDatabase() {
+    public IDatabase getDatabase() {
         return Database.getDatabase();
     }
-
-    public static SkillDatabase getSkillDatabase() {
+    @Override
+    public SkillDatabase getSkillDatabase() {
         return skillDatabase;
     }
-
-    public static PrestigeManager getPrestigeManager() {
+    @Override
+    public PrestigeManager getPrestigeManager() {
         return prestigeManager;
     }
-
-    public static PetsDatabase getPetsDatabase() {
+    @Override
+    public PetsDatabase getPetsDatabase() {
         return petsDatabase;
     }
-
-    public static AbilitiesDatabase getAbilitiesDatabase() {
+    @Override
+    public AbilitiesDatabase getAbilitiesDatabase() {
         return abilitiesDatabase;
     }
-
-    public static BoosterProvider getBoosterProvider() {
+    @Override
+    public BoosterProvider getBoosterProvider() {
         return boosterProvider;
     }
-
-    public static LeaderboardCounter getLeaderboard() {
+    @Override
+    public LeaderboardCounter getLeaderboard() {
         return leaderboard;
     }
-
-    public static BroadcastManager getBroadcastManager() {
+    @Override
+    public BroadcastManager getBroadcastManager() {
         return broadcastManager;
     }
 
@@ -118,12 +110,15 @@ public final class OpPets extends JavaPlugin {
     public void onEnable() {
         opPets = this;
         messages = new Messages().onEnable();
-        Database.setInstance(opPets);
+        Database.setInstance(this, opPets);
         petsDatabase = new PetsDatabase();
         abilitiesDatabase = new AbilitiesDatabase();
         controller = new PetPluginController(opPets);
         skillDatabase = new SkillDatabase();
-        this.setEnabled(getController().setupVersion());
+        if (!skillDatabase.isCanRun()) {
+            disablePlugin("Config file is invalid!");
+        }
+        this.setEnabled(controller.setupVersion());
         prestigeManager = new PrestigeManager();
         //economy = controller.setupEconomy();
         boosterProvider = new BoosterProvider();
@@ -133,7 +128,7 @@ public final class OpPets extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getController().saveFiles();
+        controller.saveFiles();
         opPets = null;
         creator = null;
         controller = null;

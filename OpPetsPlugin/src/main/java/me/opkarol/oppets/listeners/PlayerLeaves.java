@@ -9,7 +9,7 @@ package me.opkarol.oppets.listeners;
  */
 
 import dir.databases.Database;
-import me.opkarol.oppets.OpPets;
+import dir.interfaces.IOpPets;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,6 +26,6 @@ public class PlayerLeaves implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
         Database.getDatabase().databaseUUIDSaver(playerUUID);
-        OpPets.getUtils().killPetFromPlayerUUID(playerUUID);
+        Database.getOpPets().getUtils().killPetFromPlayerUUID(playerUUID);
     }
 }

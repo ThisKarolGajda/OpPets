@@ -8,17 +8,18 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.boosters.Booster;
-import me.opkarol.oppets.files.Messages;
-import me.opkarol.oppets.misc.StringTransformer;
-import me.opkarol.oppets.utils.OpUtils;
+import dir.boosters.Booster;
+import dir.databases.Database;
+import dir.files.Messages;
+import dir.interfaces.ICommand;
+import dir.utils.OpUtils;
+import dir.misc.StringTransformer;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static dir.utils.FormatUtils.returnMessage;
 
 public class BoosterCommand implements ICommand {
     private final StringTransformer transformer;
@@ -38,7 +39,7 @@ public class BoosterCommand implements ICommand {
         String parameter = args[1];
         switch (args.length) {
             case 2 -> {
-                List<Booster> boosterList = OpPets.getBoosterProvider().getBoosters().stream().toList();
+                List<Booster> boosterList = Database.getOpPets().getBoosterProvider().getBoosters().stream().toList();
                 StringBuilder builder = new StringBuilder();
                 for (Booster booster : boosterList) {
                     builder.append(getFormatted(booster));
@@ -51,11 +52,11 @@ public class BoosterCommand implements ICommand {
             case 3 -> {
                 if (parameter.equalsIgnoreCase("remove")) {
                     String name = args[2];
-                    Booster booster = OpPets.getBoosterProvider().getBooster(name);
+                    Booster booster = Database.getOpPets().getBoosterProvider().getBooster(name);
                     if (booster == null) {
                         return returnMessage(sender, "invalidBooster");
                     }
-                    OpPets.getBoosterProvider().removeBooster(name);
+                    Database.getOpPets().getBoosterProvider().removeBooster(name);
                 }
             }
             case 6, 7 -> {
@@ -72,10 +73,10 @@ public class BoosterCommand implements ICommand {
                         return returnMessage(sender, Messages.stringMessage("invalidObjectProvided"));
                     }
                     if (!type.equals(Booster.BOOSTER_TYPE.PLAYER)) {
-                        OpPets.getBoosterProvider().createNewBooster(name, multiplier, time, type);
+                        Database.getOpPets().getBoosterProvider().createNewBooster(name, multiplier, time, type);
                     } else {
                         String playerName = args[6];
-                        OpPets.getBoosterProvider().createNewBooster(name, multiplier, time, type, OpUtils.getUUIDFromName(playerName));
+                        Database.getOpPets().getBoosterProvider().createNewBooster(name, multiplier, time, type, OpUtils.getUUIDFromName(playerName));
                     }
                 }
             }

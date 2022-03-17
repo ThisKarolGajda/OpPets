@@ -10,11 +10,10 @@ package me.opkarol.oppets.listeners;
 
 import dir.databases.Database;
 import dir.pets.Pet;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.skills.Adder;
-import me.opkarol.oppets.skills.Skill;
-import me.opkarol.oppets.skills.SkillDatabase;
-import me.opkarol.oppets.skills.SkillEnums;
+import dir.skills.Adder;
+import dir.skills.Skill;
+import dir.skills.SkillDatabase;
+import dir.skills.SkillEnums;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
@@ -47,7 +46,7 @@ public class SkillsListeners implements Listener {
         }
 
         Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
-        SkillDatabase database = OpPets.getSkillDatabase();
+        SkillDatabase database = Database.getOpPets().getSkillDatabase();
         final Adder[] adder = new Adder[1];
         database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder1 -> {
             if (adder1.getAdder().equals(SkillEnums.SkillsAdders.MINING)) {
@@ -75,7 +74,7 @@ public class SkillsListeners implements Listener {
         Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
 
         final Adder[] adder = new Adder[1];
-        SkillDatabase database = OpPets.getSkillDatabase();
+        SkillDatabase database = Database.getOpPets().getSkillDatabase();
         Skill skill = database.getSkillFromMap(pet.getSkillName());
         skill.getE().forEach(adder1 -> {
             if (adder1.getAdder().equals(SkillEnums.SkillsAdders.HARVESTING)) {
@@ -105,7 +104,7 @@ public class SkillsListeners implements Listener {
         Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
 
         final Adder[] adder = new Adder[1];
-        SkillDatabase database = OpPets.getSkillDatabase();
+        SkillDatabase database = Database.getOpPets().getSkillDatabase();
         database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder1 -> {
             if (adder1.getAdder().equals(SkillEnums.SkillsAdders.HARVESTING)) {
                 adder[0] = adder1;
@@ -137,7 +136,7 @@ public class SkillsListeners implements Listener {
         Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
 
         final Adder[] adder = new Adder[1];
-        SkillDatabase database = OpPets.getSkillDatabase();
+        SkillDatabase database = Database.getOpPets().getSkillDatabase();
         database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder1 -> {
             if (adder1.getAdder().equals(SkillEnums.SkillsAdders.CRAFTING)) {
                 adder[0] = adder1;
@@ -168,7 +167,7 @@ public class SkillsListeners implements Listener {
         Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
 
         final Adder[] adder = new Adder[1];
-        SkillDatabase database = OpPets.getSkillDatabase();
+        SkillDatabase database = Database.getOpPets().getSkillDatabase();
         database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder1 -> {
             if (adder1.getAdder().equals(SkillEnums.SkillsAdders.SMELTING)) {
                 adder[0] = adder1;
@@ -211,7 +210,7 @@ public class SkillsListeners implements Listener {
         Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
 
         final Adder[] adder = new Adder[1];
-        SkillDatabase database = OpPets.getSkillDatabase();
+        SkillDatabase database = Database.getOpPets().getSkillDatabase();
         database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder1 -> {
             if (adder1.getAdder().equals(SkillEnums.SkillsAdders.FISHING)) {
                 adder[0] = adder1;

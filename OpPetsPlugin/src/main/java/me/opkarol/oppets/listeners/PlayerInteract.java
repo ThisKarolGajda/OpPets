@@ -9,19 +9,19 @@ package me.opkarol.oppets.listeners;
  */
 
 import dir.databases.Database;
+import dir.interfaces.IHolder;
 import dir.interfaces.IUtils;
 import dir.pets.OpPetsEntityTypes;
 import dir.pets.Pet;
 import dir.pets.PetsUtils;
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.files.Messages;
+import dir.files.Messages;
 import me.opkarol.oppets.inventories.*;
 import me.opkarol.oppets.inventories.anvil.PrestigeConfirmAnvilInventory;
 import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
 import me.opkarol.oppets.inventories.holders.*;
-import me.opkarol.oppets.skills.SkillUtils;
-import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.OpUtils;
+import dir.skills.SkillUtils;
+import dir.utils.FormatUtils;
+import dir.utils.OpUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,8 +39,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
-import static me.opkarol.oppets.utils.InventoryUtils.*;
+import static dir.utils.FormatUtils.returnMessage;
+import static dir.utils.InventoryUtils.*;
 
 public class PlayerInteract implements Listener {
 
@@ -50,16 +50,16 @@ public class PlayerInteract implements Listener {
         if (player.isSneaking()) {
             return;
         }
-        if (OpPets.getDatabase().getCurrentPet(player.getUniqueId()) != null) {
-            if (OpPets.getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
+        if (Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId()) != null) {
+            if (Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
                 event.setCancelled(true);
                 player.openInventory(new PetMainInventory().getInventory());
                 event.getPlayer().updateInventory();
                 return;
             }
         }
-        for (UUID uuid : OpPets.getDatabase().getActivePetMap().keySet()) {
-            Pet pet = OpPets.getDatabase().getCurrentPet(uuid);
+        for (UUID uuid : Database.getOpPets().getDatabase().getActivePetMap().keySet()) {
+            Pet pet = Database.getOpPets().getDatabase().getCurrentPet(uuid);
             if (pet == null || pet.getOwnUUID() == null) {
                 return;
             }
@@ -82,7 +82,7 @@ public class PlayerInteract implements Listener {
         UUID uuid = player.getUniqueId();
         Pet pet = Database.getDatabase().getCurrentPet(uuid);
         int slot = event.getSlot();
-        IUtils utils = OpPets.getUtils();
+        IUtils utils = Database.getOpPets().getUtils();
 
         if (holder instanceof IHolder) {
             event.setCancelled(true);
@@ -151,14 +151,14 @@ public class PlayerInteract implements Listener {
 
                     final String[] name = {type};
                     int i = 0;
-                    while (OpPets.getDatabase().getPetList(uuid).stream().anyMatch(pet1 -> FormatUtils.getNameString(name[0]).equals(FormatUtils.getNameString(pet1.getPetName())))) {
+                    while (Database.getOpPets().getDatabase().getPetList(uuid).stream().anyMatch(pet1 -> FormatUtils.getNameString(name[0]).equals(FormatUtils.getNameString(pet1.getPetName())))) {
                         name[0] = type + "-" + i;
                         i++;
                     }
                     OpPetsEntityTypes.TypeOfEntity entity = OpPetsEntityTypes.TypeOfEntity.valueOf(type);
 
                     Pet pet1 = new Pet(name[0], entity, null, uuid, new SkillUtils().getRandomSkillName(entity), true);
-                    OpPets.getDatabase().addPetToPetsList(uuid, pet1);
+                    Database.getOpPets().getDatabase().addPetToPetsList(uuid, pet1);
                     player.closeInventory();
                 }
             }
