@@ -11,9 +11,16 @@ package dir.abilities;
 import dir.misc.AbilitiesEnums;
 import dir.pets.OpPetsEntityTypes;
 
-public record PetAbility(AbilitiesEnums.AbilityCategory type,
-                         OpPetsEntityTypes.TypeOfEntity entityType,
-                         String description) {
+public class PetAbility {
+    AbilitiesEnums.AbilityCategory type;
+    OpPetsEntityTypes.TypeOfEntity entityType;
+    String description;
+
+    public PetAbility(AbilitiesEnums.AbilityCategory type, OpPetsEntityTypes.TypeOfEntity entityType, String description) {
+        this.type = type;
+        this.entityType = entityType;
+        this.description = description;
+    }
 
     public AbilitiesEnums.AbilityCategory getType() {
         return this.type;

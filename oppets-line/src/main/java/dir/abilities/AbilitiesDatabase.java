@@ -49,19 +49,32 @@ public class AbilitiesDatabase {
     @Contract(pure = true)
     private AbilitiesEnums.AbilityCategory getAbilityTypeFromEntity(OpPetsEntityTypes.@NotNull TypeOfEntity type) {
         switch (type) {
-            case AXOLOTL, COW, CHICKEN, HORSE, MULE, OCELOT, DONKEY, PARROT, PIG, SHEEP, TURTLE -> {
+            case TURTLE:
+            case SHEEP:
+            case PIG:
+            case PARROT:
+            case DONKEY:
+            case OCELOT:
+            case MULE:
+            case HORSE:
+            case CHICKEN:
+            case AXOLOTL:
+            case COW:
                 return AbilitiesEnums.AbilityCategory.PASSIVE;
-            }
-            case CAT, FOX, GOAT, LLAMA -> {
+            case LLAMA:
+            case GOAT:
+            case FOX:
+            case CAT:
                 return AbilitiesEnums.AbilityCategory.NEUTRAL;
-            }
-            case POLAR_BEAR, RABBIT, PANDA -> {
+            case RABBIT:
+            case PANDA:
+            case POLAR_BEAR:
                 return AbilitiesEnums.AbilityCategory.AGGRESSIVE;
-            }
-            case WOLF, MUSHROOM_COW -> {
+            case MUSHROOM_COW:
+            case WOLF:
                 return AbilitiesEnums.AbilityCategory.HOSTILE;
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + type);
+            default:
+                throw new IllegalStateException("Unexpected value: " + type);
         }
 
     }
@@ -69,47 +82,48 @@ public class AbilitiesDatabase {
     @Contract(pure = true)
     private @Nullable String getDescriptionFromEntity(OpPetsEntityTypes.@NotNull TypeOfEntity type) {
         switch (type) {
-            case AXOLOTL -> {
-            }
-            case CAT -> {
-            }
-            case CHICKEN -> {
-            }
-            case COW -> {
-            }
-            case DONKEY -> {
-            }
-            case FOX -> {
-            }
-            case GOAT -> {
-            }
-            case HORSE -> {
-            }
-            case LLAMA -> {
-            }
-            case MULE -> {
-            }
-            case MUSHROOM_COW -> {
-            }
-            case OCELOT -> {
-            }
-            case PANDA -> {
-            }
-            case PARROT -> {
-            }
-            case PIG -> {
-            }
-            case POLAR_BEAR -> {
-            }
-            case RABBIT -> {
-            }
-            case SHEEP -> {
-            }
-            case TURTLE -> {
-            }
-            case WOLF -> {
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + type);
+            case AXOLOTL:
+                break;
+            case CAT:
+                break;
+            case CHICKEN:
+                break;
+            case COW:
+                break;
+            case DONKEY:
+                break;
+            case FOX:
+                break;
+            case GOAT:
+                break;
+            case HORSE:
+                break;
+            case LLAMA:
+                break;
+            case MULE:
+                break;
+            case MUSHROOM_COW:
+                break;
+            case OCELOT:
+                break;
+            case PANDA:
+                break;
+            case PARROT:
+                break;
+            case PIG:
+                break;
+            case POLAR_BEAR:
+                break;
+            case RABBIT:
+                break;
+            case SHEEP:
+                break;
+            case TURTLE:
+                break;
+            case WOLF:
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + type);
         }
         return null;
     }

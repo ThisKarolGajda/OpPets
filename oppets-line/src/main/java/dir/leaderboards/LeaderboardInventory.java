@@ -63,7 +63,7 @@ public class LeaderboardInventory implements IInventory {
         if (leaderboard == null) {
             return lore;
         }
-        List<Pet> pets = leaderboard.getPlaces().stream().toList();
+        List<Pet> pets = new ArrayList<>(leaderboard.getPlaces());
         List<String> list = new ArrayList<>();
         lore.forEach(lambdaString -> {
             final String[] toAdd = new String[1];
@@ -80,10 +80,17 @@ public class LeaderboardInventory implements IInventory {
                     toAdd[0] = toAdd[0].replace("%" + number + "_player_name%", OpUtils.getNameFromUUID(pet.getOwnerUUID()));
                 } else {
                     switch (leaderboard.getType()) {
-                        case TOP_LEVEL -> toAdd[0] = toAdd[0].replace("%" + number + "_player_object%", String.valueOf(pet.getLevel()));
-                        case TOP_PRESTIGE -> toAdd[0] = toAdd[0].replace("%" + number + "_player_object%", new PrestigeManager().getFilledPrestige(pet.getPrestige()));
-                        case TOP_EXPERIENCE -> toAdd[0] = toAdd[0].replace("%" + number + "_player_object%", String.valueOf(pet.getPetExperience()));
-                        default -> throw new IllegalStateException("Unexpected value: " + leaderboard.getType());
+                        case TOP_LEVEL:
+                            toAdd[0] = toAdd[0].replace("%" + number + "_player_object%", String.valueOf(pet.getLevel()));
+                            break;
+                        case TOP_PRESTIGE:
+                            toAdd[0] = toAdd[0].replace("%" + number + "_player_object%", new PrestigeManager().getFilledPrestige(pet.getPrestige()));
+                            break;
+                        case TOP_EXPERIENCE:
+                            toAdd[0] = toAdd[0].replace("%" + number + "_player_object%", String.valueOf(pet.getPetExperience()));
+                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + leaderboard.getType());
                     }
                 }
             }

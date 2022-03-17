@@ -51,16 +51,23 @@ public class LeaderboardCounter {
                     Collection<Pet> value = pets.values();
                     List<Pet> places;
                     switch (leaderboard.getType()) {
-                        case TOP_LEVEL -> places = value.stream()
-                                .sorted(Comparator.comparing(Pet::getLevel))
-                                .collect(Collectors.toList());
-                        case TOP_PRESTIGE -> places = value.stream()
-                                .sorted(Comparator.comparing(Pet::getPrestige))
-                                .collect(Collectors.toList());
-                        case TOP_EXPERIENCE -> places = value.stream()
-                                .sorted(Comparator.comparing(Pet::getPetExperience))
-                                .collect(Collectors.toList());
-                        default -> throw new IllegalStateException("Unexpected value: " + leaderboard.getType());
+                        case TOP_LEVEL:
+                            places = value.stream()
+                                    .sorted(Comparator.comparing(Pet::getLevel))
+                                    .collect(Collectors.toList());
+                            break;
+                        case TOP_PRESTIGE:
+                            places = value.stream()
+                                    .sorted(Comparator.comparing(Pet::getPrestige))
+                                    .collect(Collectors.toList());
+                            break;
+                        case TOP_EXPERIENCE:
+                            places = value.stream()
+                                    .sorted(Comparator.comparing(Pet::getPetExperience))
+                                    .collect(Collectors.toList());
+                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + leaderboard.getType());
                     }
                     Collections.reverse(places);
                     leaderboard.setPlaces(places);
@@ -75,7 +82,7 @@ public class LeaderboardCounter {
     }
 
     public List<Leaderboard> getLeaderboardsFromName(String name) {
-        return activeLeaderboards.stream().filter(leaderboard -> leaderboard.getName().equals(name)).toList();
+        return activeLeaderboards.stream().filter(leaderboard -> leaderboard.getName().equals(name)).collect(Collectors.toList());
     }
 
     public LeaderboardCache getCache() {

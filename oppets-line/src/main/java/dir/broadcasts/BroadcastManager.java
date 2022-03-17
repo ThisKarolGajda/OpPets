@@ -34,11 +34,11 @@ public class BroadcastManager {
     }
 
     public void removeBroadcast(Broadcast.@NotNull BROADCAST_TYPE type) {
-        broadcastList.removeIf(broadcast -> type.equals(broadcast.type()));
+        broadcastList.removeIf(broadcast -> type.equals(broadcast.type));
     }
 
     public List<Broadcast> getBroadcast(Broadcast.@NotNull BROADCAST_TYPE type) {
-        return broadcastList.stream().filter(broadcast -> broadcast.type().equals(type)).collect(Collectors.toList());
+        return broadcastList.stream().filter(broadcast -> broadcast.type.equals(type)).collect(Collectors.toList());
     }
 
     public List<Broadcast> getBroadcastList() {

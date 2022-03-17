@@ -11,8 +11,16 @@ package dir.broadcasts;
 import dir.utils.FormatUtils;
 import org.bukkit.Bukkit;
 
-public record Broadcast(String prefix, String format,
-                        BROADCAST_TYPE type) {
+public class Broadcast {
+    String prefix;
+    String format;
+    BROADCAST_TYPE type;
+
+    public Broadcast(String prefix, String format, BROADCAST_TYPE type) {
+        this.prefix = prefix;
+        this.format = format;
+        this.type = type;
+    }
 
     public void broadcastMessage(String message) {
         Bukkit.broadcastMessage(FormatUtils.formatMessage(format.replace("%prefix%", prefix).replace("%message%", message).replace("%type%", type.name())));

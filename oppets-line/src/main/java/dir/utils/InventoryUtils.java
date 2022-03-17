@@ -54,9 +54,18 @@ public class InventoryUtils {
         FileConfiguration config = Database.getInstance().getConfig();
         Material material;
         switch (String.valueOf(lights)) {
-            case "true" -> material = Material.RED_CONCRETE;
-            case "false" -> material = Material.BLACK_CONCRETE;
-            default -> material = Material.YELLOW_CONCRETE;
+            case "true": {
+                material = Material.RED_CONCRETE;
+                break;
+            }
+            case "false": {
+                material = Material.BLACK_CONCRETE;
+                break;
+            }
+            default: {
+                material = Material.YELLOW_CONCRETE;
+                break;
+            }
         }
 
         ItemStack item = new ItemStack(material);
