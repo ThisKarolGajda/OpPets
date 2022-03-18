@@ -8,16 +8,16 @@ package me.opkarol.oppets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.Database;
-import dir.databases.PetsDatabase;
-import dir.interfaces.*;
-import dir.prestiges.PrestigeManager;
-import dir.abilities.AbilitiesDatabase;
-import dir.boosters.BoosterProvider;
-import dir.broadcasts.BroadcastManager;
-import dir.files.Messages;
-import dir.leaderboards.LeaderboardCounter;
-import dir.skills.SkillDatabase;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.databases.PetsDatabase;
+import me.opkarol.oppets.interfaces.*;
+import me.opkarol.oppets.prestiges.PrestigeManager;
+import me.opkarol.oppets.abilities.AbilitiesDatabase;
+import me.opkarol.oppets.boosters.BoosterProvider;
+import me.opkarol.oppets.broadcasts.BroadcastManager;
+import me.opkarol.oppets.files.Messages;
+import me.opkarol.oppets.leaderboards.LeaderboardCounter;
+import me.opkarol.oppets.skills.SkillDatabase;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**

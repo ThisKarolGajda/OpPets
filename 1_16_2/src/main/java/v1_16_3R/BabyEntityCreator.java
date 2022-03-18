@@ -8,10 +8,10 @@ package v1_16_3R;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.Database;
-import dir.interfaces.IBabyEntityCreator;
-import dir.pets.Pet;
-import dir.pets.PetsUtils;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.interfaces.IBabyEntityCreator;
+import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.pets.PetsUtils;
 import net.minecraft.server.v1_16_R2.ChatMessage;
 import net.minecraft.server.v1_16_R2.EntityAgeable;
 import net.minecraft.server.v1_16_R2.WorldServer;

@@ -8,16 +8,16 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.Database;
-import dir.files.Messages;
-import dir.interfaces.ICommand;
-import dir.packets.PacketManager;
-import dir.pets.Pet;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.files.Messages;
+import me.opkarol.oppets.interfaces.ICommand;
+import me.opkarol.oppets.packets.PacketManager;
+import me.opkarol.oppets.pets.Pet;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import static dir.utils.FormatUtils.returnMessage;
+import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
 public class RideCommand implements ICommand {
     @Override

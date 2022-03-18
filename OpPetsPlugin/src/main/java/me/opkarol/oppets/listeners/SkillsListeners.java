@@ -8,12 +8,12 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.Database;
-import dir.pets.Pet;
-import dir.skills.Adder;
-import dir.skills.Skill;
-import dir.skills.SkillDatabase;
-import dir.skills.SkillEnums;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.skills.Adder;
+import me.opkarol.oppets.skills.Skill;
+import me.opkarol.oppets.skills.SkillDatabase;
+import me.opkarol.oppets.skills.SkillEnums;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;

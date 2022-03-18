@@ -8,7 +8,7 @@ package v1_16_5R.entities;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.pets.Pet;
+import me.opkarol.oppets.pets.Pet;
 import net.minecraft.server.v1_16_R3.EntityPanda;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import org.bukkit.Location;

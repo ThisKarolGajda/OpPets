@@ -8,20 +8,20 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.Database;
-import dir.interfaces.IHolder;
-import dir.interfaces.IUtils;
-import dir.pets.OpPetsEntityTypes;
-import dir.pets.Pet;
-import dir.pets.PetsUtils;
-import dir.files.Messages;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.interfaces.IHolder;
+import me.opkarol.oppets.interfaces.IUtils;
+import me.opkarol.oppets.pets.OpPetsEntityTypes;
+import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.pets.PetsUtils;
+import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.inventories.*;
 import me.opkarol.oppets.inventories.anvil.PrestigeConfirmAnvilInventory;
 import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
 import me.opkarol.oppets.inventories.holders.*;
-import dir.skills.SkillUtils;
-import dir.utils.FormatUtils;
-import dir.utils.OpUtils;
+import me.opkarol.oppets.skills.SkillUtils;
+import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,8 +39,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-import static dir.utils.FormatUtils.returnMessage;
-import static dir.utils.InventoryUtils.*;
+import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static me.opkarol.oppets.utils.InventoryUtils.*;
 
 public class PlayerInteract implements Listener {
 

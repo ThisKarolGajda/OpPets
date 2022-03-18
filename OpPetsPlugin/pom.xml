@@ -92,32 +92,23 @@
         </dependency>
     </dependencies>
 
-    <reporting>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.3.2</version>
                 <configuration>
-                    <outputDirectory>${project.basedir}/javadocs</outputDirectory>
-                    <reportOutputDirectory>${project.basedir}/javadocs</reportOutputDirectory>
-                    <destDir>${project.basedir}/javadocs</destDir>
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                 </configuration>
-                <reportSets>
-                    <reportSet>
-                        <id>aggregate</id>
-                        <configuration>
-                        </configuration>
-                        <reports>
-                            <report>aggregate</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
-        </plugins>
-    </reporting>
-    <build>
-        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
@@ -145,7 +136,6 @@
                                     <includes>
                                         <include>me/opkarol/oppets/**</include>
                                         <include>META-INF/**</include>
-                                        <include>dir/**</include>
                                         <include>v1_18_1R/**</include>
                                         <include>v1_17R/**</include>
                                         <include>v1_17_1R/**</include>
@@ -155,7 +145,6 @@
                                         <include>plugin.yml</include>
                                         <include>config.yml</include>
                                         <include>net/wesjd/anvilgui/**</include>
-                                        <include>api/**</include>
                                     </includes>
                                 </filter>
                             </filters>
@@ -172,7 +161,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <directory>../target</directory>
+        <directory>E:/Servers/Test3Plugin - 1.16.5/plugins</directory>
         <finalName>OpPets</finalName>
         <resources>
             <resource>

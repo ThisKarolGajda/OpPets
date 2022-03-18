@@ -8,15 +8,15 @@ package me.opkarol.oppets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.Database;
-import dir.databases.MySQLMiniPetsDatabase;
-import dir.interfaces.*;
-import dir.packets.PacketManager;
-import dir.pets.Pet;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.databases.MySQLMiniPetsDatabase;
+import me.opkarol.oppets.interfaces.*;
+import me.opkarol.oppets.packets.PacketManager;
+import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.commands.OpPetsCommand;
-import dir.files.FileManager;
+import me.opkarol.oppets.files.FileManager;
 import me.opkarol.oppets.listeners.*;
-import dir.misc.Metrics;
+import me.opkarol.oppets.misc.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -71,7 +71,7 @@ public class PetPluginController {
      * which also counts pet numbers in the server.
      *
      * @param pluginId plugin id used to connect with bStats site
-     * @see dir.misc.Metrics
+     * @see me.opkarol.oppets.misc.Metrics
      */
     public void bStatsActivation(int pluginId) {
         Metrics metrics = new Metrics(getInstance(), pluginId);

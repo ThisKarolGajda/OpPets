@@ -8,7 +8,7 @@ package v1_18_1R;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.packets.PacketManager;
+import me.opkarol.oppets.packets.PacketManager;
 import net.minecraft.network.protocol.game.PacketPlayInSteerVehicle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

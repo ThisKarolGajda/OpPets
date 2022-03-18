@@ -8,11 +8,11 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.Database;
-import dir.interfaces.IInventory;
-import dir.pets.Pet;
-import dir.utils.FormatUtils;
-import dir.utils.OpUtils;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.interfaces.IInventory;
+import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.OpUtils;
 import me.opkarol.oppets.inventories.holders.GuestInventoryHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dir.utils.ConfigUtils.getString;
-import static dir.utils.InventoryUtils.itemCreator;
-import static dir.utils.InventoryUtils.setupEmptyGlassPanes;
+import static me.opkarol.oppets.utils.ConfigUtils.getString;
+import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
+import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
 public class GuestInventory implements IInventory {
     final String guiTitle = getString("GuestInventory.title");

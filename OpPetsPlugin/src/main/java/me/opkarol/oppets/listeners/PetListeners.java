@@ -8,15 +8,15 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import dir.databases.Database;
-import dir.events.PetLevelupEvent;
-import dir.events.PrestigeChangeEvent;
-import dir.files.Messages;
-import dir.pets.Pet;
-import dir.prestiges.PrestigeManager;
-import dir.skills.Ability;
-import dir.utils.FormatUtils;
-import dir.utils.OpUtils;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.events.PetLevelupEvent;
+import me.opkarol.oppets.events.PrestigeChangeEvent;
+import me.opkarol.oppets.files.Messages;
+import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.prestiges.PrestigeManager;
+import me.opkarol.oppets.skills.Ability;
+import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.OpUtils;
 import me.opkarol.oppets.particles.ParticlesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
