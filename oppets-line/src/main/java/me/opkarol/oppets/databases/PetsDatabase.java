@@ -15,9 +15,18 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * The type Pets database.
+ */
 public class PetsDatabase {
+    /**
+     * The Map.
+     */
     private final HashMap<OpPetsEntityTypes.TypeOfEntity, PetDatabaseObject> map = new HashMap<>();
 
+    /**
+     * Instantiates a new Pets database.
+     */
     public PetsDatabase() {
         String iPath;
         FileConfiguration config = Database.getInstance().getConfig();
@@ -30,10 +39,21 @@ public class PetsDatabase {
         }
     }
 
+    /**
+     * Gets object from database.
+     *
+     * @param entityType the entity type
+     * @return the object from database
+     */
     public PetDatabaseObject getObjectFromDatabase(OpPetsEntityTypes.TypeOfEntity entityType) {
         return map.get(entityType);
     }
 
+    /**
+     * Gets map.
+     *
+     * @return the map
+     */
     public HashMap<OpPetsEntityTypes.TypeOfEntity, PetDatabaseObject> getMap() {
         return map;
     }

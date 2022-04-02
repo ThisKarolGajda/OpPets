@@ -18,28 +18,48 @@ import org.bukkit.entity.Player;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Prestige command.
+ */
 public class PrestigeCommand implements ICommand {
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Messages.stringMessage("noConsole"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
         Pet pet = Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId());
         if (pet == null) {
-            return returnMessage(sender, Messages.stringMessage("invalidPet"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
         if (args.length > 1) {
-            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets prestige"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets prestige"));
         }
         player.openInventory(new PrestigeInventory().getInventory());
         return true;
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.prestige";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "prestige";

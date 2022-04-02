@@ -10,7 +10,6 @@ package me.opkarol.oppets.inventories.anvil;
 
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.events.PrestigeChangeEvent;
-import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -22,17 +21,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Prestige confirm anvil inventory.
+ */
 public class PrestigeConfirmAnvilInventory {
 
+    /**
+     * Instantiates a new Prestige confirm anvil inventory.
+     *
+     * @param pet          the pet
+     * @param playerOpened the player opened
+     */
     public PrestigeConfirmAnvilInventory(@NotNull Pet pet, Player playerOpened) {
-        String title = Messages.stringMessage("titlePrestige");
+        String title = Database.getOpPets().getMessages().getMessagesAccess().stringMessage("titlePrestige");
         String petName = FormatUtils.getNameString(Objects.requireNonNull(pet.getPetName()));
         new AnvilGUI.Builder()
                 .onComplete((player, s) -> {
                     if (FormatUtils.getNameString(s).equals(FormatUtils.getNameString(petName))) {
                         Bukkit.getPluginManager().callEvent(new PrestigeChangeEvent(player, pet));
                         return AnvilGUI.Response.close();
-                    } else return AnvilGUI.Response.text(Messages.stringMessage("confirmPrestigeMessage"));
+                    } else return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("confirmPrestigeMessage"));
                 })
                 .plugin(Database.getInstance())
                 .title(title.replace("%pet_name%", petName))

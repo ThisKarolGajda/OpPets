@@ -22,10 +22,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The type Rename anvil inventory.
+ */
 public class RenameAnvilInventory {
 
+    /**
+     * Instantiates a new Rename anvil inventory.
+     *
+     * @param pet          the pet
+     * @param playerOpened the player opened
+     */
     public RenameAnvilInventory(@NotNull Pet pet, @NotNull Player playerOpened) {
-        String title = Messages.stringMessage("titleRename");
+        String title = Database.getOpPets().getMessages().getMessagesAccess().stringMessage("titleRename");
         assert pet.getPetName() != null;
         String petName = pet.getPetName();
         new AnvilGUI.Builder()
@@ -33,11 +42,11 @@ public class RenameAnvilInventory {
                 .onComplete(((player, s) -> {
                     if (s != null) {
                         if (s.equals(OpPetsCommand.noPetsString)) {
-                            return AnvilGUI.Response.text(Messages.stringMessage("thisNameIsBlocked"));
+                            return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("thisNameIsBlocked"));
                         }
                         for (char character : s.toCharArray()) {
                             if (String.valueOf(character).equals(" ")) {
-                                return AnvilGUI.Response.text(Messages.stringMessage("nameWithSpaces"));
+                                return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("nameWithSpaces"));
                             }
                         }
                         Database.getOpPets().getUtils().killPetFromPlayerUUID(player.getUniqueId());
@@ -57,14 +66,14 @@ public class RenameAnvilInventory {
                         if (FormatUtils.formatMessage(s).length() != s.length()) {
                             if (player.hasPermission("oppets.pet.rename.colors") || player.isOp()) {
                                 pet.setPetName(s);
-                                player.sendMessage(Messages.stringMessage("changedName").replace("%new_pet_name%", FormatUtils.formatMessage(s)));
+                                player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("changedName").replace("%new_pet_name%", FormatUtils.formatMessage(s)));
                             } else {
-                                player.sendMessage(Messages.stringMessage("noPermission").replace("%permission%", "oppets.pet.rename.colors"));
+                                player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noPermission").replace("%permission%", "oppets.pet.rename.colors"));
                                 return AnvilGUI.Response.close();
                             }
                         } else {
                             pet.setPetName(s);
-                            player.sendMessage(Messages.stringMessage("changedName").replace("%new_pet_name%", s));
+                            player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("changedName").replace("%new_pet_name%", s));
                         }
 
                         Database.getOpPets().getCreator().spawnMiniPet(pet, player);
@@ -73,7 +82,7 @@ public class RenameAnvilInventory {
                         Database.getOpPets().getDatabase().setPets(uuid, petList);
                         return AnvilGUI.Response.close();
                     } else {
-                        return AnvilGUI.Response.text(Messages.stringMessage("incorrectValueName"));
+                        return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("incorrectValueName"));
                     }
                 }))
                 .text(petName)

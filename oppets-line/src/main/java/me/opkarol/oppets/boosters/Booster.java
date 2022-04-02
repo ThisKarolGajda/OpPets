@@ -10,8 +10,8 @@ package me.opkarol.oppets.boosters;
 
 import me.opkarol.oppets.broadcasts.Broadcast;
 import me.opkarol.oppets.broadcasts.BroadcastManager;
+import me.opkarol.oppets.cache.StringsCache;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.utils.ConfigUtils;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -19,25 +19,68 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The type Booster.
+ */
 public class Booster {
+    /**
+     * The Name.
+     */
     private final String name;
+    /**
+     * The Multiplier.
+     */
     private final double multiplier;
+    /**
+     * The Time to end.
+     */
     private final long timeToEnd;
-    private boolean running;
-    private BOOSTER_TYPE type;
+    /**
+     * The Owner.
+     */
     private final String owner;
+    /**
+     * The Message.
+     */
     private final String message;
+    /**
+     * The Running.
+     */
+    private boolean running;
+    /**
+     * The Type.
+     */
+    private BOOSTER_TYPE type;
 
+    /**
+     * Instantiates a new Booster.
+     *
+     * @param name       the name
+     * @param multiplier the multiplier
+     * @param timeToEnd  the time to end
+     * @param running    the running
+     * @param type       the type
+     */
     public Booster(String name, double multiplier, long timeToEnd, boolean running, BOOSTER_TYPE type) {
         this.name = name;
         this.multiplier = multiplier;
         this.timeToEnd = timeToEnd * 20;
         this.running = running;
         this.type = type;
-        this.message = ConfigUtils.getString("Formats.boosterEnabledMessage");
-        this.owner = "SERVER";
+        this.message = StringsCache.boosterEnabledMessage;
+        this.owner = StringsCache.defaultServerValue;
     }
 
+    /**
+     * Instantiates a new Booster.
+     *
+     * @param name       the name
+     * @param multiplier the multiplier
+     * @param timeToEnd  the time to end
+     * @param running    the running
+     * @param type       the type
+     * @param owner      the owner
+     */
     @Contract(pure = true)
     public Booster(String name, double multiplier, long timeToEnd, boolean running, BOOSTER_TYPE type, @NotNull UUID owner) {
         this.name = name;
@@ -46,14 +89,17 @@ public class Booster {
         this.running = running;
         this.type = type;
         this.owner = owner.toString();
-        this.message = ConfigUtils.getString("Formats.boosterEnabledMessage");
+        this.message = StringsCache.boosterEnabledMessage;
     }
 
+    /**
+     * Run.
+     */
     public void run() {
         running = true;
         BroadcastManager manager = Database.getOpPets().getBroadcastManager();
         List<Broadcast> broadcast = manager.getBroadcast(Broadcast.BROADCAST_TYPE.BOOSTER);
-        if (owner.equalsIgnoreCase("SERVER") && broadcast.get(0) != null) {
+        if (owner.equalsIgnoreCase(StringsCache.defaultServerValue) && broadcast.get(0) != null) {
             broadcast.get(0).broadcastMessage(message.replace("%time%", String.valueOf(timeToEnd / 20)).replace("%name%", name));
         }
         new BukkitRunnable() {
@@ -64,42 +110,89 @@ public class Booster {
         }.runTaskLaterAsynchronously(Database.getInstance(), timeToEnd);
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Gets multiplier.
+     *
+     * @return the multiplier
+     */
     public double getMultiplier() {
         return multiplier;
     }
 
+    /**
+     * Gets time to end.
+     *
+     * @return the time to end
+     */
     public long getTimeToEnd() {
         return timeToEnd;
     }
 
+    /**
+     * Is running boolean.
+     *
+     * @return the boolean
+     */
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * Sets running.
+     *
+     * @param running the running
+     */
     public void setRunning(boolean running) {
         this.running = running;
     }
 
+    /**
+     * Gets type.
+     *
+     * @return the type
+     */
     public BOOSTER_TYPE getType() {
         return type;
     }
 
+    /**
+     * Sets type.
+     *
+     * @param type the type
+     */
     public void setType(BOOSTER_TYPE type) {
         this.type = type;
     }
 
+    /**
+     * Gets owner.
+     *
+     * @return the owner
+     */
     public String getOwner() {
         return owner;
     }
 
+    /**
+     * The enum Booster type.
+     */
     public enum BOOSTER_TYPE {
-        SERVER, PLAYER, PET
+        /**
+         * Server booster type.
+         */
+        SERVER,
+        /**
+         * Player booster type.
+         */
+        PLAYER
     }
-    // SERVER: SERVER
-    // PLAYER: PLAYER_UUID
-    // PET: //TODO
 }

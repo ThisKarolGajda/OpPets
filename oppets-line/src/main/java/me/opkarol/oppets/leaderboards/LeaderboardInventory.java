@@ -8,6 +8,7 @@ package me.opkarol.oppets.leaderboards;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.pets.Pet;
@@ -25,23 +26,42 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
+/**
+ * The type Leaderboard inventory.
+ */
 public class LeaderboardInventory implements IInventory {
+    /**
+     * The Inventory.
+     */
     private final Inventory inventory;
+    /**
+     * The Current path.
+     */
     private String currentPath;
 
+    /**
+     * Instantiates a new Leaderboard inventory.
+     */
     public LeaderboardInventory() {
-        inventory = Bukkit.createInventory(new LeaderboardInventoryHolder(), 27, getMessage("LeaderboardInventory.title"));
+        inventory = Bukkit.createInventory(new LeaderboardInventoryHolder(), 27, InventoriesCache.leaderboardInventoryTitle);
         setupInventory();
     }
 
+    /**
+     * Gets inventory.
+     *
+     * @return the inventory
+     */
     public Inventory getInventory() {
         return inventory;
     }
 
+    /**
+     * Sets inventory.
+     */
     private void setupInventory() {
         String path = "LeaderboardInventory.items.";
         ConfigurationSection section = Database.getInstance().getConfig().getConfigurationSection("LeaderboardInventory.items");
@@ -55,6 +75,12 @@ public class LeaderboardInventory implements IInventory {
         setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
     }
 
+    /**
+     * Sets place holders.
+     *
+     * @param lore the lore
+     * @return the place holders
+     */
     @Override
     @Contract(pure = true)
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
@@ -69,13 +95,23 @@ public class LeaderboardInventory implements IInventory {
             final String[] toAdd = new String[1];
             toAdd[0] = lambdaString;
             String[] strings = lambdaString.split(" ");
+            //TODO fix
             for (String string : strings) {
                 if (!string.startsWith("%") || !string.endsWith("%")) {
                     continue;
                 }
                 String replaced = string.replace("%", "");
                 int number = Integer.parseInt(replaced.replaceAll("[A-z]", ""));
+                if (pets.size() == 0) {
+                    return;
+                }
+                if (pets.size() <= number - 1) {
+                    continue;
+                }
                 Pet pet = pets.get(number - 1);
+                if (pet == null) {
+                    continue;
+                }
                 if (replaced.substring(1).equals("_player_name")) {
                     toAdd[0] = toAdd[0].replace("%" + number + "_player_name%", OpUtils.getNameFromUUID(pet.getOwnerUUID()));
                 } else {

@@ -1,4 +1,4 @@
-package me.opkarol.oppets.inventories.holders;
+package me.opkarol.oppets.shops;
 
 /*
  = Copyright (c) 2021-2022.
@@ -8,16 +8,31 @@ package me.opkarol.oppets.inventories.holders;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.interfaces.IHolder;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.jetbrains.annotations.NotNull;
+import me.opkarol.oppets.cache.InventoryCache;
 
-public class PetMainInventoryHolder implements InventoryHolder, IHolder {
+/**
+ * The type Shop cache.
+ */
+public class ShopCache {
+    /**
+     * The constant cache.
+     */
+    private static InventoryCache cache;
 
-    @NotNull
-    @Override
-    public Inventory getInventory() {
-        return null;
+    /**
+     * Gets cache.
+     *
+     * @return the cache
+     */
+    public static InventoryCache getCache() {
+        return cache;
+    }
+
+    /**
+     * Sets cache.
+     */
+    public static void setCache() {
+        cache = new InventoryCache();
+        cache.setInventory(new ShopInventory().getInventory());
     }
 }

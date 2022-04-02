@@ -23,16 +23,26 @@ import java.util.UUID;
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 import static me.opkarol.oppets.commands.OpPetsCommand.noPetsString;
 
+/**
+ * The type Summon command.
+ */
 public class SummonCommand implements ICommand {
 
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Messages.stringMessage("noConsole"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         if (args.length != 2) {
-            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets summon <PET>"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets summon <PET>"));
         }
 
         UUID playerUUID = player.getUniqueId();
@@ -40,34 +50,44 @@ public class SummonCommand implements ICommand {
         Pet activePet = Database.getOpPets().getDatabase().getCurrentPet(playerUUID);
 
         if (args[1].equals(noPetsString)) {
-            return returnMessage(sender, Messages.stringMessage("petBlockedName").replace("%blocked_word%", noPetsString));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petBlockedName").replace("%blocked_word%", noPetsString));
         }
 
         if (playerPets == null || playerPets.size() == 0) {
-            return returnMessage(sender, Messages.stringMessage("petListEmpty"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petListEmpty"));
         }
 
         for (Pet pet : playerPets) {
             if (FormatUtils.getNameString(Objects.requireNonNull(pet.getPetName())).equals(FormatUtils.getNameString(args[1]))) {
                 if (activePet == pet) {
-                    return returnMessage(sender, Messages.stringMessage("samePet"));
+                    return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("samePet"));
                 } else {
                     if (activePet != null) {
                         Database.getOpPets().getUtils().killPetFromPlayerUUID(playerUUID);
                     }
                     Database.getOpPets().getCreator().spawnMiniPet(pet, player);
-                    return returnMessage(sender, Messages.stringMessage("summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
+                    return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
                 }
             }
         }
-        return returnMessage(sender, Messages.stringMessage("invalidPet"));
+        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.summon";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "summon";

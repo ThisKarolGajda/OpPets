@@ -31,7 +31,16 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 
+/**
+ * The type Utils.
+ */
 public class Utils implements IUtils {
+    /**
+     * Gets entity by unique id.
+     *
+     * @param uniqueId the unique id
+     * @return the entity by unique id
+     */
     @Override
     public org.bukkit.entity.@Nullable Entity getEntityByUniqueId(UUID uniqueId) {
         if (uniqueId == null) {
@@ -40,6 +49,12 @@ public class Utils implements IUtils {
         return Bukkit.getEntity(uniqueId);
     }
 
+    /**
+     * Hide entity from server.
+     *
+     * @param owner    the owner
+     * @param entityId the entity id
+     */
     @Override
     public void hideEntityFromServer(Player owner, int entityId) {
         Bukkit.getOnlinePlayers().forEach(player1 -> {
@@ -49,6 +64,12 @@ public class Utils implements IUtils {
         });
     }
 
+    /**
+     * Hide entity from player.
+     *
+     * @param player   the player
+     * @param entityId the entity id
+     */
     @Override
     public void hideEntityFromPlayer(Player player, int entityId) {
         new BukkitRunnable() {
@@ -59,6 +80,12 @@ public class Utils implements IUtils {
         }.runTask(Database.getInstance());
     }
 
+    /**
+     * Gets vanilla pet name.
+     *
+     * @param entityType the entity type
+     * @return the vanilla pet name
+     */
     @Override
     public String getVanillaPetName(@NotNull EntityType entityType) {
         if (entityType.getEntityClass() != null) {
@@ -67,31 +94,60 @@ public class Utils implements IUtils {
         return "";
     }
 
+    /**
+     * Kill pet from player uuid.
+     *
+     * @param playerUUID the player uuid
+     */
     @Override
     public void killPetFromPlayerUUID(UUID playerUUID) {
+        if (playerUUID == null) {
+            return;
+        }
         Pet pet = Database.getDatabase().getCurrentPet(playerUUID);
         if (pet == null) {
             return;
         }
         Database.getDatabase().getActivePetMap().values().stream().filter(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName())).forEach(pet1 -> {
-            Entity entity = Bukkit.getEntity(pet.getOwnUUID());
+            UUID uuid = pet.getOwnUUID();
+            if (uuid == null) {
+                return;
+            }
+            Entity entity = Bukkit.getEntity(uuid);
             if (entity != null) {
                 entity.remove();
             }
         });
     }
 
+    /**
+     * Respawn pet.
+     *
+     * @param pet    the pet
+     * @param player the player
+     */
     @Override
     public void respawnPet(Object pet, @NotNull Player player) {
         killPetFromPlayerUUID(player.getUniqueId());
         new BabyEntityCreator().spawnMiniPet((Pet) pet, player);
     }
 
+    /**
+     * Gets version.
+     *
+     * @return the version
+     */
     @Override
     public Object getVersion() {
         return "v1_16_3R";
     }
 
+    /**
+     * Remove pathfinders.
+     *
+     * @param bP the b p
+     * @param bQ the b q
+     */
     public void removePathfinders(Object bP, Object bQ) {
         PathfinderGoalSelector goalSelector = (PathfinderGoalSelector) bP;
         PathfinderGoalSelector targetSelector = (PathfinderGoalSelector) bQ;
@@ -124,16 +180,35 @@ public class Utils implements IUtils {
 
     }
 
+    /**
+     * Gets player channel.
+     *
+     * @param player the player
+     * @return the player channel
+     */
     @Override
     public Channel getPlayerChannel(Player player) {
         return ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel;
     }
 
+    /**
+     * Gets player pipeline.
+     *
+     * @param player the player
+     * @return the player pipeline
+     */
     @Override
     public ChannelPipeline getPlayerPipeline(Player player) {
         return ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
     }
 
+    /**
+     * Ride event register.
+     *
+     * @param event  the event
+     * @param packet the packet
+     * @param player the player
+     */
     @Override
     public void rideEventRegister(Object event, Object packet, Player player) {
         if (packet instanceof PacketPlayInSteerVehicle) {

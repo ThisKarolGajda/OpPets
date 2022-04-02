@@ -18,29 +18,49 @@ import org.bukkit.entity.Player;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Call command.
+ */
 public class CallCommand implements ICommand {
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Messages.stringMessage("noConsole"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
         Pet pet = Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId());
         if (pet == null) {
-            return returnMessage(sender, Messages.stringMessage("invalidPet"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
         Entity entity = Database.getOpPets().getUtils().getEntityByUniqueId(pet.getOwnUUID());
         if (entity == null) {
-            return returnMessage(sender, Messages.stringMessage("invalidPet"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
         entity.teleport(player.getLocation());
-        return returnMessage(sender, Messages.stringMessage("calledSuccessfully"));
+        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("calledSuccessfully"));
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.call";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "call";

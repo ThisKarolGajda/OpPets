@@ -18,7 +18,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Turtle.
+ */
 public class Turtle extends EntityTurtle {
+    /**
+     * Instantiates a new Turtle.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Turtle(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.TURTLE, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

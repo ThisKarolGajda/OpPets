@@ -13,13 +13,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
+/**
+ * The interface Entity manager.
+ */
 public interface IEntityManager {
 
     /**
      * Used to initialize pathfinder values in a specific entity object.
      *
      * @param entity object that can be cast to a specific version value
-     * @param type entity type that will be used to read float values
+     * @param type   entity type that will be used to read float values
      */
     void initPathfinder(@NotNull Object entity, OpPetsEntityTypes.TypeOfEntity type);
 

@@ -18,24 +18,53 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Chicken.
+ */
 public class Chicken extends net.minecraft.world.entity.animal.Chicken {
+    /**
+     * Instantiates a new Chicken.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Chicken(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.CHICKEN, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
 
+    /**
+     * Register goals.
+     */
     @Override
     public void registerGoals() {
     }
 
+    /**
+     * Drop experience.
+     */
     @Override
     protected void dropExperience() {
     }
 
+    /**
+     * Drop from loot table.
+     *
+     * @param damagesource the damagesource
+     * @param flag         the flag
+     */
     @Override
     protected void dropFromLootTable(DamageSource damagesource, boolean flag) {
     }
 
+    /**
+     * Hurt boolean.
+     *
+     * @param damagesource the damagesource
+     * @param f            the f
+     * @return the boolean
+     */
     @Override
     public boolean hurt(DamageSource damagesource, float f) {
         return false;

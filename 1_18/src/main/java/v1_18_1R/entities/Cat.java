@@ -17,8 +17,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Cat.
+ */
 public class Cat extends net.minecraft.world.entity.animal.Cat {
 
+    /**
+     * Instantiates a new Cat.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Cat(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.CAT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

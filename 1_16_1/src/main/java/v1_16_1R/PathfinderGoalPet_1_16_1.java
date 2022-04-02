@@ -10,20 +10,48 @@ package v1_16_1R;
 
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.pets.PetsUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 
 import java.util.EnumSet;
 
+/**
+ * The type Pathfinder goal pet 1 16 1.
+ */
 public class PathfinderGoalPet_1_16_1 extends PathfinderGoal {
+    /**
+     * The A.
+     */
     private final EntityAnimal a;
+    /**
+     * The F.
+     */
     private final double f;
+    /**
+     * The G.
+     */
     private final double g;
+    /**
+     * The Pet.
+     */
     private Pet pet;
+    /**
+     * The B.
+     */
     private EntityLiving b;
+    /**
+     * The L.
+     */
     private Location l;
 
+    /**
+     * Instantiates a new Pathfinder goal pet 1 16 1.
+     *
+     * @param a        the a
+     * @param speed    the speed
+     * @param distance the distance
+     */
     public PathfinderGoalPet_1_16_1(EntityAnimal a, double speed, float distance) {
         this.a = a;
         this.f = speed;
@@ -32,6 +60,11 @@ public class PathfinderGoalPet_1_16_1 extends PathfinderGoal {
         pet = null;
     }
 
+    /**
+     * A boolean.
+     *
+     * @return the boolean
+     */
     @Override
     public boolean a() {
         this.b = this.a.getGoalTarget();
@@ -54,12 +87,20 @@ public class PathfinderGoalPet_1_16_1 extends PathfinderGoal {
         }
     }
 
+    /**
+     * C.
+     */
     @Override
     public void c() {
         l = b.getBukkitEntity().getLocation();
         this.a.getNavigation().a(this.b.locX(), this.b.locY(), this.b.locZ(), this.f);
     }
 
+    /**
+     * B boolean.
+     *
+     * @return the boolean
+     */
     @Override
     public boolean b() {
         if (this.a.getNavigation().m()) return false;
@@ -67,6 +108,9 @@ public class PathfinderGoalPet_1_16_1 extends PathfinderGoal {
         return this.b.h(this.a) > (this.g * this.g);
     }
 
+    /**
+     * D.
+     */
     @Override
     public void d() {
         this.b = null;

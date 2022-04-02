@@ -13,7 +13,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The type Guest inventory holder.
+ */
 public class GuestInventoryHolder implements InventoryHolder, IHolder {
+    /**
+     * Gets inventory.
+     *
+     * @return the inventory
+     */
     @NotNull
     @Override
     public Inventory getInventory() {

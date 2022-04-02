@@ -18,13 +18,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+/**
+ * The type Player leaves.
+ */
 public class PlayerLeaves implements Listener {
 
+    /**
+     * Player leaves.
+     *
+     * @param event the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerLeaves(@NotNull PlayerQuitEvent event) {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
-        Database.getDatabase().databaseUUIDSaver(playerUUID);
+        Database.getDatabase().databaseUUIDSaver(playerUUID, true);
         Database.getOpPets().getUtils().killPetFromPlayerUUID(playerUUID);
     }
 }

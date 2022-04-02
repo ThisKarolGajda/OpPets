@@ -1,4 +1,4 @@
-package me.opkarol.oppets.inventories.holders;
+package me.opkarol.oppets.pets;
 
 /*
  = Copyright (c) 2021-2022.
@@ -13,7 +13,16 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-public class ShopInventoryHolder implements InventoryHolder, IHolder {
+/**
+ * The type Pet main inventory holder.
+ */
+public class PetMainInventoryHolder implements InventoryHolder, IHolder {
+
+    /**
+     * Gets inventory.
+     *
+     * @return the inventory
+     */
     @NotNull
     @Override
     public Inventory getInventory() {

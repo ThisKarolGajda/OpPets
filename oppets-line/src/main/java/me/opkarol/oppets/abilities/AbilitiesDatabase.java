@@ -11,9 +11,9 @@ package me.opkarol.oppets.abilities;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.databases.PetsDatabase;
 import me.opkarol.oppets.misc.AbilitiesEnums;
+import me.opkarol.oppets.misc.CooldownModule;
 import me.opkarol.oppets.misc.PetDatabaseObject;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
-import me.opkarol.oppets.misc.CooldownModule;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,10 +22,22 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * The type Abilities database.
+ */
 public class AbilitiesDatabase {
-    private final Set<PetAbility> set = new HashSet<>();
+    /**
+     * The Cooldown map.
+     */
     public final CooldownModule<UUID> cooldownMap = new CooldownModule<>();
+    /**
+     * The Set.
+     */
+    private final Set<PetAbility> set = new HashSet<>();
 
+    /**
+     * Instantiates a new Abilities database.
+     */
     public AbilitiesDatabase() {
         PetsDatabase database = Database.getPetsDatabase();
         for (OpPetsEntityTypes.TypeOfEntity type : database.getMap().keySet()) {
@@ -36,6 +48,12 @@ public class AbilitiesDatabase {
         }
     }
 
+    /**
+     * Gets pet ability.
+     *
+     * @param type the type
+     * @return the pet ability
+     */
     public PetAbility getPetAbility(OpPetsEntityTypes.TypeOfEntity type) {
         final PetAbility[] abilityType = new PetAbility[1];
         set.forEach(ability -> {
@@ -46,6 +64,12 @@ public class AbilitiesDatabase {
         return abilityType[0];
     }
 
+    /**
+     * Gets ability type from entity.
+     *
+     * @param type the type
+     * @return the ability type from entity
+     */
     @Contract(pure = true)
     private AbilitiesEnums.AbilityCategory getAbilityTypeFromEntity(OpPetsEntityTypes.@NotNull TypeOfEntity type) {
         switch (type) {
@@ -79,6 +103,12 @@ public class AbilitiesDatabase {
 
     }
 
+    /**
+     * Gets description from entity.
+     *
+     * @param type the type
+     * @return the description from entity
+     */
     @Contract(pure = true)
     private @Nullable String getDescriptionFromEntity(OpPetsEntityTypes.@NotNull TypeOfEntity type) {
         switch (type) {

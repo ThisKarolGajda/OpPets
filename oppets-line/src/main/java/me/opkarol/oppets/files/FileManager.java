@@ -12,8 +12,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 
+/**
+ * The type File manager.
+ *
+ * @param <K> the type parameter
+ */
 public class FileManager<K> {
 
+    /**
+     * Load object k.
+     *
+     * @param path the path
+     * @return the k
+     */
     @Nullable
     public K loadObject(String path) {
         File file = new File(path);
@@ -28,6 +39,12 @@ public class FileManager<K> {
         return null;
     }
 
+    /**
+     * Save object.
+     *
+     * @param path         the path
+     * @param objectToSave the object to save
+     */
     public void saveObject(String path, K objectToSave) {
         try {
             saveFile(objectToSave, path);
@@ -36,6 +53,13 @@ public class FileManager<K> {
         }
     }
 
+    /**
+     * Save file.
+     *
+     * @param object the object
+     * @param path   the path
+     * @throws IOException the io exception
+     */
     private void saveFile(K object, String path)
             throws IOException {
         try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(path))) {
@@ -43,6 +67,14 @@ public class FileManager<K> {
         }
     }
 
+    /**
+     * Read file k.
+     *
+     * @param path the path
+     * @return the k
+     * @throws ClassNotFoundException the class not found exception
+     * @throws IOException            the io exception
+     */
     private K readFile(String path)
             throws ClassNotFoundException, IOException {
         try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(path))) {

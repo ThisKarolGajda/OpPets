@@ -21,20 +21,43 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * The type Skill utils.
+ */
 public class SkillUtils {
+    /**
+     * The Config.
+     */
     private final FileConfiguration config;
+    /**
+     * The Database.
+     */
     private final SkillDatabase database;
 
+    /**
+     * Instantiates a new Skill utils.
+     */
     public SkillUtils() {
         config = Database.getInstance().getConfig();
         database = Database.getOpPets().getSkillDatabase();
     }
 
+    /**
+     * Instantiates a new Skill utils.
+     *
+     * @param database the database
+     */
     public SkillUtils(SkillDatabase database) {
         config = Database.getInstance().getConfig();
         this.database = database;
     }
 
+    /**
+     * Gets allowed entities.
+     *
+     * @param string the string
+     * @return the allowed entities
+     */
     public List<OpPetsEntityTypes.TypeOfEntity> getAllowedEntities(@NotNull String string) {
         String substring = string.substring(1, string.length() - 1);
         String[] strings = substring.split(",");
@@ -54,6 +77,12 @@ public class SkillUtils {
         return list;
     }
 
+    /**
+     * Gets skill abilities from section.
+     *
+     * @param pathI the path i
+     * @return the skill abilities from section
+     */
     public List<Ability> getSkillAbilitiesFromSection(String pathI) {
         if (pathI == null) {
             return null;
@@ -70,6 +99,12 @@ public class SkillUtils {
         return list;
     }
 
+    /**
+     * Gets skill requirement from section.
+     *
+     * @param path the path
+     * @return the skill requirement from section
+     */
     public List<Requirement> getSkillRequirementFromSection(String path) {
         if (path == null) {
             return null;
@@ -86,6 +121,12 @@ public class SkillUtils {
         return list;
     }
 
+    /**
+     * Gets skill adder from section.
+     *
+     * @param path the path
+     * @return the skill adder from section
+     */
     public List<Adder> getSkillAdderFromSection(String path) {
         if (path == null) {
             return null;
@@ -107,6 +148,13 @@ public class SkillUtils {
         return list;
     }
 
+    /**
+     * Gets granted points from enum.
+     *
+     * @param pet         the pet
+     * @param skillsAdder the skills adder
+     * @return the granted points from enum
+     */
     public double getGrantedPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
         final double[] i = {0};
         database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
@@ -119,6 +167,13 @@ public class SkillUtils {
         return i[0];
     }
 
+    /**
+     * Gets max points from enum.
+     *
+     * @param pet         the pet
+     * @param skillsAdder the skills adder
+     * @return the max points from enum
+     */
     public double getMaxPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
         final double[] i = {0};
         database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
@@ -133,6 +188,12 @@ public class SkillUtils {
         return i[0];
     }
 
+    /**
+     * Gets random skill name.
+     *
+     * @param type the type
+     * @return the random skill name
+     */
     public String getRandomSkillName(OpPetsEntityTypes.TypeOfEntity type) {
         List<Skill> list = database.getAccessibleSkillsToPetType(type);
         if (list == null) return null;
@@ -143,6 +204,13 @@ public class SkillUtils {
         }
     }
 
+    /**
+     * Gets random number.
+     *
+     * @param min the min
+     * @param max the max
+     * @return the random number
+     */
     public int getRandomNumber(int min, int max) {
         if (min == max) {
             return min;

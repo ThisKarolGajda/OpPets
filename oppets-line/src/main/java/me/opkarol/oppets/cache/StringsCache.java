@@ -8,16 +8,22 @@ package me.opkarol.oppets.cache;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import org.bukkit.inventory.Inventory;
+import static me.opkarol.oppets.utils.ConfigUtils.getString;
 
-public class LeaderboardCache {
-    private Inventory inventory;
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
-    }
+/**
+ * The type Strings cache.
+ */
+public class StringsCache {
+    /**
+     * The constant boosterEnabledMessage.
+     */
+    public static String boosterEnabledMessage = getString("Formats.boosterEnabledMessage");
+    /**
+     * The constant defaultServerValue.
+     */
+    public static String defaultServerValue = "SERVER";
+    /**
+     * The constant broadcastFormatMessage.
+     */
+    public static String broadcastFormatMessage = getString("Formats.broadcastFormat");
 }

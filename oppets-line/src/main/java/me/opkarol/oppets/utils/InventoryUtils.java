@@ -26,11 +26,29 @@ import org.jetbrains.annotations.Nullable;
 import static me.opkarol.oppets.utils.FormatUtils.formatList;
 import static me.opkarol.oppets.utils.FormatUtils.formatMessage;
 
+/**
+ * The type Inventory utils.
+ */
 public class InventoryUtils {
 
+    /**
+     * The constant typeKey.
+     */
     public static NamespacedKey typeKey = new NamespacedKey(Database.getInstance(), "oppets-shop-type");
+    /**
+     * The constant priceKey.
+     */
     public static NamespacedKey priceKey = new NamespacedKey(Database.getInstance(), "oppets-shop-price");
 
+    /**
+     * Item creator shop item stack.
+     *
+     * @param type      the type
+     * @param price     the price
+     * @param path      the path
+     * @param inventory the inventory
+     * @return the item stack
+     */
     public static @NotNull ItemStack itemCreatorShop(String type, int price, String path, @NotNull IInventory inventory) {
         ItemStack item = itemCreator(path, inventory);
         ItemMeta meta = item.getItemMeta();
@@ -41,6 +59,14 @@ public class InventoryUtils {
         return item;
     }
 
+    /**
+     * Gets value from key.
+     *
+     * @param namespacedKey the namespaced key
+     * @param meta          the meta
+     * @param type          the type
+     * @return the value from key
+     */
     public static @Nullable Object getValueFromKey(NamespacedKey namespacedKey, @NotNull ItemMeta meta, ItemTagType type) {
         CustomItemTagContainer tagContainer = meta.getCustomTagContainer();
 
@@ -50,6 +76,14 @@ public class InventoryUtils {
         return null;
     }
 
+    /**
+     * Item creator lamp item stack.
+     *
+     * @param path      the path
+     * @param lights    the lights
+     * @param inventory the inventory
+     * @return the item stack
+     */
     public static @NotNull ItemStack itemCreatorLamp(String path, boolean lights, @NotNull IInventory inventory) {
         FileConfiguration config = Database.getInstance().getConfig();
         Material material;
@@ -81,6 +115,12 @@ public class InventoryUtils {
         return item;
     }
 
+    /**
+     * Gets blank glass panes.
+     *
+     * @param material the material
+     * @return the blank glass panes
+     */
     public static @NotNull ItemStack getBlankGlassPanes(Material material) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
@@ -92,6 +132,12 @@ public class InventoryUtils {
         return item;
     }
 
+    /**
+     * Sets empty glass panes.
+     *
+     * @param material  the material
+     * @param inventory the inventory
+     */
     public static void setupEmptyGlassPanes(Material material, @NotNull Inventory inventory) {
         ItemStack glass = getBlankGlassPanes(material);
         for (int i = 0; i < inventory.getSize(); i++) {
@@ -102,6 +148,13 @@ public class InventoryUtils {
     }
 
 
+    /**
+     * Item creator item stack.
+     *
+     * @param path      the path
+     * @param inventory the inventory
+     * @return the item stack
+     */
     public static @NotNull ItemStack itemCreator(String path, @NotNull IInventory inventory) {
         FileConfiguration config = Database.getInstance().getConfig();
         ItemStack item = new ItemStack(Material.valueOf(config.getString(path + "material")));

@@ -21,8 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * The type Player join.
+ */
 public class PlayerJoin implements Listener {
 
+    /**
+     * Player join.
+     *
+     * @param event the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -37,6 +45,11 @@ public class PlayerJoin implements Listener {
         }
     }
 
+    /**
+     * Player join 2.
+     *
+     * @param event the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerJoin2(@NotNull PlayerJoinEvent event) {
         Database.getOpPets().getDatabase().getActivePetMap().keySet().forEach(uuid -> {

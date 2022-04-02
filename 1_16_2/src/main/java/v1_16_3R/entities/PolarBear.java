@@ -18,7 +18,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Polar bear.
+ */
 public class PolarBear extends EntityPolarBear {
+    /**
+     * Instantiates a new Polar bear.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public PolarBear(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.POLAR_BEAR, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

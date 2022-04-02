@@ -8,6 +8,7 @@ package me.opkarol.oppets.pets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.uuid.PetUUID;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -16,16 +17,25 @@ import org.json.simple.parser.ParseException;
 
 import java.util.*;
 
+/**
+ * The type Pets converter.
+ */
 public class PetsConverter {
 
+    /**
+     * Convert json to pet pet.
+     *
+     * @param object the object
+     * @return the pet
+     */
     public Pet convertJSONToPet(@NotNull JSONObject object) {
         String name, settings, skill, prestige;
         double experience;
         int level;
         OpPetsEntityTypes.TypeOfEntity type;
         boolean active;
-        UUID ownUUID, ownerUUID;
-
+        UUID ownerUUID;
+        PetUUID petUUID;
         name = (String) object.get("name");
         settings = (String) object.get("settings");
         skill = (String) object.get("skill");
@@ -33,14 +43,18 @@ public class PetsConverter {
         level = Integer.parseInt(String.valueOf(object.get("level")));
         type = OpPetsEntityTypes.TypeOfEntity.valueOf((String) object.get("type"));
         active = (boolean) object.get("active");
-        ownUUID = null;
         ownerUUID = UUID.fromString(String.valueOf(object.get("ownerUUID")));
         prestige = String.valueOf(object.get("prestige"));
-
-
-        return new Pet(name, experience, level, type, active, ownUUID, ownerUUID, settings, skill, prestige);
+        petUUID = new PetUUID(Integer.parseInt(String.valueOf(object.get("petID"))));
+        return new Pet(name, experience, level, type, active, null, ownerUUID, settings, skill, prestige, petUUID);
     }
 
+    /**
+     * Convert pet to json json object.
+     *
+     * @param pet the pet
+     * @return the json object
+     */
     public JSONObject convertPetToJSON(@NotNull Pet pet) {
         Map<String, Object> map = new HashMap<>();
         map.put("name", pet.getPetName());
@@ -53,9 +67,16 @@ public class PetsConverter {
         map.put("settings", pet.getSettingsSerialized());
         map.put("skill", pet.getSkillName());
         map.put("prestige", pet.getPrestige());
+        map.put("petID", pet.getPetUUID().getID());
         return new JSONObject(map);
     }
 
+    /**
+     * Convert pet list to json list list.
+     *
+     * @param pet the pet
+     * @return the list
+     */
     public List<JSONObject> convertPetListToJSONList(List<Pet> pet) {
         if (pet == null) {
             return null;
@@ -65,6 +86,12 @@ public class PetsConverter {
         return i;
     }
 
+    /**
+     * Convert string to pet pet.
+     *
+     * @param o the o
+     * @return the pet
+     */
     public Pet convertStringToPet(String o) {
         JSONParser parser = new JSONParser();
         try {
@@ -76,6 +103,12 @@ public class PetsConverter {
         return null;
     }
 
+    /**
+     * Convert json array to pet list list.
+     *
+     * @param array the array
+     * @return the list
+     */
     public List<Pet> convertJSONArrayToPetList(Object @NotNull [] array) {
         List<Pet> i = new ArrayList<>();
         for (Object o : array) {
@@ -86,6 +119,12 @@ public class PetsConverter {
         return i;
     }
 
+    /**
+     * Convert json array to pet list list.
+     *
+     * @param array the array
+     * @return the list
+     */
     public List<Pet> convertJSONArrayToPetList(@NotNull JSONArray array) {
         List<Pet> i = new ArrayList<>();
         for (Object o : array) {
@@ -96,6 +135,12 @@ public class PetsConverter {
         return i;
     }
 
+    /**
+     * Gets list from pets.
+     *
+     * @param list the list
+     * @return the list from pets
+     */
     public ArrayList<Object> getListFromPets(@NotNull List<Pet> list) {
         ArrayList<Object> i = new ArrayList<>();
         for (Pet pet : list) {

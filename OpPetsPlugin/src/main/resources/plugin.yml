@@ -4,6 +4,7 @@ main: me.opkarol.oppets.OpPets
 api-version: 1.16
 authors: [ OpKarol, ThisOpKarol, NotOpKarol ]
 softdepend: [ Vault ]
+libraries: [com.zaxxer:HikariCP:5.0.1]
 
 commands:
   oppets:

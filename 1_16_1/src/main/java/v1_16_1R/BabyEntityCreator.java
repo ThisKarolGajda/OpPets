@@ -11,7 +11,7 @@ package v1_16_1R;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IBabyEntityCreator;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.pets.PetsUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import net.minecraft.server.v1_16_R1.ChatMessage;
 import net.minecraft.server.v1_16_R1.EntityAgeable;
 import net.minecraft.server.v1_16_R1.WorldServer;
@@ -20,8 +20,17 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import v1_16_1R.entities.*;
 
+/**
+ * The type Baby entity creator.
+ */
 public class BabyEntityCreator implements IBabyEntityCreator {
 
+    /**
+     * Spawn mini pet.
+     *
+     * @param pet    the pet
+     * @param player the player
+     */
     @Override
     public void spawnMiniPet(@NotNull Pet pet, @NotNull Player player) {
         pet.setOwnerUUID(player.getUniqueId());
@@ -39,6 +48,13 @@ public class BabyEntityCreator implements IBabyEntityCreator {
         new Utils().hideEntityFromServer(player, id);
     }
 
+    /**
+     * Gets pet.
+     *
+     * @param pet    the pet
+     * @param player the player
+     * @return the pet
+     */
     public EntityAgeable getPet(@NotNull Pet pet, Player player) {
         switch (pet.getPetType()) {
             case CAT:

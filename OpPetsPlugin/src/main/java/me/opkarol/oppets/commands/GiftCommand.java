@@ -22,15 +22,25 @@ import java.util.UUID;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Gift command.
+ */
 public class GiftCommand implements ICommand {
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Messages.stringMessage("noConsole"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         if (args.length != 3) {
-            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets gift <PET> <PLAYER>"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets gift <PET> <PLAYER>"));
         }
 
         UUID uuid = player.getUniqueId();
@@ -45,11 +55,11 @@ public class GiftCommand implements ICommand {
         }
 
         if (pet == null) {
-            return returnMessage(sender, Messages.stringMessage("invalidPet"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
 
         if (!pet.isGiftable()) {
-            return returnMessage(sender, Messages.stringMessage("petIsntGiftable"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petIsntGiftable"));
         }
 
         String playerName = args[2];
@@ -70,24 +80,34 @@ public class GiftCommand implements ICommand {
         }
 
         if (Database.getOpPets().getDatabase().getPetList(uuid1).stream().anyMatch(pet1 -> FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName)))) {
-            return returnMessage(sender, Messages.stringMessage("receiverSameNamedPet").replace("%pet_name%", petName));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("receiverSameNamedPet").replace("%pet_name%", petName));
         }
 
         if (!b || uuid1.toString().length() == 0) {
-            return returnMessage(sender, Messages.stringMessage("receiverInvalid"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("receiverInvalid"));
         }
 
         Database.getOpPets().getDatabase().removePet(uuid, pet);
         Database.getOpPets().getDatabase().addPetToPetsList(uuid1, pet);
 
-        return returnMessage(sender, Messages.stringMessage("petGifted").replace("%pet_name%", petName).replace("%player_name%", playerIName));
+        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petGifted").replace("%pet_name%", petName).replace("%player_name%", playerIName));
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.gift";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "gift";

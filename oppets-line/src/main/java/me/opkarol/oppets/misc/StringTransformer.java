@@ -10,8 +10,17 @@ package me.opkarol.oppets.misc;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The type String transformer.
+ */
 public class StringTransformer {
 
+    /**
+     * Gets int from string.
+     *
+     * @param s the s
+     * @return the int from string
+     */
     public Integer getIntFromString(@NotNull String s) {
         if (containsNotNumbers(s)) {
             return null;
@@ -19,6 +28,12 @@ public class StringTransformer {
         return Integer.parseInt(s);
     }
 
+    /**
+     * Gets double from string.
+     *
+     * @param s the s
+     * @return the double from string
+     */
     public Double getDoubleFromString(@NotNull String s) {
         if (containsNotNumbers(s)) {
             return null;
@@ -26,6 +41,13 @@ public class StringTransformer {
         return Double.parseDouble(s);
     }
 
+    /**
+     * Gets enum from string.
+     *
+     * @param s the s
+     * @param e the e
+     * @return the enum from string
+     */
     public Enum getEnumFromString(String s, Class e) {
         Enum anEnum;
         try {
@@ -39,6 +61,12 @@ public class StringTransformer {
         return null;
     }
 
+    /**
+     * Contains not numbers boolean.
+     *
+     * @param s the s
+     * @return the boolean
+     */
     public boolean containsNotNumbers(@NotNull String s) {
         for (char c : s.toCharArray()) {
             String s1 = String.valueOf(c).replaceAll("[A-z]", "").replace("&", "").replace(",", "");

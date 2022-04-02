@@ -13,7 +13,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The type Buyer admit inventory holder.
+ */
 public class BuyerAdmitInventoryHolder implements InventoryHolder, IHolder {
+    /**
+     * Gets inventory.
+     *
+     * @return the inventory
+     */
     @NotNull
     @Override
     public Inventory getInventory() {

@@ -12,12 +12,15 @@ import me.opkarol.oppets.pets.Pet;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The interface Baby entity creator.
+ */
 public interface IBabyEntityCreator {
     /**
      * This method takes pet and player object.
      * It generates and creates in-game pet object that will be assigned to a provided player.
      *
-     * @param pet pet object which from data will be read
+     * @param pet    pet object which from data will be read
      * @param player sender / owner of the pet
      */
     void spawnMiniPet(@NotNull Pet pet, @NotNull Player player);

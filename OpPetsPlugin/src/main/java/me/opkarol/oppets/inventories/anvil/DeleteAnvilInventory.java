@@ -21,10 +21,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * The type Delete anvil inventory.
+ */
 public class DeleteAnvilInventory {
 
+    /**
+     * Instantiates a new Delete anvil inventory.
+     *
+     * @param pet          the pet
+     * @param playerOpened the player opened
+     */
     public DeleteAnvilInventory(@NotNull Pet pet, @NotNull Player playerOpened) {
-        String title = Messages.stringMessage("titleDelete");
+        String title = Database.getOpPets().getMessages().getMessagesAccess().stringMessage("titleDelete");
         String petName = FormatUtils.getNameString(Objects.requireNonNull(pet.getPetName()));
         UUID uuid = playerOpened.getUniqueId();
         final boolean[] b = {true};
@@ -33,9 +42,9 @@ public class DeleteAnvilInventory {
                     if (b[0] && FormatUtils.getNameString(s).equals(FormatUtils.getNameString(petName))) {
                         b[0] = false;
                         Database.getOpPets().getDatabase().removePet(uuid, pet);
-                        player.sendMessage(Messages.stringMessage("deletedMessage").replace("%pet_name%", petName));
+                        player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("deletedMessage").replace("%pet_name%", petName));
                         return AnvilGUI.Response.close();
-                    } else return AnvilGUI.Response.text(Messages.stringMessage("confirmMessage"));
+                    } else return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("confirmMessage"));
                 })
                 .plugin(Database.getInstance())
                 .title(title.replace("%pet_name%", petName))

@@ -8,9 +8,10 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.interfaces.IInventory;
-import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
+import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,24 +23,55 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.*;
 
+/**
+ * The type Settings inventory.
+ */
 public class SettingsInventory implements IInventory {
+    /**
+     * The Inventory.
+     */
     private final Inventory inventory;
-    Pet pet;
-
+    /**
+     * The Visible to others.
+     */
     boolean visibleToOthers;
+    /**
+     * The Giftable.
+     */
     boolean giftable;
+    /**
+     * The Glows.
+     */
     boolean glows;
+    /**
+     * The Follow player.
+     */
     boolean followPlayer;
+    /**
+     * The Teleport to player.
+     */
     boolean teleportToPlayer;
+    /**
+     * The Rideable.
+     */
     boolean rideable;
+    /**
+     * The Other rideable.
+     */
     boolean otherRideable;
+    /**
+     * The Particles enabled.
+     */
     boolean particlesEnabled;
 
+    /**
+     * Instantiates a new Settings inventory.
+     *
+     * @param pet the pet
+     */
     public SettingsInventory(@NotNull Pet pet) {
-        this.pet = pet;
         visibleToOthers = pet.isVisibleToOthers();
         giftable = pet.isGiftable();
         glows = pet.isGlowing();
@@ -48,14 +80,22 @@ public class SettingsInventory implements IInventory {
         rideable = pet.isRideable();
         otherRideable = pet.isOtherRideable();
         particlesEnabled = pet.areParticlesEnabled();
-        inventory = Bukkit.createInventory(new SettingsInventoryHolder(), 27, getMessage("SettingsInventory.title").replace("%pet_name%", FormatUtils.formatMessage(Objects.requireNonNull(pet.getPetName()))));
+        inventory = Bukkit.createInventory(new SettingsInventoryHolder(), 27, InventoriesCache.settingsInventoryTitle.replace("%pet_name%", FormatUtils.formatMessage(Objects.requireNonNull(pet.getPetName()))));
         setupInventory();
     }
 
+    /**
+     * Gets inventory.
+     *
+     * @return the inventory
+     */
     public Inventory getInventory() {
         return inventory;
     }
 
+    /**
+     * Sets inventory.
+     */
     private void setupInventory() {
         String path = "SettingsInventory.items.";
         inventory.setItem(9, itemCreatorLamp(path + "visibleToOthers.", visibleToOthers, this));
@@ -71,6 +111,12 @@ public class SettingsInventory implements IInventory {
 
     }
 
+    /**
+     * Sets place holders.
+     *
+     * @param lore the lore
+     * @return the place holders
+     */
     @Override
     @Contract(pure = true)
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {

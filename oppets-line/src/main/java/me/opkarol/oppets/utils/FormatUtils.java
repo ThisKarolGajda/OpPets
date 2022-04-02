@@ -16,22 +16,50 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The type Format utils.
+ */
 public class FormatUtils {
 
+    /**
+     * Format message string.
+     *
+     * @param message the message
+     * @return the string
+     */
     @Contract("_ -> new")
     public static @NotNull String formatMessage(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
+    /**
+     * Format list list.
+     *
+     * @param list the list
+     * @return the list
+     */
     public static @NotNull List<String> formatList(@NotNull List<String> list) {
         return list.stream().map(FormatUtils::formatMessage).collect(Collectors.toList());
     }
 
+    /**
+     * Return message boolean.
+     *
+     * @param sender  the sender
+     * @param message the message
+     * @return the boolean
+     */
     public static boolean returnMessage(@NotNull CommandSender sender, String message) {
         sender.sendMessage(message);
         return true;
     }
 
+    /**
+     * Gets name string.
+     *
+     * @param string the string
+     * @return the name string
+     */
     public static String getNameString(String string) {
         return ChatColor.stripColor(formatMessage(string));
     }

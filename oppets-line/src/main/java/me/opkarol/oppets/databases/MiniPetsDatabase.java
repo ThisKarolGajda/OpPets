@@ -17,12 +17,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * The type Mini pets database.
+ */
 public class MiniPetsDatabase implements IDatabase {
-
+    /**
+     * The Active pet map.
+     */
     private HashMap<UUID, Pet> activePetMap;
+    /**
+     * The Pets map.
+     */
     private HashMap<UUID, List<Pet>> petsMap;
+    /**
+     * The Id pets map.
+     */
     private HashMap<UUID, Integer> idPetsMap;
 
+    /**
+     * Start logic.
+     */
     @Override
     public void startLogic() {
         if (activePetMap == null) {
@@ -36,16 +50,34 @@ public class MiniPetsDatabase implements IDatabase {
         }
     }
 
+    /**
+     * Add id pet.
+     *
+     * @param petUUID the pet uuid
+     * @param petId   the pet id
+     */
     @Override
     public void addIdPet(UUID petUUID, int petId) {
         idPetsMap.put(petUUID, petId);
     }
 
+    /**
+     * Gets id pet.
+     *
+     * @param petUUID the pet uuid
+     * @return the id pet
+     */
     @Override
     public int getIdPet(UUID petUUID) {
         return idPetsMap.getOrDefault(petUUID, 0);
     }
 
+    /**
+     * Remove pet.
+     *
+     * @param uuid the uuid
+     * @param pet  the pet
+     */
     @Override
     public void removePet(UUID uuid, @NotNull Pet pet) {
         ArrayList<Pet> list = (ArrayList<Pet>) petsMap.get(uuid);
@@ -61,30 +93,62 @@ public class MiniPetsDatabase implements IDatabase {
         setPets(uuid, list);
     }
 
+    /**
+     * Gets name.
+     *
+     * @param s the s
+     * @return the name
+     */
     private String getName(String s) {
         return ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', s));
     }
 
+    /**
+     * Gets active pet map.
+     *
+     * @return the active pet map
+     */
     @Override
     public HashMap<UUID, Pet> getActivePetMap() {
         return activePetMap;
     }
 
+    /**
+     * Sets active pet map.
+     *
+     * @param activePetMap the active pet map
+     */
     @Override
     public void setActivePetMap(HashMap<UUID, Pet> activePetMap) {
         this.activePetMap = activePetMap;
     }
 
+    /**
+     * Gets pets map.
+     *
+     * @return the pets map
+     */
     @Override
     public HashMap<UUID, List<Pet>> getPetsMap() {
         return petsMap;
     }
 
+    /**
+     * Sets pets map.
+     *
+     * @param petsMap the pets map
+     */
     @Override
     public void setPetsMap(HashMap<UUID, List<Pet>> petsMap) {
         this.petsMap = petsMap;
     }
 
+    /**
+     * Sets current pet.
+     *
+     * @param uuid the uuid
+     * @param pet  the pet
+     */
     @Override
     public void setCurrentPet(UUID uuid, Pet pet) {
         if (activePetMap.containsKey(uuid)) {
@@ -94,11 +158,22 @@ public class MiniPetsDatabase implements IDatabase {
         }
     }
 
+    /**
+     * Gets current pet.
+     *
+     * @param uuid the uuid
+     * @return the current pet
+     */
     @Override
     public Pet getCurrentPet(UUID uuid) {
         return activePetMap.get(uuid);
     }
 
+    /**
+     * Remove current pet.
+     *
+     * @param uuid the uuid
+     */
     @Override
     public void removeCurrentPet(UUID uuid) {
         Pet pet = getCurrentPet(uuid);
@@ -112,6 +187,12 @@ public class MiniPetsDatabase implements IDatabase {
         activePetMap.remove(uuid);
     }
 
+    /**
+     * Sets pets.
+     *
+     * @param uuid the uuid
+     * @param list the list
+     */
     @Override
     public void setPets(UUID uuid, List<Pet> list) {
         petsMap.remove(uuid);
@@ -122,11 +203,24 @@ public class MiniPetsDatabase implements IDatabase {
 
     }
 
+    /**
+     * Gets pet list.
+     *
+     * @param uuid the uuid
+     * @return the pet list
+     */
     @Override
     public List<Pet> getPetList(UUID uuid) {
         return petsMap.get(uuid);
     }
 
+    /**
+     * Add pet to pets list boolean.
+     *
+     * @param uuid the uuid
+     * @param pet  the pet
+     * @return the boolean
+     */
     @Override
     public boolean addPetToPetsList(UUID uuid, Pet pet) {
         List<Pet> petList;

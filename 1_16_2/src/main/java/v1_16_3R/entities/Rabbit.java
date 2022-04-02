@@ -18,7 +18,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Rabbit.
+ */
 public class Rabbit extends EntityRabbit {
+    /**
+     * Instantiates a new Rabbit.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Rabbit(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.RABBIT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

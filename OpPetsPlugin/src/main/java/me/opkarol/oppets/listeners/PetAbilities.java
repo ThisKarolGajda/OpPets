@@ -29,15 +29,32 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * The type Pet abilities.
+ */
 public class PetAbilities implements Listener {
+    /**
+     * The Abilities database.
+     */
     private final AbilitiesDatabase abilitiesDatabase;
+    /**
+     * The Functions.
+     */
     private final AbilitiesFunctions functions;
 
+    /**
+     * Instantiates a new Pet abilities.
+     */
     public PetAbilities() {
         abilitiesDatabase = Database.getOpPets().getAbilitiesDatabase();
         functions = new AbilitiesFunctions();
     }
 
+    /**
+     * Player interact.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void playerInteract(@NotNull PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
@@ -85,6 +102,11 @@ public class PetAbilities implements Listener {
         }
     }
 
+    /**
+     * Player fall.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void playerFall(@NotNull EntityDamageEvent event) {
         if (!event.getEntityType().equals(EntityType.PLAYER)) {
@@ -119,6 +141,11 @@ public class PetAbilities implements Listener {
         }
     }
 
+    /**
+     * Player damaged.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void playerDamaged(@NotNull EntityDamageByEntityEvent event) {
         if (!event.getDamager().getType().equals(EntityType.PLAYER)) {

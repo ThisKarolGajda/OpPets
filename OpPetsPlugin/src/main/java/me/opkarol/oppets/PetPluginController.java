@@ -9,7 +9,6 @@ package me.opkarol.oppets;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.databases.MySQLMiniPetsDatabase;
 import me.opkarol.oppets.interfaces.*;
 import me.opkarol.oppets.packets.PacketManager;
 import me.opkarol.oppets.pets.Pet;
@@ -31,22 +30,43 @@ import java.util.UUID;
 /**
  * PetPluginController is a controlling class that can run methods
  * which would be redundant in the main OpPets class.
- *
+ * <p>
  * This public class contains methods that helps build and compile
  * OpPets but also has some Logic, File Managers and MySQL access.
  */
-
 public class PetPluginController {
+    /**
+     * The Instance.
+     */
     private final OpPets instance;
+    /**
+     * The Local path.
+     */
     private final String localPath = Database.getInstance().getDataFolder().getAbsolutePath();
+    /**
+     * The Packet event.
+     */
     private IPacketPlayInSteerVehicleEvent packetEvent;
+    /**
+     * The Version.
+     */
     private String version;
 
+    /**
+     * Instantiates a new Pet plugin controller.
+     *
+     * @param opPets the op pets
+     */
     public PetPluginController(OpPets opPets) {
         this.instance = opPets;
         init();
     }
 
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     */
     public OpPets getInstance() {
         return instance;
     }
@@ -55,12 +75,10 @@ public class PetPluginController {
      * Plugin initialization method that runs File Configuration saver, loading files
      * Database logic and Registers event and Commands.
      * It's also used to set up InventoryManager and activate bStats with plugin id.
-     *
      */
     public void init() {
         getInstance().saveDefaultConfig();
         loadFiles();
-        Database.getDatabase().startLogic();
         registerEvents();
         registerCommands();
         bStatsActivation(13211);
@@ -90,7 +108,7 @@ public class PetPluginController {
             new FileManager<HashMap<UUID, List<Pet>>>().saveObject(localPath + "/PetsMap.db", Database.getDatabase().getPetsMap());
             new FileManager<HashMap<UUID, Pet>>().saveObject(localPath + "/ActivePetMap.db", Database.getDatabase().getActivePetMap());
         } else {
-            Bukkit.getOnlinePlayers().forEach(player -> new MySQLMiniPetsDatabase().databaseUUIDSaver(player.getUniqueId()));
+            Bukkit.getOnlinePlayers().forEach(player -> Database.getDatabase().databaseUUIDSaver(player.getUniqueId(), false));
         }
         killAllPets();
     }
@@ -142,12 +160,18 @@ public class PetPluginController {
      * If result is valid, it can be successfully removed using Bukkit method.
      */
     public void killAllPets() {
-        Database.getDatabase().getActivePetMap().keySet().forEach(uuid -> Database.getUtils().killPetFromPlayerUUID(uuid));
+        Database.getDatabase().getActivePetMap().keySet().forEach(uuid -> {
+            if (uuid != null) {
+                Database.getUtils().killPetFromPlayerUUID(uuid);
+            }
+        });
     }
 
     /**
      * This is a main method of this class, which provides classified information about every
      * version, and sets it to main OpPets class, PacketManager class and Database class.
+     *
+     * @return the version
      */
     public boolean setupVersion() {
         String version;
@@ -181,9 +205,7 @@ public class PetPluginController {
             IUtils utils = (IUtils) Class.forName(versionR + "Utils").newInstance();
             OpPets.setUtils(utils);
             PacketManager.setUtils(utils);
-            if (Database.mySQLAccess) {
-                Database.setUtils(utils);
-            }
+            Database.setUtils(utils);
             PacketManager.setEvent(getPacketEvent());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -191,18 +213,38 @@ public class PetPluginController {
         return true;
     }
 
+    /**
+     * Gets packet event.
+     *
+     * @return the packet event
+     */
     public IPacketPlayInSteerVehicleEvent getPacketEvent() {
         return this.packetEvent;
     }
 
+    /**
+     * Sets packet event.
+     *
+     * @param packetEvent the packet event
+     */
     public void setPacketEvent(IPacketPlayInSteerVehicleEvent packetEvent) {
         this.packetEvent = packetEvent;
     }
 
+    /**
+     * Gets version.
+     *
+     * @return the version
+     */
     public String getVersion() {
         return this.version;
     }
 
+    /**
+     * Sets version.
+     *
+     * @param version the version
+     */
     public void setVersion(String version) {
         this.version = version;
     }

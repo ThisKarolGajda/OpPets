@@ -9,11 +9,10 @@ package me.opkarol.oppets.commands;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.pets.PetsUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.command.CommandSender;
@@ -24,15 +23,25 @@ import java.util.UUID;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Admin command.
+ */
 public class AdminCommand implements ICommand {
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            return returnMessage(sender, Messages.stringMessage("noConsole"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         if (args.length != 5) {
-            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets admin <PLAYER> <PET> <KEY> <VALUE>"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets admin <PLAYER> <PET> <KEY> <VALUE>"));
         }
 
         String name = args[1];
@@ -40,7 +49,7 @@ public class AdminCommand implements ICommand {
 
         List<Pet> petList = Database.getOpPets().getDatabase().getPetList(uuid);
         if (petList.size() == 0) {
-            return returnMessage(sender, Messages.stringMessage("petListEmpty"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petListEmpty"));
         }
 
         String petName = args[2];
@@ -53,7 +62,7 @@ public class AdminCommand implements ICommand {
         }
 
         if (pet == null) {
-            return returnMessage(sender, Messages.stringMessage("invalidPet"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
 
         petList.removeIf(pet1 -> FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName)));
@@ -75,14 +84,24 @@ public class AdminCommand implements ICommand {
 
         PetsUtils.savePetProgress(pet, uuid);
 
-        return returnMessage(sender, Messages.stringMessage("changedAdminValue").replace("%value%", value).replace("%key%", args[3]).replace("%player_name%", name).replace("%pet_name%", petName));
+        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("changedAdminValue").replace("%value%", value).replace("%key%", args[3]).replace("%player_name%", name).replace("%pet_name%", petName));
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.admin";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "admin";

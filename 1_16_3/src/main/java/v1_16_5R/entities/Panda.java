@@ -18,7 +18,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Panda.
+ */
 public class Panda extends EntityPanda {
+    /**
+     * Instantiates a new Panda.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Panda(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.PANDA, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

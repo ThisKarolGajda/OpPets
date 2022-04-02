@@ -8,28 +8,45 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.inventories.holders.PrestigeInventoryHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 
-import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
+/**
+ * The type Prestige inventory.
+ */
 public class PrestigeInventory implements IInventory {
+    /**
+     * The Inventory.
+     */
     private final Inventory inventory;
 
+    /**
+     * Instantiates a new Prestige inventory.
+     */
     public PrestigeInventory() {
-        inventory = Bukkit.createInventory(new PrestigeInventoryHolder(), 27, getMessage("PrestigeInventory.title"));
+        inventory = Bukkit.createInventory(new PrestigeInventoryHolder(), 27, InventoriesCache.prestigeInventoryTitle);
         setupInventory();
     }
 
+    /**
+     * Gets inventory.
+     *
+     * @return the inventory
+     */
     public Inventory getInventory() {
         return inventory;
     }
 
+    /**
+     * Sets inventory.
+     */
     private void setupInventory() {
         String path = "PrestigeInventory.items.";
         inventory.setItem(11, itemCreator(path + "informationBook.", this));

@@ -12,7 +12,7 @@ import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.pets.PetsUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -23,13 +23,34 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * The type Skill database.
+ */
 public class SkillDatabase {
+    /**
+     * The Skill map.
+     */
     private final HashMap<String, Skill> skillMap = new HashMap<>();
+    /**
+     * The Utils.
+     */
     private final SkillUtils utils;
+    /**
+     * The Config.
+     */
     private final FileConfiguration config;
+    /**
+     * The Basic path.
+     */
     private String basicPath = "Skills";
+    /**
+     * The Can run.
+     */
     private boolean canRun = true;
 
+    /**
+     * Instantiates a new Skill database.
+     */
     public SkillDatabase() {
         utils = new SkillUtils(this);
         config = Database.getInstance().getConfig();
@@ -45,10 +66,21 @@ public class SkillDatabase {
         }
     }
 
+    /**
+     * Gets skills.
+     *
+     * @return the skills
+     */
     public List<Skill> getSkills() {
         return new ArrayList<>(skillMap.values());
     }
 
+    /**
+     * Gets skill from path.
+     *
+     * @param skillName the skill name
+     * @return the skill from path
+     */
     public Skill getSkillFromPath(@NotNull String skillName) {
         String iPath = basicPath + skillName + ".";
         if (config.getString(iPath + "available_pets") == null) {
@@ -63,10 +95,22 @@ public class SkillDatabase {
 
     }
 
+    /**
+     * Gets skill from map.
+     *
+     * @param name the name
+     * @return the skill from map
+     */
     public Skill getSkillFromMap(String name) {
         return skillMap.get(name);
     }
 
+    /**
+     * Gets accessible skills to pet type.
+     *
+     * @param type the type
+     * @return the accessible skills to pet type
+     */
     public List<Skill> getAccessibleSkillsToPetType(OpPetsEntityTypes.TypeOfEntity type) {
         if (skillMap.size() == 0) return null;
         List<Skill> list = new ArrayList<>();
@@ -80,6 +124,13 @@ public class SkillDatabase {
         return list;
     }
 
+    /**
+     * Add point.
+     *
+     * @param skillEnums the skill enums
+     * @param pet        the pet
+     * @param player     the player
+     */
     public void addPoint(SkillEnums.SkillsAdders skillEnums, @NotNull Pet pet, @NotNull Player player) {
         double experience = pet.getPetExperience();
         double grantedPoints = utils.getGrantedPointsFromEnum(pet, skillEnums);
@@ -104,8 +155,8 @@ public class SkillDatabase {
      * Returns string that has been connected from table of strings,
      * which can later be used to transform it.
      *
-     * @param  strings table of strings
-     * @return string  result from connecting strings
+     * @param strings table of strings
+     * @return string result from connecting strings
      */
     @Contract(pure = true)
     private @NotNull String getStringFromStrings(String[] strings) {
@@ -125,7 +176,7 @@ public class SkillDatabase {
      * This method is based as on types taken.
      * It generates all possible materials that can be used in order to get through validation process.
      *
-     * @param  types     table of Materials
+     * @param types table of Materials
      * @return materials string result
      * @see org.bukkit.Material
      */
@@ -146,8 +197,8 @@ public class SkillDatabase {
     /**
      * This method can generate all available pets to string, using provided types.
      *
-     * @param  types list of type of entity objects
-     * @return pets  string object containing all pet types
+     * @param types list of type of entity objects
+     * @return pets string object containing all pet types
      * @see me.opkarol.oppets.pets.OpPetsEntityTypes
      */
     private @NotNull String getAvailablePets(List<OpPetsEntityTypes.TypeOfEntity> types) {
@@ -163,6 +214,11 @@ public class SkillDatabase {
         return builder.append("]").toString();
     }
 
+    /**
+     * Is can run boolean.
+     *
+     * @return the boolean
+     */
     public boolean isCanRun() {
         return canRun;
     }

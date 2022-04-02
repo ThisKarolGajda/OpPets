@@ -17,8 +17,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The type Player steer vehicle event v 1 18 1.
+ */
 public class PlayerSteerVehicleEvent_v1_18_1 implements Listener {
 
+    /**
+     * Gets velocity vector.
+     *
+     * @param vector the vector
+     * @param player the player
+     * @param side   the side
+     * @param forw   the forw
+     * @return the velocity vector
+     */
     @NotNull
     private static Vector getVelocityVector(@NotNull Vector vector, Player player, float side, float forw) {
         vector.setX(0.0D);
@@ -32,6 +44,11 @@ public class PlayerSteerVehicleEvent_v1_18_1 implements Listener {
         return mot.add(vector);
     }
 
+    /**
+     * Player steer vehicle.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void playerSteerVehicle(PacketPlayInSteerVehicleEvent_v1_18_1 event) {
         Player player = event.getPlayer();

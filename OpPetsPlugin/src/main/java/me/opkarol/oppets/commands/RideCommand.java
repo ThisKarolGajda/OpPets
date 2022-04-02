@@ -19,20 +19,30 @@ import org.bukkit.entity.Player;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Ride command.
+ */
 public class RideCommand implements ICommand {
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Messages.stringMessage("noConsole"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         Pet pet = Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId());
         if (pet == null) {
-            return returnMessage(sender, Messages.stringMessage("invalidPet"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
 
         if (!pet.isRideable()) {
-            return returnMessage(sender, Messages.stringMessage("petIsntRideable"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petIsntRideable"));
         }
 
         Entity entity = Database.getOpPets().getUtils().getEntityByUniqueId(Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID());
@@ -44,11 +54,21 @@ public class RideCommand implements ICommand {
         return true;
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.ride";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "ride";

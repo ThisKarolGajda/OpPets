@@ -18,8 +18,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Pig.
+ */
 public class Pig extends EntityPig {
 
+    /**
+     * Instantiates a new Pig.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Pig(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.PIG, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

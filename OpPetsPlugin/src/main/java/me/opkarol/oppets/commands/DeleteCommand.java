@@ -22,36 +22,63 @@ import java.util.UUID;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Delete command.
+ */
 public class DeleteCommand implements ICommand {
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Messages.stringMessage("noConsole"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         if (args.length != 2) {
-            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets delete <PET>"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets delete <PET>"));
         }
 
         Pet pet = getPetByName(player.getUniqueId(), FormatUtils.getNameString(args[1]));
         if (pet == null) {
-            return returnMessage(sender, Messages.stringMessage("invalidPet"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         } else {
             new DeleteAnvilInventory(pet, player);
             return true;
         }
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.delete";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "delete";
     }
 
+    /**
+     * Gets pet by name.
+     *
+     * @param playerUUID the player uuid
+     * @param petName    the pet name
+     * @return the pet by name
+     */
     private Pet getPetByName(UUID playerUUID, String petName) {
         final Pet[] petI = new Pet[1];
         Database.getOpPets().getDatabase().getPetList(playerUUID).forEach(pet -> {

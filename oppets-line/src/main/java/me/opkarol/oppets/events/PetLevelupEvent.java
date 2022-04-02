@@ -15,41 +15,93 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Thrown when a pet levels up.
+ * Can be cancelled.
+ */
 public class PetLevelupEvent extends Event implements Cancellable {
+    /**
+     * The constant HANDLERS_LIST.
+     */
     private static final HandlerList HANDLERS_LIST = new HandlerList();
+    /**
+     * The Pet.
+     */
     private final Pet pet;
+    /**
+     * The Player.
+     */
     private final Player player;
+    /**
+     * The Is cancelled.
+     */
     private boolean isCancelled;
 
+    /**
+     * Instantiates a new Pet levelup event.
+     *
+     * @param player the player
+     * @param pet    the pet
+     */
     public PetLevelupEvent(Player player, Pet pet) {
         this.isCancelled = false;
         this.player = player;
         this.pet = pet;
     }
 
+    /**
+     * Gets handler list.
+     *
+     * @return the handler list
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
 
+    /**
+     * Is cancelled boolean.
+     *
+     * @return the boolean
+     */
     @Override
     public boolean isCancelled() {
         return isCancelled;
     }
 
+    /**
+     * Sets cancelled.
+     *
+     * @param cancelled the cancelled
+     */
     @Override
     public void setCancelled(boolean cancelled) {
         this.isCancelled = cancelled;
     }
 
+    /**
+     * Gets handlers.
+     *
+     * @return the handlers
+     */
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS_LIST;
     }
 
+    /**
+     * Gets pet.
+     *
+     * @return the pet
+     */
     public Pet getPet() {
         return pet;
     }
 
+    /**
+     * Gets player.
+     *
+     * @return the player
+     */
     public Player getPlayer() {
         return player;
     }

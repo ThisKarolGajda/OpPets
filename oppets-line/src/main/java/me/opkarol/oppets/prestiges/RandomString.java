@@ -10,8 +10,18 @@ package me.opkarol.oppets.prestiges;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The type Random string.
+ */
 public class RandomString {
 
+    /**
+     * Gets string.
+     *
+     * @param length the length
+     * @param mode   the mode
+     * @return the string
+     */
     public @NotNull String getString(int length, @NotNull Mode mode) {
         StringBuilder builder = new StringBuilder();
         String string;
@@ -52,7 +62,25 @@ public class RandomString {
         return builder.toString();
     }
 
+    /**
+     * The enum Mode.
+     */
     public enum Mode {
-        ALPHA, NUMERIC, ALPHANUMERIC, CODES
+        /**
+         * Alpha mode.
+         */
+        ALPHA,
+        /**
+         * Numeric mode.
+         */
+        NUMERIC,
+        /**
+         * Alphanumeric mode.
+         */
+        ALPHANUMERIC,
+        /**
+         * Codes mode.
+         */
+        CODES
     }
 }

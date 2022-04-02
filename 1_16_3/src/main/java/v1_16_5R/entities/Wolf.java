@@ -18,7 +18,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Wolf.
+ */
 public class Wolf extends EntityWolf {
+    /**
+     * Instantiates a new Wolf.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Wolf(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.WOLF, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

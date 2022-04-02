@@ -10,15 +10,34 @@ package me.opkarol.oppets.misc;
 
 import java.util.HashMap;
 
+/**
+ * The type Cooldown module.
+ *
+ * @param <K> the type parameter
+ */
 public class CooldownModule<K> {
+    /**
+     * The Cooldown map.
+     */
     private final HashMap<K, Long> cooldownMap;
+    /**
+     * The Default value.
+     */
     @SuppressWarnings("all")
     private final long DEFAULT_VALUE = 1000L;
 
+    /**
+     * Instantiates a new Cooldown module.
+     */
     public CooldownModule() {
         this.cooldownMap = new HashMap<>();
     }
 
+    /**
+     * Add cooldown.
+     *
+     * @param object the object
+     */
     public void addCooldown(K object) {
         if (!this.cooldownMap.containsKey(object)) {
             this.cooldownMap.put(object, (getCurrentUnix() + 30));
@@ -27,6 +46,12 @@ public class CooldownModule<K> {
         }
     }
 
+    /**
+     * Has active cooldown boolean.
+     *
+     * @param object the object
+     * @return the boolean
+     */
     public boolean hasActiveCooldown(K object) {
         if (this.cooldownMap.containsKey(object)) {
             long cooldown = this.cooldownMap.get(object);
@@ -36,10 +61,20 @@ public class CooldownModule<K> {
         return false;
     }
 
+    /**
+     * Gets current unix.
+     *
+     * @return the current unix
+     */
     private long getCurrentUnix() {
         return System.currentTimeMillis() / this.DEFAULT_VALUE;
     }
 
+    /**
+     * Gets cooldown map.
+     *
+     * @return the cooldown map
+     */
     public HashMap<K, Long> getCooldownMap() {
         return this.cooldownMap;
     }

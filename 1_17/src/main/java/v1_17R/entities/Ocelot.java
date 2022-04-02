@@ -18,25 +18,54 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Ocelot.
+ */
 public class Ocelot extends net.minecraft.world.entity.animal.Ocelot {
 
+    /**
+     * Instantiates a new Ocelot.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Ocelot(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.OCELOT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
     }
 
+    /**
+     * Register goals.
+     */
     @Override
     public void registerGoals() {
     }
 
+    /**
+     * Drop experience.
+     */
     @Override
     protected void dropExperience() {
     }
 
+    /**
+     * Drop from loot table.
+     *
+     * @param damagesource the damagesource
+     * @param flag         the flag
+     */
     @Override
     protected void dropFromLootTable(DamageSource damagesource, boolean flag) {
     }
 
+    /**
+     * Hurt boolean.
+     *
+     * @param damagesource the damagesource
+     * @param f            the f
+     * @return the boolean
+     */
     @Override
     public boolean hurt(DamageSource damagesource, float f) {
         return false;

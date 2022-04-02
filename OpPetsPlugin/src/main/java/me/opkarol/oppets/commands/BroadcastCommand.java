@@ -18,17 +18,34 @@ import org.jetbrains.annotations.NotNull;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Broadcast command.
+ */
 public class BroadcastCommand implements ICommand {
+    /**
+     * The Format.
+     */
     final String format;
 
+    /**
+     * Instantiates a new Broadcast command.
+     */
     public BroadcastCommand() {
-        format = Messages.stringMessage("broadcastListFormat");
+        format = Database.getOpPets().getMessages().getMessagesAccess().stringMessage("broadcastListFormat");
     }
+
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String @NotNull [] args) {
         // /oppets broadcast <add/remove/list> (name) (prefix) (type) (message)
         if (args.length == 1) {
-            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets broadcast <add/remove/list> (NAME) (PREFIX) (MESSAGE)"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets broadcast <add/remove/list> (NAME) (PREFIX) (MESSAGE)"));
         }
         if (args.length == 2 && args[1].equalsIgnoreCase("list")) {
             StringBuilder builder = new StringBuilder();
@@ -43,7 +60,7 @@ public class BroadcastCommand implements ICommand {
         if (args.length == 3 && args[1].equalsIgnoreCase("remove")) {
             Object object = new StringTransformer().getEnumFromString(args[2], Broadcast.BROADCAST_TYPE.class);
             if (object == null) {
-                return returnMessage(sender, Messages.stringMessage("invalidObjectProvided"));
+                return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidObjectProvided"));
             }
             Broadcast.BROADCAST_TYPE type = (Broadcast.BROADCAST_TYPE) object;
             Database.getOpPets().getBroadcastManager().removeBroadcast(type);
@@ -52,7 +69,7 @@ public class BroadcastCommand implements ICommand {
             String prefix = args[2];
             Object object = new StringTransformer().getEnumFromString(args[3], Broadcast.BROADCAST_TYPE.class);
             if (object == null) {
-                return returnMessage(sender, Messages.stringMessage("invalidObjectProvided"));
+                return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidObjectProvided"));
             }
             Broadcast.BROADCAST_TYPE type = (Broadcast.BROADCAST_TYPE) object;
             StringBuilder builder = new StringBuilder();
@@ -66,16 +83,32 @@ public class BroadcastCommand implements ICommand {
         return true;
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.broadcast";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "broadcast";
     }
 
+    /**
+     * Gets formatted.
+     *
+     * @param broadcast the broadcast
+     * @return the formatted
+     */
     public @NotNull String getFormatted(@NotNull Broadcast broadcast) {
         return format
                 .replace("%format%", String.valueOf(broadcast.getFormat()))

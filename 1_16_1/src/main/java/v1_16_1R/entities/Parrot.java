@@ -18,7 +18,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Parrot.
+ */
 public class Parrot extends EntityParrot {
+    /**
+     * Instantiates a new Parrot.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Parrot(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.PARROT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

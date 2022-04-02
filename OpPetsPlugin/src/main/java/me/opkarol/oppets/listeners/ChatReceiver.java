@@ -19,15 +19,33 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
+/**
+ * The type Chat receiver.
+ */
 public class ChatReceiver implements Listener {
+    /**
+     * The constant handlers.
+     */
     private static final HashMap<UUID, BiConsumer<UUID, String>> handlers = new HashMap<>();
 
+    /**
+     * Chat register.
+     *
+     * @param player   the player
+     * @param message  the message
+     * @param consumer the consumer
+     */
     public static void chatRegister(@NotNull Player player, String message, BiConsumer<UUID, String> consumer) {
         player.closeInventory();
         player.sendMessage(FormatUtils.formatMessage(message));
         handlers.put(player.getUniqueId(), consumer);
     }
 
+    /**
+     * Player chat.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void playerChat(@NotNull AsyncPlayerChatEvent event) {
         UUID player = event.getPlayer().getUniqueId();

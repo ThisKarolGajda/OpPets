@@ -11,32 +11,52 @@ package me.opkarol.oppets.commands;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.interfaces.ICommand;
-import me.opkarol.oppets.inventories.PetMainInventory;
+import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Help command.
+ */
 public class HelpCommand implements ICommand {
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Messages.stringMessage("noConsole"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
-            return returnMessage(sender, Messages.stringMessage("invalidPet"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
 
-        player.openInventory(new PetMainInventory().getInventory());
+        OpUtils.openMainInventory(player);
         return true;
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.help";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "help";

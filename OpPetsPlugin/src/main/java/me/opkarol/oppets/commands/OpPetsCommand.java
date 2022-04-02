@@ -30,11 +30,23 @@ import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Op pets command.
+ */
 public class OpPetsCommand implements CommandExecutor, TabCompleter {
+    /**
+     * The constant noPetsString.
+     */
     public static String noPetsString = "<NO-PETS>";
 
+    /**
+     * The Commands.
+     */
     private final List<ICommand> commands = new ArrayList<>();
 
+    /**
+     * Instantiates a new Op pets command.
+     */
     public OpPetsCommand() {
         commands.add(new SummonCommand());
         commands.add(new CreateCommand());
@@ -52,6 +64,15 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
         commands.add(new BroadcastCommand());
     }
 
+    /**
+     * On tab complete list.
+     *
+     * @param sender the sender
+     * @param cmd    the cmd
+     * @param label  the label
+     * @param args   the args
+     * @return the list
+     */
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         Player player = (Player) sender;
@@ -145,6 +166,12 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
         return result;
     }
 
+    /**
+     * Gets players.
+     *
+     * @param arg the arg
+     * @return the players
+     */
     private @NotNull List<String> getPlayers(String arg) {
         List<String> result = new ArrayList<>();
         List<String> completions = new ArrayList<>();
@@ -155,6 +182,13 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
         return result;
     }
 
+    /**
+     * Gets completed pet list.
+     *
+     * @param uuid the uuid
+     * @param args the args
+     * @return the completed pet list
+     */
     private @NotNull @Unmodifiable List<String> getCompletedPetList(UUID uuid, String args) {
         List<String> list = new ArrayList<>();
         if (Database.getOpPets().getDatabase().getPetList(uuid) == null) return Collections.singletonList(noPetsString);
@@ -165,6 +199,15 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
         return list;
     }
 
+    /**
+     * On command boolean.
+     *
+     * @param sender  the sender
+     * @param command the command
+     * @param label   the label
+     * @param args    the args
+     * @return the boolean
+     */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         String cmd = (args.length == 0 || args[0].equalsIgnoreCase(" ")) ? "help" : args[0];
@@ -172,14 +215,14 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
             if (subCommandInterface.getSubCommand().equals(cmd)) {
                 if (sender.hasPermission(subCommandInterface.getPermission()) || sender.isOp() || subCommandInterface.getPermission() == null) {
                     if (!subCommandInterface.execute(sender, args)) {
-                        return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "Error occurred"));
+                        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "Error occurred"));
                     }
                     return true;
                 }
-                return returnMessage(sender, Messages.stringMessage("noPermission").replace("%permission%", subCommandInterface.getPermission()));
+                return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noPermission").replace("%permission%", subCommandInterface.getPermission()));
             }
         }
-        return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets <create/summon/gift/help/rename/ride/shop/summon>"));
+        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets <create/summon/gift/help/rename/ride/shop/summon>"));
     }
 
 }

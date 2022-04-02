@@ -1,4 +1,4 @@
-package me.opkarol.oppets.inventories;
+package me.opkarol.oppets.pets;
 
 /*
  = Copyright (c) 2021-2022.
@@ -8,29 +8,43 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.interfaces.IInventory;
-import me.opkarol.oppets.inventories.holders.PetMainInventoryHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 
-import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
+/**
+ * The type Pet main inventory.
+ */
 public class PetMainInventory implements IInventory {
-    public String guiTitle = getMessage("PetMainInventory.title");
+    /**
+     * The Inventory.
+     */
+    private final Inventory inventory = Bukkit.createInventory(new PetMainInventoryHolder(), 27, InventoriesCache.mainInventoryTitle);
 
-    private final Inventory inventory = Bukkit.createInventory(new PetMainInventoryHolder(), 27, guiTitle);
-
+    /**
+     * Instantiates a new Pet main inventory.
+     */
     public PetMainInventory() {
         setupInventory();
     }
 
+    /**
+     * Gets inventory.
+     *
+     * @return the inventory
+     */
     public Inventory getInventory() {
         return inventory;
     }
 
+    /**
+     * Sets inventory.
+     */
     public void setupInventory() {
         String path = "PetMainInventory.items.";
         inventory.setItem(10, itemCreator(path + "level.", this));

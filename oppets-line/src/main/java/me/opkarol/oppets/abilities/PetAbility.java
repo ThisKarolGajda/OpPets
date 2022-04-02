@@ -11,25 +11,59 @@ package me.opkarol.oppets.abilities;
 import me.opkarol.oppets.misc.AbilitiesEnums;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 
+/**
+ * The type Pet ability.
+ */
 public class PetAbility {
+    /**
+     * The Type.
+     */
     AbilitiesEnums.AbilityCategory type;
+    /**
+     * The Entity type.
+     */
     OpPetsEntityTypes.TypeOfEntity entityType;
+    /**
+     * The Description.
+     */
     String description;
 
+    /**
+     * Instantiates a new Pet ability.
+     *
+     * @param type        the type
+     * @param entityType  the entity type
+     * @param description the description
+     */
     public PetAbility(AbilitiesEnums.AbilityCategory type, OpPetsEntityTypes.TypeOfEntity entityType, String description) {
         this.type = type;
         this.entityType = entityType;
         this.description = description;
     }
 
+    /**
+     * Gets type.
+     *
+     * @return the type
+     */
     public AbilitiesEnums.AbilityCategory getType() {
         return this.type;
     }
 
+    /**
+     * Gets entity type.
+     *
+     * @return the entity type
+     */
     public OpPetsEntityTypes.TypeOfEntity getEntityType() {
         return this.entityType;
     }
 
+    /**
+     * Gets description.
+     *
+     * @return the description
+     */
     public String getDescription() {
         return this.description;
     }

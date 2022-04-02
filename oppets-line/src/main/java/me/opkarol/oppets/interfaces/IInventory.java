@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * The interface Inventory.
+ */
 public interface IInventory {
 
     /**

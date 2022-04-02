@@ -10,6 +10,9 @@ package me.opkarol.oppets.interfaces;
 
 import org.bukkit.command.CommandSender;
 
+/**
+ * The interface Command.
+ */
 public interface ICommand {
 
     /**
@@ -17,17 +20,21 @@ public interface ICommand {
      * what have been chosen before.
      *
      * @param sender command sender
-     * @param args table of string
+     * @param args   table of string
      * @return boolean if statement was successfully launched
      */
     boolean execute(CommandSender sender, String[] args);
 
     /**
+     * Gets permission.
+     *
      * @return string permission which is required to use specific command
      */
     String getPermission();
 
     /**
+     * Gets sub command.
+     *
      * @return string sub command which is a tabComplete and command executor provider.
      */
     String getSubCommand();

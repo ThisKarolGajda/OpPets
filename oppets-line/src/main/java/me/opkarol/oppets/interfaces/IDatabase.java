@@ -14,34 +14,122 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The interface Database.
+ */
 public interface IDatabase {
+    /**
+     * Gets pets map.
+     *
+     * @return the pets map
+     */
     HashMap<UUID, List<Pet>> getPetsMap();
 
+    /**
+     * Sets pets map.
+     *
+     * @param loadObject the load object
+     */
     void setPetsMap(HashMap<UUID, List<Pet>> loadObject);
 
+    /**
+     * Gets pet list.
+     *
+     * @param uuid the uuid
+     * @return the pet list
+     */
     List<Pet> getPetList(UUID uuid);
 
+    /**
+     * Sets current pet.
+     *
+     * @param uniqueId the unique id
+     * @param pet      the pet
+     */
     void setCurrentPet(UUID uniqueId, Pet pet);
 
+    /**
+     * Gets active pet map.
+     *
+     * @return the active pet map
+     */
     HashMap<UUID, Pet> getActivePetMap();
 
+    /**
+     * Sets active pet map.
+     *
+     * @param loadObject the load object
+     */
     void setActivePetMap(HashMap<UUID, Pet> loadObject);
 
+    /**
+     * Start logic.
+     */
     void startLogic();
 
+    /**
+     * Gets current pet.
+     *
+     * @param uuid the uuid
+     * @return the current pet
+     */
     Pet getCurrentPet(UUID uuid);
 
+    /**
+     * Add id pet.
+     *
+     * @param ownUUID the own uuid
+     * @param id      the id
+     */
     void addIdPet(UUID ownUUID, int id);
 
+    /**
+     * Gets id pet.
+     *
+     * @param ownUUID the own uuid
+     * @return the id pet
+     */
     int getIdPet(UUID ownUUID);
 
-    default void removePet(UUID uniqueId, Pet pet) {}
+    /**
+     * Remove pet.
+     *
+     * @param uniqueId the unique id
+     * @param pet      the pet
+     */
+    void removePet(UUID uniqueId, Pet pet);
 
+    /**
+     * Remove current pet.
+     *
+     * @param uuid the uuid
+     */
     void removeCurrentPet(UUID uuid);
 
+    /**
+     * Sets pets.
+     *
+     * @param uuid    the uuid
+     * @param objects the objects
+     */
     void setPets(UUID uuid, List<Pet> objects);
 
+    /**
+     * Add pet to pets list boolean.
+     *
+     * @param playerUUID the player uuid
+     * @param pet        the pet
+     * @return the boolean
+     */
     boolean addPetToPetsList(UUID playerUUID, Pet pet);
 
-    default void databaseUUIDSaver(UUID playerUUID) {}
+    /**
+     * Database uuid saver.
+     *
+     * @param playerUUID the player uuid
+     * @param async      the async
+     */
+    default void databaseUUIDSaver(UUID playerUUID, boolean async) {
+
+    }
 }

@@ -13,25 +13,70 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * The interface Packet play in steer vehicle event.
+ */
 public interface IPacketPlayInSteerVehicleEvent {
 
+    /**
+     * Gets handler list.
+     *
+     * @return the handler list
+     */
     @Contract(pure = true)
     static @Nullable HandlerList getHandlerList() {
         return null;
     }
 
+    /**
+     * Gets handlers.
+     *
+     * @return the handlers
+     */
     @NotNull
     HandlerList getHandlers();
 
+    /**
+     * Initialize packet play in steer vehicle event.
+     *
+     * @param var1 the var 1
+     * @param var2 the var 2
+     * @return the packet play in steer vehicle event
+     */
     IPacketPlayInSteerVehicleEvent initialize(Object var1, Object var2);
 
+    /**
+     * Gets packet.
+     *
+     * @return the packet
+     */
     Object getPacket();
 
+    /**
+     * Gets player.
+     *
+     * @return the player
+     */
     Object getPlayer();
 
+    /**
+     * Gets event.
+     *
+     * @return the event
+     */
     Object getEvent();
 
+    /**
+     * Gets vehicle keys.
+     *
+     * @return the vehicle keys
+     */
     Object getVehicleKeys();
 
+    /**
+     * Gets vehicle.
+     *
+     * @return the vehicle
+     */
     Object getVehicle();
 }

@@ -31,18 +31,26 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * The type Metrics.
+ */
 public class Metrics {
 
+    /**
+     * The Plugin.
+     */
     private final Plugin plugin;
 
+    /**
+     * The Metrics base.
+     */
     private final MetricsBase metricsBase;
 
     /**
      * Creates a new Metrics instance.
      *
      * @param plugin    Your plugin instance.
-     * @param serviceId The id of the service. It can be found at <a
-     *                  href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
+     * @param serviceId The id of the service. It can be found at <a                  href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
      */
     public Metrics(JavaPlugin plugin, int serviceId) {
         this.plugin = plugin;
@@ -103,6 +111,11 @@ public class Metrics {
         metricsBase.addCustomChart(chart);
     }
 
+    /**
+     * Append platform data.
+     *
+     * @param builder the builder
+     */
     private void appendPlatformData(JsonObjectBuilder builder) {
         builder.appendField("playerAmount", getPlayerAmount());
         builder.appendField("onlineMode", Bukkit.getOnlineMode() ? 1 : 0);
@@ -115,10 +128,20 @@ public class Metrics {
         builder.appendField("coreCount", Runtime.getRuntime().availableProcessors());
     }
 
+    /**
+     * Append service data.
+     *
+     * @param builder the builder
+     */
     private void appendServiceData(JsonObjectBuilder builder) {
         builder.appendField("pluginVersion", plugin.getDescription().getVersion());
     }
 
+    /**
+     * Gets player amount.
+     *
+     * @return the player amount
+     */
     private int getPlayerAmount() {
         try {
             // Around MC 1.8 the return type was changed from an array to a collection,
@@ -134,6 +157,9 @@ public class Metrics {
         }
     }
 
+    /**
+     * The type Metrics base.
+     */
     public static class MetricsBase {
 
         /**
@@ -141,53 +167,97 @@ public class Metrics {
          */
         public static final String METRICS_VERSION = "2.2.1";
 
+        /**
+         * The constant scheduler.
+         */
         private static final ScheduledExecutorService scheduler =
                 Executors.newScheduledThreadPool(1, task -> new Thread(task, "bStats-Metrics"));
 
+        /**
+         * The constant REPORT_URL.
+         */
         private static final String REPORT_URL = "https://bStats.org/api/v2/data/%s";
 
+        /**
+         * The Platform.
+         */
         private final String platform;
 
+        /**
+         * The Server uuid.
+         */
         private final String serverUuid;
 
+        /**
+         * The Service id.
+         */
         private final int serviceId;
 
+        /**
+         * The Append platform data consumer.
+         */
         private final Consumer<JsonObjectBuilder> appendPlatformDataConsumer;
 
+        /**
+         * The Append service data consumer.
+         */
         private final Consumer<JsonObjectBuilder> appendServiceDataConsumer;
 
+        /**
+         * The Submit task consumer.
+         */
         private final Consumer<Runnable> submitTaskConsumer;
 
+        /**
+         * The Check service enabled supplier.
+         */
         private final Supplier<Boolean> checkServiceEnabledSupplier;
 
+        /**
+         * The Error logger.
+         */
         private final BiConsumer<String, Throwable> errorLogger;
 
+        /**
+         * The Info logger.
+         */
         private final Consumer<String> infoLogger;
 
+        /**
+         * The Log errors.
+         */
         private final boolean logErrors;
 
+        /**
+         * The Log sent data.
+         */
         private final boolean logSentData;
 
+        /**
+         * The Log response status text.
+         */
         private final boolean logResponseStatusText;
 
+        /**
+         * The Custom charts.
+         */
         private final Set<CustomChart> customCharts = new HashSet<>();
 
+        /**
+         * The Enabled.
+         */
         private final boolean enabled;
 
         /**
          * Creates a new MetricsBase class instance.
          *
          * @param platform                    The platform of the service.
-         * @param serviceId                   The id of the service.
          * @param serverUuid                  The server uuid.
+         * @param serviceId                   The id of the service.
          * @param enabled                     Whether or not data sending is enabled.
-         * @param appendPlatformDataConsumer  A consumer that receives a {@code JsonObjectBuilder} and
-         *                                    appends all platform-specific data.
-         * @param appendServiceDataConsumer   A consumer that receives a {@code JsonObjectBuilder} and
-         *                                    appends all service-specific data.
-         * @param submitTaskConsumer          A consumer that takes a runnable with the submit task. This can be
-         *                                    used to delegate the data collection to a another thread to prevent errors caused by
-         *                                    concurrency. Can be {@code null}.
+         * @param appendPlatformDataConsumer  A consumer that receives a {@code JsonObjectBuilder} and                                    appends all platform-specific data.
+         * @param appendServiceDataConsumer   A consumer that receives a {@code JsonObjectBuilder} and                                    appends all service-specific data.
+         * @param submitTaskConsumer          A consumer that takes a runnable with the submit task. This can be                                    used to delegate the data collection to a another thread to prevent errors caused by                                    concurrency. Can be {@code null}.
          * @param checkServiceEnabledSupplier A supplier to check if the service is still enabled.
          * @param errorLogger                 A consumer that accepts log message and an error.
          * @param infoLogger                  A consumer that accepts info log messages.
@@ -233,6 +303,7 @@ public class Metrics {
          *
          * @param str The string to gzip.
          * @return The gzipped string.
+         * @throws IOException the io exception
          */
         private static byte[] compress(final String str) throws IOException {
             if (str == null) {
@@ -245,10 +316,18 @@ public class Metrics {
             return outputStream.toByteArray();
         }
 
+        /**
+         * Add custom chart.
+         *
+         * @param chart the chart
+         */
         public void addCustomChart(CustomChart chart) {
             this.customCharts.add(chart);
         }
 
+        /**
+         * Start submitting.
+         */
         private void startSubmitting() {
             final Runnable submitTask =
                     () -> {
@@ -277,6 +356,9 @@ public class Metrics {
                     submitTask, initialDelay + secondDelay, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
         }
 
+        /**
+         * Submit data.
+         */
         private void submitData() {
             final JsonObjectBuilder baseJsonBuilder = new JsonObjectBuilder();
             appendPlatformDataConsumer.accept(baseJsonBuilder);
@@ -307,6 +389,12 @@ public class Metrics {
                     });
         }
 
+        /**
+         * Send data.
+         *
+         * @param data the data
+         * @throws Exception the exception
+         */
         private void sendData(JsonObjectBuilder.JsonObject data) throws Exception {
             if (logSentData) {
                 infoLogger.accept("Sent bStats metrics data: " + data.toString());
@@ -362,8 +450,14 @@ public class Metrics {
         }
     }
 
+    /**
+     * The type Advanced bar chart.
+     */
     public static class AdvancedBarChart extends CustomChart {
 
+        /**
+         * The Callable.
+         */
         private final Callable<Map<String, int[]>> callable;
 
         /**
@@ -377,6 +471,12 @@ public class Metrics {
             this.callable = callable;
         }
 
+        /**
+         * Gets chart data.
+         *
+         * @return the chart data
+         * @throws Exception the exception
+         */
         @Override
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
@@ -402,8 +502,14 @@ public class Metrics {
         }
     }
 
+    /**
+     * The type Simple bar chart.
+     */
     public static class SimpleBarChart extends CustomChart {
 
+        /**
+         * The Callable.
+         */
         private final Callable<Map<String, Integer>> callable;
 
         /**
@@ -417,6 +523,12 @@ public class Metrics {
             this.callable = callable;
         }
 
+        /**
+         * Gets chart data.
+         *
+         * @return the chart data
+         * @throws Exception the exception
+         */
         @Override
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
@@ -432,8 +544,14 @@ public class Metrics {
         }
     }
 
+    /**
+     * The type Multi line chart.
+     */
     public static class MultiLineChart extends CustomChart {
 
+        /**
+         * The Callable.
+         */
         private final Callable<Map<String, Integer>> callable;
 
         /**
@@ -447,6 +565,12 @@ public class Metrics {
             this.callable = callable;
         }
 
+        /**
+         * Gets chart data.
+         *
+         * @return the chart data
+         * @throws Exception the exception
+         */
         @Override
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
@@ -472,8 +596,14 @@ public class Metrics {
         }
     }
 
+    /**
+     * The type Advanced pie.
+     */
     public static class AdvancedPie extends CustomChart {
 
+        /**
+         * The Callable.
+         */
         private final Callable<Map<String, Integer>> callable;
 
         /**
@@ -487,6 +617,12 @@ public class Metrics {
             this.callable = callable;
         }
 
+        /**
+         * Gets chart data.
+         *
+         * @return the chart data
+         * @throws Exception the exception
+         */
         @Override
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
@@ -512,10 +648,21 @@ public class Metrics {
         }
     }
 
+    /**
+     * The type Custom chart.
+     */
     public abstract static class CustomChart {
 
+        /**
+         * The Chart id.
+         */
         private final String chartId;
 
+        /**
+         * Instantiates a new Custom chart.
+         *
+         * @param chartId the chart id
+         */
         protected CustomChart(String chartId) {
             if (chartId == null) {
                 throw new IllegalArgumentException("chartId must not be null");
@@ -523,6 +670,13 @@ public class Metrics {
             this.chartId = chartId;
         }
 
+        /**
+         * Gets request json object.
+         *
+         * @param errorLogger the error logger
+         * @param logErrors   the log errors
+         * @return the request json object
+         */
         public JsonObjectBuilder.JsonObject getRequestJsonObject(
                 BiConsumer<String, Throwable> errorLogger, boolean logErrors) {
             JsonObjectBuilder builder = new JsonObjectBuilder();
@@ -543,11 +697,23 @@ public class Metrics {
             return builder.build();
         }
 
+        /**
+         * Gets chart data.
+         *
+         * @return the chart data
+         * @throws Exception the exception
+         */
         protected abstract JsonObjectBuilder.JsonObject getChartData() throws Exception;
     }
 
+    /**
+     * The type Single line chart.
+     */
     public static class SingleLineChart extends CustomChart {
 
+        /**
+         * The Callable.
+         */
         private final Callable<Integer> callable;
 
         /**
@@ -561,6 +727,12 @@ public class Metrics {
             this.callable = callable;
         }
 
+        /**
+         * Gets chart data.
+         *
+         * @return the chart data
+         * @throws Exception the exception
+         */
         @Override
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             int value = callable.call();
@@ -572,8 +744,14 @@ public class Metrics {
         }
     }
 
+    /**
+     * The type Simple pie.
+     */
     public static class SimplePie extends CustomChart {
 
+        /**
+         * The Callable.
+         */
         private final Callable<String> callable;
 
         /**
@@ -587,6 +765,12 @@ public class Metrics {
             this.callable = callable;
         }
 
+        /**
+         * Gets chart data.
+         *
+         * @return the chart data
+         * @throws Exception the exception
+         */
         @Override
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             String value = callable.call();
@@ -598,8 +782,14 @@ public class Metrics {
         }
     }
 
+    /**
+     * The type Drilldown pie.
+     */
     public static class DrilldownPie extends CustomChart {
 
+        /**
+         * The Callable.
+         */
         private final Callable<Map<String, Map<String, Integer>>> callable;
 
         /**
@@ -613,6 +803,12 @@ public class Metrics {
             this.callable = callable;
         }
 
+        /**
+         * Gets chart data.
+         *
+         * @return the chart data
+         * @throws Exception the exception
+         */
         @Override
         public JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
@@ -650,10 +846,19 @@ public class Metrics {
      */
     public static class JsonObjectBuilder {
 
+        /**
+         * The Builder.
+         */
         private StringBuilder builder = new StringBuilder();
 
+        /**
+         * The Has at least one field.
+         */
         private boolean hasAtLeastOneField = false;
 
+        /**
+         * Instantiates a new Json object builder.
+         */
         public JsonObjectBuilder() {
             builder.append("{");
         }
@@ -831,16 +1036,29 @@ public class Metrics {
          *
          * <p>This class only exists to make methods of the {@link JsonObjectBuilder} type-safe and not
          * allow a raw string inputs for methods like {@link JsonObjectBuilder#appendField(String,
-         * JsonObject)}.
+         * JsonObject)}*.
          */
         public static class JsonObject {
 
+            /**
+             * The Value.
+             */
             private final String value;
 
+            /**
+             * Instantiates a new Json object.
+             *
+             * @param value the value
+             */
             private JsonObject(String value) {
                 this.value = value;
             }
 
+            /**
+             * To string string.
+             *
+             * @return the string
+             */
             @Override
             public String toString() {
                 return value;

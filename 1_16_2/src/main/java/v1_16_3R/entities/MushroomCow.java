@@ -18,8 +18,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Mushroom cow.
+ */
 public class MushroomCow extends EntityMushroomCow {
 
+    /**
+     * Instantiates a new Mushroom cow.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public MushroomCow(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.MOOSHROOM, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

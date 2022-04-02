@@ -2,6 +2,14 @@
 #   OpPets by ThisOpKarol   #
 # ------------------------- #
 
+# (Recommended turning on )
+# MySQL values (by default turned off, switch enabled value to true, in order to activate SQL).
+mysql:
+  enabled: false
+  user: "login"
+  password: "password"
+  url: "jdbc:mysql://localhost:3306/database"
+
 # ------------------------- #
 # Settings section:         #
 # ------------------------- #
@@ -18,6 +26,8 @@ Prestiges:
 Skills:
   example_skill:
     available_pets: '[ALL]'
+    # This isn't a maximum level that player can get, but it is a required level
+    # from which player can prestige-up their pet.
     max_level: 5
     abilities:
       ability1:
@@ -349,54 +359,14 @@ LeaderboardInventory:
         - "&f2nd place &7-&f&l %2_player_name% &7-&f&l %2_player_object%"
       glow: true
       slot: 16
+
 # ------------------------- #
-# Messages section:         #
+# Others section:           #
 # ------------------------- #
 
 Formats:
   broadcastFormat: "&f&l%prefix% &7[&c&l%type%&7]: &f%message%"
   boosterEnabledMessage: "&7Booster %name% has been activated for %time% seconds!"
-AnvilInventories:
-  RenameInventory:
-    titleRename: "&7Enter &f&lnew &7pet name!"
-    thisNameIsBlocked: "&cThis name is blocked."
-    nameWithSpaces: "&c Pet name can't have spaces."
-    changedName: "&7Changed pet name to &f&l%new_pet_name%&7!"
-    incorrectValueName: "&cInvalid value entered."
-  DeleteInventory:
-    titleDelete: "&7Write &f&l%pet_name%&7 to confirm &ndeleting&r &7pet."
-    deletedMessage: "&7Deleted &f&l%pet_name%&7!"
-    confirmMessage: "&7Write your pet name to confirm!"
-  PrestigeInventory:
-    titlePrestige: "&7Write &f&l%pet_name%&7 to confirm prestige-up."
-    confirmPrestigeMessage: "&7Write your pet name to confirm!"
-Commands:
-  badCommandUsage: "&cBad command usage! Use &f&l%proper_usage% &cinstead."
-  noPermission: "&cYou don't have permission &f&l%permission% &cto use this command."
-  noConsole: "&7Console cannot use this command."
-  petWithSameName: "&cYour pets have already the name &f&l%pet_name%&c."
-  wrongType: "&cSelected type &f&l%pet_type% &cis not available"
-  createdPet: "&7Created &f&l%pet_name%&7, pet type of &f&l%pet_type%&7."
-  invalidPet: "&cPet is invalid!"
-  petIsntGiftable: "&cPet isn't giftable!"
-  petIsntRideable: "&cPet isn't rideable"
-  receiverSameNamedPet: "&cReceiver already has pet named &f&l%pet_name%&c!"
-  receiverInvalid: "&cReceiver is invalid."
-  petGifted: "&f&l%pet_name% &7has been gifted to &f&l%player_name%&7!"
-  petBlockedName: "&cPet name contains blocked phrase &f&l%blocked_word%&c!"
-  petListEmpty: "&cPet list is empty."
-  samePet: "&cYou have the same pet equipped."
-  summonedPet: "&7You have summoned pet &f&l%pet_name%&7!"
-  cantPrestige: "&cYour pet cannot prestige now. Need &f&l%more_levels% &cmore levels to be able to!"
-  changedAdminValue: "&7Set value: &f&l%value%&7 for object: &f&l%key%&7, for &f&l%player_name%&7 pet: &f&l%pet_name%&7!"
-  calledSuccessfully: "&7Your pet has been called successfully!"
-  boostersListFormat: "%name% - %type% - %multiplier% - %running%"
-  broadcastListFormat: "%prefix% - %type% - %format%"
-  invalidBooster: "&cInvalid booster."
-  invalidObjectProvided: "&cProvided object / argument is invalid."
-Messages:
-  petLevelUpMessage: "&2-------------------------------%newline%&eNew level &6&l%pet_name%&e!%newline%&eYour pet is now level &6&l%current_level%&e!%newline%Your pet needs &6&l%experience_level% &eexp &eto reach next level.%newline%&2-------------------------------%newline%"
-  prestigeUpMessage: "&2-------------------------------%newline%&eNew prestige &6&l%pet_name%&e!%newline%&eYour pet is now on prestige &6&l%current_prestige%&e!%newline%Your pet needs &6&l%max_level% &elevels &eto reach next prestige.%newline%&2-------------------------------%newline%"
 Pets:
   # AXOLOTL (1.17+)
   AXOLOTL:
@@ -517,19 +487,3 @@ Pets:
       - ACTIONBAR_AFTER:&7You stole a lot of health!
     speed: 1.9
     distance: 15
-
-# ------------------------- #
-#  Currently not working    #
-# ------------------------- #
-
-# MySQL values (by default turned off, switch enabled value to activate SQL).
-# Current version doesn't support mysql, will be supported in the next versions (Most of the code is done, but I want to make sure that everything works)
-# mysql:
-#   enabled: false
-#   host: "localhost"
-#   port: "3306"
-#   database: "your_database"
-#   login: "user"
-#   password: "password"
-#   table: "OpPets"
-#   driver: "mysql"

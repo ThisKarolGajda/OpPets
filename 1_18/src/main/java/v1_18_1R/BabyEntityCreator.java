@@ -11,7 +11,7 @@ package v1_18_1R;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IBabyEntityCreator;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.pets.PetsUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
@@ -20,8 +20,17 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import v1_18_1R.entities.*;
 
+/**
+ * The type Baby entity creator.
+ */
 public class BabyEntityCreator implements IBabyEntityCreator {
 
+    /**
+     * Spawn mini pet.
+     *
+     * @param pet    the pet
+     * @param player the player
+     */
     @Override
     public void spawnMiniPet(@NotNull Pet pet, @NotNull Player player) {
         pet.setOwnerUUID(player.getUniqueId());
@@ -38,6 +47,13 @@ public class BabyEntityCreator implements IBabyEntityCreator {
         new Utils().hideEntityFromServer(player, id);
     }
 
+    /**
+     * Gets pet.
+     *
+     * @param pet    the pet
+     * @param player the player
+     * @return the pet
+     */
     public Animal getPet(@NotNull Pet pet, Player player) {
         switch (pet.getPetType()) {
             case AXOLOTL:

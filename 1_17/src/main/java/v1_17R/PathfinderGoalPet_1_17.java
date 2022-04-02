@@ -10,7 +10,7 @@ package v1_17R;
 
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.pets.PetsUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
@@ -18,14 +18,42 @@ import org.bukkit.Location;
 
 import java.util.EnumSet;
 
+/**
+ * The type Pathfinder goal pet 1 17.
+ */
 public class PathfinderGoalPet_1_17 extends Goal {
+    /**
+     * The A.
+     */
     private final Animal a;
+    /**
+     * The F.
+     */
     private final double f;
+    /**
+     * The G.
+     */
     private final double g;
+    /**
+     * The B.
+     */
     private LivingEntity b;
+    /**
+     * The P.
+     */
     private Pet p;
+    /**
+     * The L.
+     */
     private Location l;
 
+    /**
+     * Instantiates a new Pathfinder goal pet 1 17.
+     *
+     * @param a        the a
+     * @param speed    the speed
+     * @param distance the distance
+     */
     public PathfinderGoalPet_1_17(Animal a, double speed, float distance) {
         this.a = a;
         this.f = speed;
@@ -33,11 +61,19 @@ public class PathfinderGoalPet_1_17 extends Goal {
         this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
+    /**
+     * Can use boolean.
+     *
+     * @return the boolean
+     */
     @Override
     public boolean canUse() {
         return this.a != null;
     }
 
+    /**
+     * Tick.
+     */
     @Override
     public void tick() {
         this.b = this.a.getTarget();
@@ -60,6 +96,11 @@ public class PathfinderGoalPet_1_17 extends Goal {
         }
     }
 
+    /**
+     * Can continue to use boolean.
+     *
+     * @return the boolean
+     */
     @Override
     public boolean canContinueToUse() {
         return this.b != null && this.a.getDisplayName() != null;

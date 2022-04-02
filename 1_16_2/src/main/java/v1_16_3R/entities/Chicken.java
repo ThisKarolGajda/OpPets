@@ -18,7 +18,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Chicken.
+ */
 public class Chicken extends EntityChicken {
+    /**
+     * Instantiates a new Chicken.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Chicken(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.CHICKEN, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);

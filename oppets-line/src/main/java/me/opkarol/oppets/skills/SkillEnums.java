@@ -8,36 +8,94 @@ package me.opkarol.oppets.skills;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+/**
+ * The type Skill enums.
+ */
 public class SkillEnums {
 
     /**
-        SkillsAbilities are abilities that are given to a player         ->
-        for every * action / for every level upgrade / every level * action
+     * SkillsAbilities are abilities that are given to a player         ->
+     * for every * action / for every level upgrade / every level * action
      */
     public enum SkillsAbilities {
-        // CURRENT PLUGIN CONNECTIONS: Vault
-        CUSTOM_COMMAND, PLUGIN_CONNECTION, VANILLA_EFFECT, TREASURE
+        /**
+         * The Custom command.
+         */
+// CURRENT PLUGIN CONNECTIONS: Vault
+        CUSTOM_COMMAND,
+        /**
+         * Plugin connection skills abilities.
+         */
+        PLUGIN_CONNECTION,
+        /**
+         * Vanilla effect skills abilities.
+         */
+        VANILLA_EFFECT,
+        /**
+         * Treasure skills abilities.
+         */
+        TREASURE
     }
 
     /**
-        SkillsRequirements are requirements that are needed to level up such as:
-
+     * SkillsRequirements are requirements that are needed to level up such as:
      */
     public enum SkillsRequirements {
+        /**
+         * Pet level skills requirements.
+         */
         PET_LEVEL,
     }
 
     /**
-        SkillBoosters are addons that can help players to level up their pets
+     * SkillBoosters are addons that can help players to level up their pets
      */
     public enum SkillsBoosters {
-        CUSTOM_BOOSTER, SERVER_BOOST, PLAYER_BOOST, WORLD_BOOST, PET_BOOST
+        /**
+         * Custom booster skills boosters.
+         */
+        CUSTOM_BOOSTER,
+        /**
+         * Server boost skills boosters.
+         */
+        SERVER_BOOST,
+        /**
+         * Player boost skills boosters.
+         */
+        PLAYER_BOOST,
+        /**
+         * World boost skills boosters.
+         */
+        WORLD_BOOST,
+        /**
+         * Pet boost skills boosters.
+         */
+        PET_BOOST
     }
 
     /**
-        SkillAdders are selective group of actions that leads to leveling up your pet
+     * SkillAdders are selective group of actions that leads to leveling up your pet
      */
     public enum SkillsAdders {
-        MINING, HARVESTING, CRAFTING, SMELTING, FISHING
+        /**
+         * Mining skills adders.
+         */
+        MINING,
+        /**
+         * Harvesting skills adders.
+         */
+        HARVESTING,
+        /**
+         * Crafting skills adders.
+         */
+        CRAFTING,
+        /**
+         * Smelting skills adders.
+         */
+        SMELTING,
+        /**
+         * Fishing skills adders.
+         */
+        FISHING
     }
 }

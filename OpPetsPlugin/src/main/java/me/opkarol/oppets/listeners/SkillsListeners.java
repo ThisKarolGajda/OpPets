@@ -31,8 +31,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
+/**
+ * The type Skills listeners.
+ */
 public class SkillsListeners implements Listener {
 
+    /**
+     * Player mine.
+     *
+     * @param event the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerMine(@NotNull BlockBreakEvent event) {
         ItemStack item = event.getPlayer().getItemInHand();
@@ -65,6 +73,11 @@ public class SkillsListeners implements Listener {
         database.addPoint(SkillEnums.SkillsAdders.MINING, pet, player);
     }
 
+    /**
+     * Player harvest.
+     *
+     * @param event the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerHarvest(@NotNull PlayerHarvestBlockEvent event) {
         Player player = event.getPlayer();
@@ -94,6 +107,11 @@ public class SkillsListeners implements Listener {
         database.addPoint(SkillEnums.SkillsAdders.HARVESTING, pet, player);
     }
 
+    /**
+     * Player harvest.
+     *
+     * @param event the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerHarvest(@NotNull BlockBreakEvent event) {
         Player player = event.getPlayer();
@@ -122,6 +140,11 @@ public class SkillsListeners implements Listener {
         database.addPoint(SkillEnums.SkillsAdders.HARVESTING, pet, player);
     }
 
+    /**
+     * Player craft.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void playerCraft(@NotNull CraftItemEvent event) {
         if (event.getCurrentItem() == null) {
@@ -156,6 +179,11 @@ public class SkillsListeners implements Listener {
         database.addPoint(SkillEnums.SkillsAdders.CRAFTING, pet, player);
     }
 
+    /**
+     * Player smelt.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void playerSmelt(@NotNull FurnaceExtractEvent event) {
 
@@ -187,6 +215,11 @@ public class SkillsListeners implements Listener {
         database.addPoint(SkillEnums.SkillsAdders.SMELTING, pet, player);
     }
 
+    /**
+     * Player fish.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void playerFish(@NotNull PlayerFishEvent event) {
         if (event.getCaught() == null) {

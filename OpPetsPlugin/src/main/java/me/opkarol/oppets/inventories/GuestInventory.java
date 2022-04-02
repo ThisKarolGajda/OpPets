@@ -8,12 +8,13 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IInventory;
+import me.opkarol.oppets.inventories.holders.GuestInventoryHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
-import me.opkarol.oppets.inventories.holders.GuestInventoryHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -22,33 +23,58 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.ConfigUtils.getString;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
+/**
+ * The type Guest inventory.
+ */
 public class GuestInventory implements IInventory {
-    final String guiTitle = getString("GuestInventory.title");
-    final Pet pet;
-    final Inventory inventory;
+    /**
+     * The Pet.
+     */
+    private final Pet pet;
+    /**
+     * The Inventory.
+     */
+    private final Inventory inventory;
 
+    /**
+     * Instantiates a new Guest inventory.
+     *
+     * @param pet the pet
+     */
     public GuestInventory(@NotNull Pet pet) {
         this.pet = pet;
-        inventory = Bukkit.createInventory(new GuestInventoryHolder(), 27, FormatUtils.formatMessage(guiTitle.replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName()))));
+        inventory = Bukkit.createInventory(new GuestInventoryHolder(), 27, InventoriesCache.guestInventoryTitle.replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
         setupInventory();
     }
 
+    /**
+     * Gets inventory.
+     *
+     * @return the inventory
+     */
     public Inventory getInventory() {
         return inventory;
     }
 
+    /**
+     * Sets inventory.
+     */
     private void setupInventory() {
         String path = "GuestInventory.items.";
         inventory.setItem(11, itemCreator(path + "informationBook.", this));
         inventory.setItem(15, itemCreator(path + "level.", this));
         setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
-
     }
 
+    /**
+     * Sets place holders.
+     *
+     * @param lore the lore
+     * @return the place holders
+     */
     @Override
     @NotNull
     public List<String> setPlaceHolders(@NotNull List<String> lore) {

@@ -13,12 +13,13 @@ import me.opkarol.oppets.interfaces.IHolder;
 import me.opkarol.oppets.interfaces.IUtils;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.pets.PetsUtils;
-import me.opkarol.oppets.files.Messages;
+import me.opkarol.oppets.pets.PetMainInventoryHolder;
+import me.opkarol.oppets.utils.PetsUtils;
 import me.opkarol.oppets.inventories.*;
 import me.opkarol.oppets.inventories.anvil.PrestigeConfirmAnvilInventory;
 import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
 import me.opkarol.oppets.inventories.holders.*;
+import me.opkarol.oppets.shops.ShopInventoryHolder;
 import me.opkarol.oppets.skills.SkillUtils;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
@@ -42,8 +43,16 @@ import java.util.UUID;
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 import static me.opkarol.oppets.utils.InventoryUtils.*;
 
+/**
+ * The type Player interact.
+ */
 public class PlayerInteract implements Listener {
 
+    /**
+     * Player interact.
+     *
+     * @param event the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerInteract(@NotNull PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
@@ -53,7 +62,7 @@ public class PlayerInteract implements Listener {
         if (Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId()) != null) {
             if (Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
                 event.setCancelled(true);
-                player.openInventory(new PetMainInventory().getInventory());
+                OpUtils.openMainInventory(player);
                 event.getPlayer().updateInventory();
                 return;
             }
@@ -73,6 +82,11 @@ public class PlayerInteract implements Listener {
 
     }
 
+    /**
+     * Player interact.
+     *
+     * @param event the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerInteract(@NotNull InventoryClickEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
@@ -165,7 +179,7 @@ public class PlayerInteract implements Listener {
         } else if (holder instanceof PrestigeInventoryHolder) {
             if (slot == 15) {
                 if (!OpUtils.canPrestige(pet)) {
-                    returnMessage(player, Messages.stringMessage("cantPrestige").replace("%more_levels%", String.valueOf(OpUtils.getLevelsForPrestige(pet))));
+                    returnMessage(player, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("cantPrestige").replace("%more_levels%", String.valueOf(OpUtils.getLevelsForPrestige(pet))));
                     return;
                 }
                 player.closeInventory();

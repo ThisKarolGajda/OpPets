@@ -10,10 +10,9 @@ package me.opkarol.oppets.commands;
 
 import me.opkarol.oppets.boosters.Booster;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.interfaces.ICommand;
-import me.opkarol.oppets.utils.OpUtils;
 import me.opkarol.oppets.misc.StringTransformer;
+import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,19 +20,38 @@ import java.util.List;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
+/**
+ * The type Booster command.
+ */
 public class BoosterCommand implements ICommand {
+    /**
+     * The Transformer.
+     */
     private final StringTransformer transformer;
+    /**
+     * The Format.
+     */
     private final String format;
 
+    /**
+     * Instantiates a new Booster command.
+     */
     public BoosterCommand() {
         transformer = new StringTransformer();
-        format = Messages.stringMessage("boostersListFormat");
+        format = Database.getOpPets().getMessages().getMessagesAccess().stringMessage("boostersListFormat");
     }
 
+    /**
+     * Execute boolean.
+     *
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
+     */
     @Override
     public boolean execute(CommandSender sender, String @NotNull [] args) {
         if (args.length < 2) {
-            return returnMessage(sender, Messages.stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets booster <add/remove/list> (name) (type) (multiplier) (time)"));
+            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets booster <add/remove/list> (name) (type) (multiplier) (time)"));
         }
 
         String parameter = args[1];
@@ -64,13 +82,13 @@ public class BoosterCommand implements ICommand {
                     String name = args[2];
                     Object object = transformer.getEnumFromString(args[3], Booster.BOOSTER_TYPE.class);
                     if (object == null) {
-                        return returnMessage(sender, Messages.stringMessage("invalidObjectProvided"));
+                        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidObjectProvided"));
                     }
                     Booster.BOOSTER_TYPE type = (Booster.BOOSTER_TYPE) object;
                     Double multiplier = transformer.getDoubleFromString(args[4]);
                     Integer time = transformer.getIntFromString(args[5]);
                     if (name == null || multiplier == null || time == null) {
-                        return returnMessage(sender, Messages.stringMessage("invalidObjectProvided"));
+                        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidObjectProvided"));
                     }
                     if (!type.equals(Booster.BOOSTER_TYPE.PLAYER)) {
                         Database.getOpPets().getBoosterProvider().createNewBooster(name, multiplier, time, type);
@@ -84,16 +102,32 @@ public class BoosterCommand implements ICommand {
         return true;
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     @Override
     public String getPermission() {
         return "oppets.command.booster";
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @return the sub command
+     */
     @Override
     public String getSubCommand() {
         return "booster";
     }
 
+    /**
+     * Gets formatted.
+     *
+     * @param booster the booster
+     * @return the formatted
+     */
     public @NotNull String getFormatted(@NotNull Booster booster) {
         return format
                 .replace("%running%", String.valueOf(booster.isRunning()))

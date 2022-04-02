@@ -8,9 +8,94 @@ package me.opkarol.oppets.pets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+/**
+ * The type Op pets entity types.
+ */
 public class OpPetsEntityTypes {
 
+    /**
+     * The enum Type of entity.
+     */
     public enum TypeOfEntity {
-        AXOLOTL, CAT, CHICKEN, COW, DONKEY, FOX, GOAT, HORSE, LLAMA, MULE, MUSHROOM_COW, OCELOT, PANDA, PARROT, PIG, POLAR_BEAR, RABBIT, SHEEP, TURTLE, WOLF
+        /**
+         * Axolotl type of entity.
+         */
+        AXOLOTL,
+        /**
+         * Cat type of entity.
+         */
+        CAT,
+        /**
+         * Chicken type of entity.
+         */
+        CHICKEN,
+        /**
+         * Cow type of entity.
+         */
+        COW,
+        /**
+         * Donkey type of entity.
+         */
+        DONKEY,
+        /**
+         * Fox type of entity.
+         */
+        FOX,
+        /**
+         * Goat type of entity.
+         */
+        GOAT,
+        /**
+         * Horse type of entity.
+         */
+        HORSE,
+        /**
+         * Llama type of entity.
+         */
+        LLAMA,
+        /**
+         * Mule type of entity.
+         */
+        MULE,
+        /**
+         * Mushroom cow type of entity.
+         */
+        MUSHROOM_COW,
+        /**
+         * Ocelot type of entity.
+         */
+        OCELOT,
+        /**
+         * Panda type of entity.
+         */
+        PANDA,
+        /**
+         * Parrot type of entity.
+         */
+        PARROT,
+        /**
+         * Pig type of entity.
+         */
+        PIG,
+        /**
+         * Polar bear type of entity.
+         */
+        POLAR_BEAR,
+        /**
+         * Rabbit type of entity.
+         */
+        RABBIT,
+        /**
+         * Sheep type of entity.
+         */
+        SHEEP,
+        /**
+         * Turtle type of entity.
+         */
+        TURTLE,
+        /**
+         * Wolf type of entity.
+         */
+        WOLF
     }
 }

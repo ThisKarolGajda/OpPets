@@ -28,8 +28,17 @@ import v1_16_5R.Utils;
 import java.util.Arrays;
 import java.util.HashSet;
 
+/**
+ * The type Entity manager.
+ */
 public class EntityManager implements IEntityManager {
 
+    /**
+     * Init pathfinder.
+     *
+     * @param entity the entity
+     * @param type   the type
+     */
     public void initPathfinder(@NotNull Object entity, OpPetsEntityTypes.TypeOfEntity type) {
         EntityAnimal e = (EntityAnimal) entity;
         PetDatabaseObject object = Database.getPetsDatabase().getObjectFromDatabase(type);
@@ -39,6 +48,13 @@ public class EntityManager implements IEntityManager {
         e.goalSelector.a(0, new PathfinderGoalFloat(e));
     }
 
+    /**
+     * Spawn entity.
+     *
+     * @param obj1 the obj 1
+     * @param obj2 the obj 2
+     * @param obj3 the obj 3
+     */
     @Override
     public void spawnEntity(@NotNull Object obj1, @NotNull Object obj2, @NotNull Object obj3) {
         Player player = (Player) obj2;
@@ -58,6 +74,11 @@ public class EntityManager implements IEntityManager {
         initPathfinder(entity, pet.getPetType());
     }
 
+    /**
+     * Gets allowed entities.
+     *
+     * @return the allowed entities
+     */
     @Override
     public HashSet<String> getAllowedEntities() {
         return new HashSet<>(Arrays.asList("Cat", "Chicken", "Cow", "Donkey", "Fox", "Horse", "Llama", "Mule", "Mushroom_Cow", "Ocelot", "Panda", "Parrot", "Pig", "PolarBear", "Rabbit", "Sheep", "Turtle", "Wolf"));

@@ -18,7 +18,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * The type Llama.
+ */
 public class Llama extends EntityLlama {
+    /**
+     * Instantiates a new Llama.
+     *
+     * @param location the location
+     * @param player   the player
+     * @param pet      the pet
+     */
     public Llama(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.LLAMA, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         new EntityManager().spawnEntity(this, player, pet);
