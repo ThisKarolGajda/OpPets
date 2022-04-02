@@ -158,6 +158,7 @@
                                         <include>plugin.yml</include>
                                         <include>config.yml</include>
                                         <include>net/wesjd/anvilgui/**</include>
+                                        <include>com/zaxxer/hikari/**</include>
                                     </includes>
                                 </filter>
                             </filters>
@@ -165,6 +166,10 @@
                                 <relocation>
                                     <pattern>net.wesjd.anvilgui</pattern>
                                     <shadedPattern>me.opkarol.oppets.anvilgui</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.zaxxer.hikari</pattern>
+                                    <shadedPattern>me.opkarol.oppets.hikaricp</shadedPattern>
                                 </relocation>
                             </relocations>
                             <minimizeJar>false</minimizeJar>
