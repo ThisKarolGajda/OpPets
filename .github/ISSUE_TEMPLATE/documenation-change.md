@@ -2,7 +2,7 @@
 name: Documenation change
 about: Suggest / order a change for documantion
 title: "[DOCS]"
-labels: documentation, duplicate
+labels: documentation, not sorted
 assignees: ThisKarolGajda
 
 ---
