@@ -35,6 +35,8 @@ Skills:
         connection: Vault
         options:
           action: 500
+      # Custom commands will be executed by console.
+      # This feature is coming soon!
       ability2:
         type: CUSTOM_COMMAND
         options:
@@ -52,6 +54,9 @@ Skills:
         type: TREASURE
         name: '&bLevel Treasure!'
         options: { }
+      ability5:
+        type: CUSTOM_MESSAGE
+        message: '&bYou got speed effect for 100 seconds and 500$!'
     requirements:
       requirement1:
         type: PET_LEVEL
@@ -359,6 +364,8 @@ LeaderboardInventory:
         - "&f2nd place &7-&f&l %2_player_name% &7-&f&l %2_player_object%"
       glow: true
       slot: 16
+AddonsInventory:
+  title: "&e&lAddons!"
 
 # ------------------------- #
 # Others section:           #

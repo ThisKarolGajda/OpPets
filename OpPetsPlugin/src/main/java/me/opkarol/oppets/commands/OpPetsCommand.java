@@ -11,7 +11,6 @@ package me.opkarol.oppets.commands;
 import me.opkarol.oppets.boosters.Booster;
 import me.opkarol.oppets.broadcasts.Broadcast;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
@@ -62,6 +61,7 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
         commands.add(new BoosterCommand());
         commands.add(new LeaderboardCommand());
         commands.add(new BroadcastCommand());
+        commands.add(new AddonsCommand());
     }
 
     /**

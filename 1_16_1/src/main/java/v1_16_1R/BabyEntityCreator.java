@@ -8,9 +8,11 @@ package v1_16_1R;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.cache.NamespacedKeysCache;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IBabyEntityCreator;
 import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.utils.PDCUtils;
 import me.opkarol.oppets.utils.PetsUtils;
 import net.minecraft.server.v1_16_R1.ChatMessage;
 import net.minecraft.server.v1_16_R1.EntityAgeable;
@@ -44,6 +46,7 @@ public class BabyEntityCreator implements IBabyEntityCreator {
         world.addEntity(entityAnimal);
         int id = entityAnimal.getId();
         Database.getDatabase().addIdPet(pet.getOwnUUID(), id);
+        PDCUtils.addNBT(entityAnimal.getBukkitEntity(), NamespacedKeysCache.petKey, "valid");
         if (pet.isVisibleToOthers()) return;
         new Utils().hideEntityFromServer(player, id);
     }

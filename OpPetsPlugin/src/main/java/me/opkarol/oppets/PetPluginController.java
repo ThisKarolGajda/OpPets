@@ -8,24 +8,32 @@ package me.opkarol.oppets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.interfaces.*;
-import me.opkarol.oppets.packets.PacketManager;
-import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.cache.NamespacedKeysCache;
 import me.opkarol.oppets.commands.OpPetsCommand;
+import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.files.FileManager;
+import me.opkarol.oppets.interfaces.IBabyEntityCreator;
+import me.opkarol.oppets.interfaces.IEntityManager;
+import me.opkarol.oppets.interfaces.IPacketPlayInSteerVehicleEvent;
+import me.opkarol.oppets.interfaces.IUtils;
 import me.opkarol.oppets.listeners.*;
 import me.opkarol.oppets.misc.Metrics;
+import me.opkarol.oppets.packets.PacketManager;
+import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.utils.PDCUtils;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
-//import net.milkbowl.vault.economy.Economy;
 
 /**
  * PetPluginController is a controlling class that can run methods
@@ -165,6 +173,11 @@ public class PetPluginController {
                 Database.getUtils().killPetFromPlayerUUID(uuid);
             }
         });
+        Bukkit.getWorlds()
+                .forEach(world -> world.getLivingEntities().stream()
+                        .filter(entity -> (!(entity instanceof Player)))
+                        .filter(entity -> PDCUtils.hasNBT(entity, NamespacedKeysCache.petKey))
+                        .forEach(LivingEntity::remove));
     }
 
     /**
@@ -249,14 +262,19 @@ public class PetPluginController {
         this.version = version;
     }
 
-    //public @Nullable Economy setupEconomy() {
-    //    if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
-    //        return null;
-    //    }
-    //    RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-    //    if (rsp == null) {
-    //        return null;
-    //    }
-    //    return rsp.getProvider();
-    //}
+    /**
+     * Sets economy.
+     *
+     * @return the economy
+     */
+    public @Nullable Economy setupEconomy() {
+        if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
+            return null;
+        }
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return null;
+        }
+        return rsp.getProvider();
+    }
 }

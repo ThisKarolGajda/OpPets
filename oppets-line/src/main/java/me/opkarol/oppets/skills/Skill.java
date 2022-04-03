@@ -66,7 +66,7 @@ public class Skill extends SkillEnums {
      *
      * @return the a
      */
-    public String getA() {
+    public String getName() {
         return name;
     }
 
@@ -84,7 +84,7 @@ public class Skill extends SkillEnums {
      *
      * @return the b
      */
-    public List<Ability> getB() {
+    public List<Ability> getAbilityList() {
         return abilityList;
     }
 
@@ -102,7 +102,7 @@ public class Skill extends SkillEnums {
      *
      * @return the c
      */
-    public List<Requirement> getC() {
+    public List<Requirement> getRequirementList() {
         return requirementList;
     }
 
@@ -120,7 +120,7 @@ public class Skill extends SkillEnums {
      *
      * @return the e
      */
-    public List<Adder> getE() {
+    public List<Adder> getAdderList() {
         return adderList;
     }
 
@@ -138,7 +138,7 @@ public class Skill extends SkillEnums {
      *
      * @return the f
      */
-    public List<OpPetsEntityTypes.TypeOfEntity> getF() {
+    public List<OpPetsEntityTypes.TypeOfEntity> getTypeOfEntityList() {
         return typeOfEntityList;
     }
 
@@ -156,7 +156,7 @@ public class Skill extends SkillEnums {
      *
      * @return the h
      */
-    public int getH() {
+    public int getMaxLevel() {
         return maxLevel;
     }
 

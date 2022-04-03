@@ -17,6 +17,7 @@ import me.opkarol.oppets.prestiges.PrestigeManager;
 import me.opkarol.oppets.skills.Ability;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -51,21 +52,19 @@ public class PetListeners implements Listener {
         if (pet.getPetName() == null) {
             return;
         }
-
         player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petLevelUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_level%", String.valueOf(OpUtils.getLevel(pet))).replace("%max_level%", String.valueOf(OpUtils.getMaxLevel(pet))).replace("%experience_level%", String.valueOf(OpUtils.getPetLevelExperience(pet))));
         if (pet.areParticlesEnabled()) {
             ParticlesManager.spawnLevelUpPetEffect(player, Database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
         }
-
-        List<Ability> abilities = Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getB();
+        List<Ability> abilities = Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getAbilityList();
         for (Ability ability : abilities) {
             switch (ability.getAbility()) {
                 case PLUGIN_CONNECTION -> {
                     if (ability.getPLUGIN_CONNECTION().equalsIgnoreCase("Vault")) {
-                        //Economy economy = OpPets.getEconomy();
-                        //if (economy != null) {
-                        //    economy.depositPlayer(player, Double.parseDouble(ability.getPluginAction()));
-                        //}
+                        Economy economy = Database.getOpPets().getEconomy();
+                        if (economy != null) {
+                            economy.depositPlayer(player, Double.parseDouble(ability.getPluginAction()));
+                        }
                     }
                 }
                 case CUSTOM_COMMAND -> {
@@ -84,10 +83,9 @@ public class PetListeners implements Listener {
                 case TREASURE -> {
 
                 }
+                case CUSTOM_MESSAGE -> player.sendMessage(ability.getMESSAGE());
             }
         }
-
-
     }
 
     /**

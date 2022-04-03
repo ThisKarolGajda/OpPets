@@ -66,12 +66,16 @@ public class StringTransformer {
      *
      * @param s the s
      * @return the boolean
+     * @since 0.8.3.3
      */
+    @Deprecated
     public boolean containsNotNumbers(@NotNull String s) {
         for (char c : s.toCharArray()) {
-            String s1 = String.valueOf(c).replaceAll("[A-z]", "").replace("&", "").replace(",", "");
-            if (s1.length() != 1) {
-                return true;
+            String cs = String.valueOf(c);
+            for (int i = 0; i < 10; i++) {
+                if (cs.contains(String.valueOf(i))) {
+                    return true;
+                }
             }
         }
         return false;

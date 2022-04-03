@@ -21,7 +21,7 @@ public class SkillEnums {
         /**
          * The Custom command.
          */
-// CURRENT PLUGIN CONNECTIONS: Vault
+        // CURRENT PLUGIN CONNECTIONS: Vault
         CUSTOM_COMMAND,
         /**
          * Plugin connection skills abilities.
@@ -34,7 +34,8 @@ public class SkillEnums {
         /**
          * Treasure skills abilities.
          */
-        TREASURE
+        TREASURE,
+        CUSTOM_MESSAGE
     }
 
     /**

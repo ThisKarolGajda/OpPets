@@ -229,18 +229,23 @@ public class MySQL {
      * @return the boolean
      */
     @SuppressWarnings("unused")
-    @Deprecated
-    public static boolean containsID(int id) {
-        try (Connection conn = source.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM `oppets` WHERE id=?;"
-             )) {
-            stmt.setString(1, String.valueOf(id));
-            ResultSet resultSet = stmt.executeQuery();
-            return resultSet.next();
-        } catch (SQLException e) {
-            logSQLError("Could not check player pet " + e.getLocalizedMessage());
-        }
-        return false;
+    public static synchronized boolean containsID(int id) {
+        final boolean[] supplier = new boolean[1];
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try (Connection conn = source.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement(
+                             "SELECT * FROM `oppets` WHERE id=?;"
+                     )) {
+                    stmt.setString(1, String.valueOf(id));
+                    ResultSet resultSet = stmt.executeQuery();
+                    supplier[0] = resultSet.next();
+                } catch (SQLException e) {
+                    logSQLError("Could not check player pet " + e.getLocalizedMessage());
+                }
+            }
+        }.runTaskAsynchronously(plugin);
+        return supplier[0];
     }
 }

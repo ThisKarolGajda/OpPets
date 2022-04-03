@@ -9,16 +9,16 @@ package me.opkarol.oppets.commands;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.interfaces.ICommand;
+import me.opkarol.oppets.inventories.anvil.DeleteAnvilInventory;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.inventories.anvil.DeleteAnvilInventory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
@@ -80,12 +80,8 @@ public class DeleteCommand implements ICommand {
      * @return the pet by name
      */
     private Pet getPetByName(UUID playerUUID, String petName) {
-        final Pet[] petI = new Pet[1];
-        Database.getOpPets().getDatabase().getPetList(playerUUID).forEach(pet -> {
-            if (Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(petName))) {
-                petI[0] = pet;
-            }
-        });
-        return petI[0];
+        return Database.getOpPets().getDatabase().getPetList(playerUUID).stream()
+                .filter(pet -> Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(petName))).collect(Collectors.toList())
+                .get(0);
     }
 }

@@ -62,7 +62,7 @@ public class OpUtils {
      * @see me.opkarol.oppets.skills.SkillDatabase
      */
     public static int getMaxLevel(@NotNull Pet pet) {
-        return Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getH();
+        return Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getMaxLevel();
     }
 
     /**
@@ -76,7 +76,7 @@ public class OpUtils {
      *
      * @param pet class object from which level will be read
      * @return experience is a divided operation from pet`s experience and adderPoints
-     * @see me.opkarol.oppets.utils.OpUtils#getAdderPoints me.opkarol.oppets.utils.OpUtils#getAdderPoints
+     * @see me.opkarol.oppets.utils.OpUtils#getAdderPoints me.opkarol.oppets.utils.OpUtils#getAdderPointsme.opkarol.oppets.utils.OpUtils#getAdderPoints
      */
     public static int getPetLevelExperience(@NotNull Pet pet) {
         return Math.toIntExact(Math.round(getAdderPoints(pet.getSkillName(), true, pet) - pet.getPetExperience()));
@@ -114,7 +114,7 @@ public class OpUtils {
      */
     public static double getAdderPoints(String skillName, boolean lowestOutput, Pet pet) {
         double number = 0D;
-        List<Adder> list = Database.getOpPets().getSkillDatabase().getSkillFromMap(skillName).getE();
+        List<Adder> list = Database.getOpPets().getSkillDatabase().getSkillFromMap(skillName).getAdderList();
         for (Adder adder : list) {
             double calculated = adder.calculateMaxCurrent(pet.getLevel());
             if (number == 0) {

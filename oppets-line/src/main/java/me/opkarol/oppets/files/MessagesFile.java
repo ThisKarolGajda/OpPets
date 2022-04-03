@@ -101,6 +101,9 @@ public class MessagesFile {
         saveData();
     }
 
+    /**
+     * Reload data.
+     */
     @SuppressWarnings("unused")
     public void reloadData() {
         this.data = YamlConfiguration.loadConfiguration(this.file);

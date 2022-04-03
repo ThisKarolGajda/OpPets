@@ -12,18 +12,19 @@ import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.inventories.holders.BuyerAdmitInventoryHolder;
 import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.PDCUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.opkarol.oppets.cache.NamespacedKeysCache.priceKey;
+import static me.opkarol.oppets.cache.NamespacedKeysCache.typeKey;
 import static me.opkarol.oppets.utils.InventoryUtils.*;
 
 /**
@@ -33,15 +34,15 @@ public class BuyerAdmitInventory implements IInventory {
     /**
      * The Inventory.
      */
-    private Inventory inventory;
+    private final Inventory inventory;
     /**
      * The Price.
      */
-    private String price;
+    private final String price;
     /**
      * The Type.
      */
-    private String type;
+    private final String type;
 
     /**
      * Instantiates a new Buyer admit inventory.
@@ -49,12 +50,8 @@ public class BuyerAdmitInventory implements IInventory {
      * @param item the item
      */
     public BuyerAdmitInventory(@NotNull ItemStack item) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) {
-            return;
-        }
-        price = String.valueOf(getValueFromKey(priceKey, meta, ItemTagType.INTEGER));
-        type = (String) getValueFromKey(typeKey, meta, ItemTagType.STRING);
+        price = PDCUtils.getNBT(item, priceKey);
+        type = PDCUtils.getNBT(item, typeKey);
         inventory = Bukkit.createInventory(new BuyerAdmitInventoryHolder(), 27, InventoriesCache.buyerAdmitInventoryTitle);
         setupInventory();
     }

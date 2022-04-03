@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * The type Skill database.
@@ -115,8 +116,8 @@ public class SkillDatabase {
         if (skillMap.size() == 0) return null;
         List<Skill> list = new ArrayList<>();
         skillMap.values().forEach(skill -> {
-            if (skill.getF() != null) {
-                if (skill.getF().contains(type)) {
+            if (skill.getTypeOfEntityList() != null) {
+                if (skill.getTypeOfEntityList().contains(type)) {
                     list.add(skill);
                 }
             }
@@ -137,13 +138,8 @@ public class SkillDatabase {
         double multiplier = Database.getOpPets().getBoosterProvider().getMultiplier(player.getUniqueId().toString());
         pet.setPetExperience(experience + grantedPoints * multiplier);
         double maxPoints = utils.getMaxPointsFromEnum(pet, skillEnums);
-        final boolean[] requirementPetLevel = {false};
-        Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getC().forEach(requirement -> {
-            if (requirement.getRequirement().equals(SkillEnums.SkillsRequirements.PET_LEVEL)) {
-                requirementPetLevel[0] = true;
-            }
-        });
-        if (requirementPetLevel[0]) {
+        Stream<Requirement> stream = Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getRequirementList().stream().filter(requirement -> requirement.getRequirement().equals(SkillEnums.SkillsRequirements.PET_LEVEL));
+        if (stream.findAny().isPresent()) {
             if (maxPoints <= pet.getPetExperience()) {
                 Bukkit.getPluginManager().callEvent(new PetLevelupEvent(player, pet));
             }

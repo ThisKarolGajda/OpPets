@@ -92,10 +92,8 @@ public class LeaderboardInventory implements IInventory {
         List<Pet> pets = new ArrayList<>(leaderboard.getPlaces());
         List<String> list = new ArrayList<>();
         lore.forEach(lambdaString -> {
-            final String[] toAdd = new String[1];
-            toAdd[0] = lambdaString;
+            String toAdd = lambdaString;
             String[] strings = lambdaString.split(" ");
-            //TODO fix
             for (String string : strings) {
                 if (!string.startsWith("%") || !string.endsWith("%")) {
                     continue;
@@ -113,24 +111,24 @@ public class LeaderboardInventory implements IInventory {
                     continue;
                 }
                 if (replaced.substring(1).equals("_player_name")) {
-                    toAdd[0] = toAdd[0].replace("%" + number + "_player_name%", OpUtils.getNameFromUUID(pet.getOwnerUUID()));
+                    toAdd = lambdaString.replace("%" + number + "_player_name%", OpUtils.getNameFromUUID(pet.getOwnerUUID()));
                 } else {
                     switch (leaderboard.getType()) {
                         case TOP_LEVEL:
-                            toAdd[0] = toAdd[0].replace("%" + number + "_player_object%", String.valueOf(pet.getLevel()));
+                            toAdd = lambdaString.replace("%" + number + "_player_object%", String.valueOf(pet.getLevel()));
                             break;
                         case TOP_PRESTIGE:
-                            toAdd[0] = toAdd[0].replace("%" + number + "_player_object%", new PrestigeManager().getFilledPrestige(pet.getPrestige()));
+                            toAdd = lambdaString.replace("%" + number + "_player_object%", new PrestigeManager().getFilledPrestige(pet.getPrestige()));
                             break;
                         case TOP_EXPERIENCE:
-                            toAdd[0] = toAdd[0].replace("%" + number + "_player_object%", String.valueOf(pet.getPetExperience()));
+                            toAdd = lambdaString.replace("%" + number + "_player_object%", String.valueOf(pet.getPetExperience()));
                             break;
                         default:
                             throw new IllegalStateException("Unexpected value: " + leaderboard.getType());
                     }
                 }
             }
-            list.add(FormatUtils.formatMessage(toAdd[0]));
+            list.add(FormatUtils.formatMessage(toAdd));
         });
         return list;
     }

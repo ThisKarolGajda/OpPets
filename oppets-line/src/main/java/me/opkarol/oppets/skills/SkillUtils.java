@@ -64,7 +64,9 @@ public class SkillUtils {
         List<OpPetsEntityTypes.TypeOfEntity> list = new ArrayList<>();
         try {
             for (String pseudoType : strings) {
-                if (pseudoType.equals("[]")) break;
+                if (pseudoType.equals("[]")) {
+                    break;
+                }
                 if (pseudoType.equals("ALL")) {
                     list.addAll(Arrays.stream(OpPetsEntityTypes.TypeOfEntity.values()).collect(Collectors.toList()));
                     break;
@@ -90,11 +92,12 @@ public class SkillUtils {
         pathI = pathI.substring(0, pathI.length() - 1);
         List<Ability> list = new ArrayList<>();
         ConfigurationSection sec = config.getConfigurationSection(pathI + ".abilities");
-        if (sec != null) {
-            for (String key : sec.getKeys(false)) {
-                String iPath = pathI + ".abilities." + key + ".";
-                list.add(new Ability(SkillEnums.SkillsAbilities.valueOf(config.getString(iPath + "type")), iPath));
-            }
+        if (sec == null) {
+            return list;
+        }
+        for (String key : sec.getKeys(false)) {
+            String iPath = pathI + ".abilities." + key + ".";
+            list.add(new Ability(SkillEnums.SkillsAbilities.valueOf(config.getString(iPath + "type")), iPath));
         }
         return list;
     }
@@ -112,11 +115,12 @@ public class SkillUtils {
         path = path.substring(0, path.length() - 1);
         List<Requirement> list = new ArrayList<>();
         ConfigurationSection sec = config.getConfigurationSection(path + ".requirements");
-        if (sec != null) {
-            for (String key : sec.getKeys(false)) {
-                String iPath = path + ".requirements." + key + ".";
-                list.add(new Requirement(SkillEnums.SkillsRequirements.valueOf(config.getString(iPath + "type"))));
-            }
+        if (sec == null) {
+            return list;
+        }
+        for (String key : sec.getKeys(false)) {
+            String iPath = path + ".requirements." + key + ".";
+            list.add(new Requirement(SkillEnums.SkillsRequirements.valueOf(config.getString(iPath + "type"))));
         }
         return list;
     }
@@ -134,15 +138,16 @@ public class SkillUtils {
         path = path.substring(0, path.length() - 1);
         List<Adder> list = new ArrayList<>();
         ConfigurationSection sec = config.getConfigurationSection(path + ".adders");
-        if (sec != null) {
-            for (String key : sec.getKeys(false)) {
-                String iPath = path + ".adders." + key + ".";
-                int everyAction = config.getInt(iPath + "levelup.everyAction");
-                if (everyAction == 0) {
-                    list.add(new Adder(SkillEnums.SkillsAdders.valueOf(config.getString(iPath + "type")), config.getString(iPath + "levelup.progressiveLevel"), Objects.requireNonNull(config.getString(iPath + "materials"))));
-                } else {
-                    list.add(new Adder(SkillEnums.SkillsAdders.valueOf(config.getString(iPath + "type")), config.getDouble(iPath + "levelup.grantedPoints"), everyAction, Objects.requireNonNull(config.getString(iPath + "materials"))));
-                }
+        if (sec == null) {
+            return list;
+        }
+        for (String key : sec.getKeys(false)) {
+            String iPath = path + ".adders." + key + ".";
+            int everyAction = config.getInt(iPath + "levelup.everyAction");
+            if (everyAction == 0) {
+                list.add(new Adder(SkillEnums.SkillsAdders.valueOf(config.getString(iPath + "type")), config.getString(iPath + "levelup.progressiveLevel"), Objects.requireNonNull(config.getString(iPath + "materials"))));
+            } else {
+                list.add(new Adder(SkillEnums.SkillsAdders.valueOf(config.getString(iPath + "type")), config.getDouble(iPath + "levelup.grantedPoints"), everyAction, Objects.requireNonNull(config.getString(iPath + "materials"))));
             }
         }
         return list;
@@ -156,15 +161,14 @@ public class SkillUtils {
      * @return the granted points from enum
      */
     public double getGrantedPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
-        final double[] i = {0};
-        database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
-            if (adder.getAdder() == skillsAdder) {
-                if (!adder.progressiveAdderEnabled()) {
-                    i[0] = adder.getGrantedPoints();
-                } else i[0] = 1.0D;
-            }
-        });
-        return i[0];
+        List<Double> values = database.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
+                .filter(adder -> adder.getAdder() == skillsAdder)
+                .filter(adder -> !adder.progressiveAdderEnabled())
+                .map(Adder::getGrantedPoints).collect(Collectors.toList());
+        if (values.size() != 1) {
+            return 1.0D;
+        }
+        return values.get(0);
     }
 
     /**
@@ -175,17 +179,21 @@ public class SkillUtils {
      * @return the max points from enum
      */
     public double getMaxPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
-        final double[] i = {0};
-        database.getSkillFromMap(pet.getSkillName()).getE().forEach(adder -> {
-            if (adder.progressiveAdderEnabled()) {
-                i[0] = adder.calculateMaxCurrent(pet.getLevel());
-            } else {
-                if (adder.getAdder() == skillsAdder) {
-                    i[0] = adder.getEveryAction();
-                }
-            }
-        });
-        return i[0];
+        List<Object> values = database.getSkillFromMap(pet.getSkillName()).getAdderList()
+                .stream().map(adder -> {
+                    if (adder.progressiveAdderEnabled()) {
+                        return adder.calculateMaxCurrent(pet.getLevel());
+                    } else {
+                        if (adder.getAdder() == skillsAdder) {
+                            return adder.getEveryAction();
+                        }
+                    }
+                    return 1.0D;
+                }).collect(Collectors.toList());
+        if (values.size() == 0) {
+            return 1.0D;
+        }
+        return (double) values.get(0);
     }
 
     /**
@@ -198,9 +206,9 @@ public class SkillUtils {
         List<Skill> list = database.getAccessibleSkillsToPetType(type);
         if (list == null) return null;
         if (list.size() == 1) {
-            return list.get(0).getA();
+            return list.get(0).getName();
         } else {
-            return list.get(getRandomNumber(0, list.size() - 1)).getA();
+            return list.get(getRandomNumber(0, list.size() - 1)).getName();
         }
     }
 

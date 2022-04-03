@@ -8,6 +8,7 @@ import me.opkarol.oppets.files.MessagesFile;
 import me.opkarol.oppets.leaderboards.LeaderboardCounter;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import me.opkarol.oppets.skills.SkillDatabase;
+import net.milkbowl.vault.economy.Economy;
 
 /**
  * The interface Op pets.
@@ -96,4 +97,11 @@ public interface IOpPets {
      * @return the broadcast manager
      */
     BroadcastManager getBroadcastManager();
+
+    /**
+     * Gets economy.
+     *
+     * @return the economy
+     */
+    Economy getEconomy();
 }

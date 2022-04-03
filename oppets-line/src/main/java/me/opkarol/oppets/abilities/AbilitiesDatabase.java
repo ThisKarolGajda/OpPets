@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * The type Abilities database.
@@ -55,13 +56,9 @@ public class AbilitiesDatabase {
      * @return the pet ability
      */
     public PetAbility getPetAbility(OpPetsEntityTypes.TypeOfEntity type) {
-        final PetAbility[] abilityType = new PetAbility[1];
-        set.forEach(ability -> {
-            if (ability.getEntityType().equals(type)) {
-                abilityType[0] = ability;
-            }
-        });
-        return abilityType[0];
+        return set.stream()
+                .filter(ability -> ability.getEntityType().equals(type)).collect(Collectors.toList())
+                .get(0);
     }
 
     /**

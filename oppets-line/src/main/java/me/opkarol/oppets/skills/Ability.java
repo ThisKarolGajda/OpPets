@@ -9,6 +9,7 @@ package me.opkarol.oppets.skills;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -35,10 +36,14 @@ public class Ability {
      * The Treasure.
      */
     private String TREASURE;
+
+    private String MESSAGE;
+
     /**
      * The Plugin action.
      */
     private String pluginAction;
+
 
     /**
      * Instantiates a new Ability.
@@ -66,6 +71,9 @@ public class Ability {
             case TREASURE:
                 TREASURE = "";
                 //TODO: Add json support
+                break;
+            case CUSTOM_MESSAGE:
+                MESSAGE = FormatUtils.formatMessage(config.getString(iPath + "message"));
                 break;
         }
     }
@@ -185,5 +193,17 @@ public class Ability {
      */
     public void setEFFECT(String EFFECT) {
         this.EFFECT = EFFECT;
+    }
+
+    public String getEFFECT() {
+        return EFFECT;
+    }
+
+    public String getMESSAGE() {
+        return MESSAGE;
+    }
+
+    public void setMESSAGE(String MESSAGE) {
+        this.MESSAGE = MESSAGE;
     }
 }

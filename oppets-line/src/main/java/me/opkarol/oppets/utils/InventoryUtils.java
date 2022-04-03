@@ -23,6 +23,10 @@ import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
+import static me.opkarol.oppets.cache.NamespacedKeysCache.priceKey;
+import static me.opkarol.oppets.cache.NamespacedKeysCache.typeKey;
 import static me.opkarol.oppets.utils.FormatUtils.formatList;
 import static me.opkarol.oppets.utils.FormatUtils.formatMessage;
 
@@ -30,15 +34,8 @@ import static me.opkarol.oppets.utils.FormatUtils.formatMessage;
  * The type Inventory utils.
  */
 public class InventoryUtils {
+    private static FileConfiguration config = Database.getInstance().getConfig();
 
-    /**
-     * The constant typeKey.
-     */
-    public static NamespacedKey typeKey = new NamespacedKey(Database.getInstance(), "oppets-shop-type");
-    /**
-     * The constant priceKey.
-     */
-    public static NamespacedKey priceKey = new NamespacedKey(Database.getInstance(), "oppets-shop-price");
 
     /**
      * Item creator shop item stack.
@@ -49,11 +46,15 @@ public class InventoryUtils {
      * @param inventory the inventory
      * @return the item stack
      */
-    public static @NotNull ItemStack itemCreatorShop(String type, int price, String path, @NotNull IInventory inventory) {
+    public static @Nullable ItemStack itemCreatorShop(String type, int price, String path, @NotNull IInventory inventory) {
         ItemStack item = itemCreator(path, inventory);
+        if (item == null) {
+            return null;
+        }
         ItemMeta meta = item.getItemMeta();
-        assert meta != null;
-        meta.getCustomTagContainer().setCustomTag(typeKey, ItemTagType.STRING, type);
+        if (meta == null) {
+            return null;
+        }        meta.getCustomTagContainer().setCustomTag(typeKey, ItemTagType.STRING, type);
         meta.getCustomTagContainer().setCustomTag(priceKey, ItemTagType.INTEGER, price);
         item.setItemMeta(meta);
         return item;
@@ -66,10 +67,12 @@ public class InventoryUtils {
      * @param meta          the meta
      * @param type          the type
      * @return the value from key
+     * @see PDCUtils#getNBT(ItemStack, NamespacedKey)
+     * @since 0.8.3.2
      */
+    @Deprecated
     public static @Nullable Object getValueFromKey(NamespacedKey namespacedKey, @NotNull ItemMeta meta, ItemTagType type) {
         CustomItemTagContainer tagContainer = meta.getCustomTagContainer();
-
         if (tagContainer.hasCustomTag(namespacedKey, type)) {
             return tagContainer.getCustomTag(namespacedKey, type);
         }
@@ -84,8 +87,7 @@ public class InventoryUtils {
      * @param inventory the inventory
      * @return the item stack
      */
-    public static @NotNull ItemStack itemCreatorLamp(String path, boolean lights, @NotNull IInventory inventory) {
-        FileConfiguration config = Database.getInstance().getConfig();
+    public static @Nullable ItemStack itemCreatorLamp(String path, boolean lights, @NotNull IInventory inventory) {
         Material material;
         switch (String.valueOf(lights)) {
             case "true": {
@@ -101,10 +103,11 @@ public class InventoryUtils {
                 break;
             }
         }
-
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        assert meta != null;
+        if (meta == null) {
+            return null;
+        }
         meta.setDisplayName(formatMessage(config.getString(path + "name")));
         meta.setLore(formatList(inventory.setPlaceHolders(config.getStringList(path + "lore"))));
         meta.setAttributeModifiers(null);
@@ -121,10 +124,12 @@ public class InventoryUtils {
      * @param material the material
      * @return the blank glass panes
      */
-    public static @NotNull ItemStack getBlankGlassPanes(Material material) {
+    public static @Nullable ItemStack getBlankGlassPanes(Material material) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        assert meta != null;
+        if (meta == null) {
+            return null;
+        }
         meta.setDisplayName(formatMessage("&k"));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
@@ -147,7 +152,6 @@ public class InventoryUtils {
         }
     }
 
-
     /**
      * Item creator item stack.
      *
@@ -155,16 +159,32 @@ public class InventoryUtils {
      * @param inventory the inventory
      * @return the item stack
      */
-    public static @NotNull ItemStack itemCreator(String path, @NotNull IInventory inventory) {
-        FileConfiguration config = Database.getInstance().getConfig();
+    public static @Nullable ItemStack itemCreator(String path, @NotNull IInventory inventory) {
         ItemStack item = new ItemStack(Material.valueOf(config.getString(path + "material")));
         ItemMeta meta = item.getItemMeta();
-        assert meta != null;
+        if (meta == null) {
+            return null;
+        }
         meta.setDisplayName(formatMessage(config.getString(path + "name")));
         meta.setLore(formatList(inventory.setPlaceHolders(config.getStringList(path + "lore"))));
         meta.setAttributeModifiers(null);
         meta.setUnbreakable(true);
         if (config.getBoolean(path + "glow")) meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static @Nullable ItemStack itemCreator(Material material, String name, List<String> lore, @NotNull IInventory inventory) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return null;
+        }
+        meta.setDisplayName(formatMessage(name));
+        meta.setLore(formatList(inventory.setPlaceHolders(lore)));
+        meta.setAttributeModifiers(null);
+        meta.setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         item.setItemMeta(meta);
         return item;

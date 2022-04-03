@@ -1036,7 +1036,7 @@ public class Metrics {
          *
          * <p>This class only exists to make methods of the {@link JsonObjectBuilder} type-safe and not
          * allow a raw string inputs for methods like {@link JsonObjectBuilder#appendField(String,
-         * JsonObject)}*.
+         * JsonObject)}**.
          */
         public static class JsonObject {
 

@@ -81,6 +81,9 @@ public class PetAbilities implements Listener {
             String[] abilityArgs = object.getAbilityArgs(s);
             switch (object.getAbility(s)) {
                 case ACTIONBAR -> functions.sendActionbar(player, abilityArgs[1]);
+                case ACTIONBAR_AFTER, STOP_FALL_DAMAGE, FLAME, STEAL_HEALTH, STOP_KNOCKBACK, STOP_ATTACK, MESSAGE_AFTER, LIGHTING -> {
+                    return;
+                }
                 case ADD_FOOD -> functions.addFood(player, Integer.parseInt(abilityArgs[1]));
                 case ADD_HEALTH -> functions.addHealth(player, Integer.parseInt(abilityArgs[1]));
                 case CONSOLE_COMMAND -> functions.consoleCommand(player, abilityArgs[1]);
@@ -117,7 +120,7 @@ public class PetAbilities implements Listener {
         if (Database.getOpPets().getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
             return;
         }
-        if (event.getCause() == EntityDamageEvent.DamageCause.FALL){
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
             Pet pet = Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId());
             if (pet == null) {
                 return;
@@ -185,7 +188,11 @@ public class PetAbilities implements Listener {
                     functions.addHealth(player, healthSteal);
                 }
                 case MESSAGE_AFTER -> functions.message(player, abilityArgs[1]);
+                case ACTIONBAR, STOP_FALL_DAMAGE, FIREBALL, PLAYER_COMMAND, INVINCIBLE, PARTICLE, EXP, REVIVE, MESSAGE, POTION, CURE, CONSOLE_COMMAND, ADD_HEALTH, ADD_FOOD -> {
+                    return;
+                }
                 case ACTIONBAR_AFTER -> functions.sendActionbar(player, abilityArgs[1]);
+                default -> throw new IllegalStateException("Unexpected value: " + object.getAbility(s));
             }
             activated = true;
         }

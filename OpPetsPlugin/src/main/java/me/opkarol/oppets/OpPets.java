@@ -19,6 +19,7 @@ import me.opkarol.oppets.interfaces.*;
 import me.opkarol.oppets.leaderboards.LeaderboardCounter;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import me.opkarol.oppets.skills.SkillDatabase;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -75,7 +76,10 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     /**
      * The constant boosterProvider.
      */
-//private static Economy economy;
+    private static Economy economy;
+    /**
+     * The constant boosterProvider.
+     */
     private static BoosterProvider boosterProvider;
     /**
      * The constant leaderboard.
@@ -268,7 +272,7 @@ public final class OpPets extends JavaPlugin implements IOpPets {
         }
         this.setEnabled(controller.setupVersion());
         prestigeManager = new PrestigeManager();
-        //economy = controller.setupEconomy();
+        economy = controller.setupEconomy();
         boosterProvider = new BoosterProvider();
         leaderboard = new LeaderboardCounter();
         broadcastManager = new BroadcastManager();
@@ -290,13 +294,19 @@ public final class OpPets extends JavaPlugin implements IOpPets {
         utils = null;
         messages = null;
         prestigeManager = null;
-        //economy = null;
+        economy = null;
         boosterProvider = null;
     }
 
-    //public static Economy getEconomy() {
-    //return economy;
-    //}
+    /**
+     * Gets economy.
+     *
+     * @return the economy
+     */
+    @Override
+    public Economy getEconomy() {
+        return economy;
+    }
 
     /**
      * Method that informs a server with provided reason about
@@ -310,4 +320,4 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     }
 
 }
-//TODO: panel for oppets, addons (Discord integration panel), mysql working
+//TODO: panel for oppets, addon manager and addons(Discord integration panel, Recipes addon), add pdc for pets as a backup way to remove / retrieve them (maybe even remove removing pets by own uuid, could be useful and could remove option to store own uuid as a pet)
