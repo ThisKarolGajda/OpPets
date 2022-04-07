@@ -14,7 +14,6 @@ import me.opkarol.oppets.inventories.holders.BuyerAdmitInventoryHolder;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.PDCUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
@@ -73,7 +72,7 @@ public class BuyerAdmitInventory implements IInventory {
         inventory.setItem(10, itemCreator(path + "decline.", this));
         inventory.setItem(13, itemCreator(path + "informationBook.", this));
         inventory.setItem(16, itemCreatorShop(type, Integer.parseInt(price), path + "confirm.", this));
-        setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
+        fillInventory(inventory);
     }
 
     /**

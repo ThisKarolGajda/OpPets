@@ -46,5 +46,13 @@ public class InventoriesCache {
      * The constant shopInventoryTitle.
      */
     public static String shopInventoryTitle = getMessage("ShopInventory.title");
+    /**
+     * The constant addonsInventoryTitle.
+     */
     public static String addonsInventoryTitle = getMessage("AddonsInventory.title");
+    /**
+     * The constant addonsInventoryMessage.
+     */
+    public static String addonsInventoryMessage = getMessage("AddonsInventory.stringMessage");
+    public static String summonInventoryTitle = getMessage("SummonInventory.title");
 }

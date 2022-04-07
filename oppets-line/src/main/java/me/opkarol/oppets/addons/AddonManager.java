@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The type Addon manager.
@@ -21,7 +22,7 @@ public class AddonManager {
     /**
      * The constant addons.
      */
-    private static List<IAddon> addons = new ArrayList<>();
+    private static final List<IAddon> addons = new ArrayList<>();
 
     /**
      * Add addon.
@@ -32,9 +33,11 @@ public class AddonManager {
         if (addon.canBeLaunched()) {
             if (addon.getPlugin().getName().equals(addon.getName())) {
                 addons.add(addon);
+                setCache();
             } else {
                 throw new InvalidAddonException("Provided addon contains invalid name: " + addon.getPlugin().getName() + " should be " + addon.getName() + ".");
             }
+        } else {
             throw new InvalidAddonException("Provided addon " + addon.getName() + " can't be launched, contains invalid specification.");
         }
     }
@@ -64,6 +67,13 @@ public class AddonManager {
                 .filter(iAddon -> iAddon.getName().equals(name)).findFirst();
     }
 
+    public static void setCache() {
+        if (cache == null) {
+            cache = new InventoryCache();
+        }
+        cache.setInventory(getCachedInventory());
+    }
+
     /**
      * Gets cache.
      *
@@ -77,6 +87,11 @@ public class AddonManager {
             cache.setInventory(new AddonsInventory().getInventory());
         }
         return cache.getInventory();
+    }
+
+
+    public static List<String> getStringAddons() {
+        return addons.stream().map(IAddon::getName).collect(Collectors.toList());
     }
 
     /**

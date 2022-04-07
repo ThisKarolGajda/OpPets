@@ -9,9 +9,12 @@ package me.opkarol.oppets.utils;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
 /**
  * The type Pets utils.
@@ -90,5 +95,29 @@ public class PetsUtils {
             return ChatColor.translateAlternateColorCodes('&', pet.getPetName().replace("%p%", new PrestigeManager().getFilledPrestige(pet.getPrestige())));
         }
         return null;
+    }
+
+    public static Material getMaterialByPetType(@NotNull Pet pet) {
+        if (pet.getPetType().equals(OpPetsEntityTypes.TypeOfEntity.MUSHROOM_COW)) {
+            return Material.MOOSHROOM_SPAWN_EGG;
+        }
+        return Material.valueOf(pet.getPetType().name() + "_SPAWN_EGG");
+    }
+
+    public static void summonPet(String name, UUID uuid, Player sender) {
+        Pet activePet = Database.getDatabase().getCurrentPet(uuid);
+        Database.getDatabase().getPetList(uuid).stream()
+                .filter(pet -> FormatUtils.getNameString(pet.getPetName()).equals(FormatUtils.getNameString(name)))
+                .forEach(pet -> {
+                    if (activePet == pet) {
+                        returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("samePet"));
+                    } else {
+                        if (activePet != null) {
+                            Database.getOpPets().getUtils().killPetFromPlayerUUID(uuid);
+                        }
+                        Database.getOpPets().getCreator().spawnMiniPet(pet, sender);
+                        returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
+                    }
+                });
     }
 }

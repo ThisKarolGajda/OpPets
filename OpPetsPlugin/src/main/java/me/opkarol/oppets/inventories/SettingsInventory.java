@@ -14,7 +14,6 @@ import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -107,7 +106,7 @@ public class SettingsInventory implements IInventory {
         inventory.setItem(15, itemCreatorLamp(path + "otherRideable.", otherRideable, this));
         inventory.setItem(16, itemCreatorLamp(path + "particlesEnabled.", particlesEnabled, this));
         inventory.setItem(17, itemCreator(path + "resetSettings.", this));
-        setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
+        fillInventory(inventory);
 
     }
 

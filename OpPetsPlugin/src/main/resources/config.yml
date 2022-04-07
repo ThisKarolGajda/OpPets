@@ -366,6 +366,9 @@ LeaderboardInventory:
       slot: 16
 AddonsInventory:
   title: "&e&lAddons!"
+  stringMessage: "%name% - %version% - %description%"
+SummonInventory:
+  title: "&e&lPets to summon!"
 
 # ------------------------- #
 # Others section:           #

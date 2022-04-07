@@ -10,6 +10,8 @@ package me.opkarol.oppets.misc;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 /**
  * The type String transformer.
  */
@@ -22,10 +24,8 @@ public class StringTransformer {
      * @return the int from string
      */
     public Integer getIntFromString(@NotNull String s) {
-        if (containsNotNumbers(s)) {
-            return null;
-        }
-        return Integer.parseInt(s);
+        return Optional.of(s.replaceAll("\\s+", ""))
+                .map(Integer::valueOf).orElse(-1);
     }
 
     /**
@@ -35,10 +35,8 @@ public class StringTransformer {
      * @return the double from string
      */
     public Double getDoubleFromString(@NotNull String s) {
-        if (containsNotNumbers(s)) {
-            return null;
-        }
-        return Double.parseDouble(s);
+        return Optional.of(s.replaceAll("\\s+", ""))
+                .map(Double::parseDouble).orElse(-1D);
     }
 
     /**
@@ -48,17 +46,17 @@ public class StringTransformer {
      * @param e the e
      * @return the enum from string
      */
-    public Enum getEnumFromString(String s, Class e) {
-        Enum anEnum;
+    public <K extends Enum<K>> Enum<K> getEnumFromString(String s, Class<K> e) throws IllegalArgumentException {
+        Enum<K> anEnum;
         try {
             anEnum = Enum.valueOf(e, s);
         } catch (IllegalArgumentException ignore) {
-            return null;
+            throw new IllegalArgumentException(String.format("Couldn't find value with name %s in Enum %s.", s, e.getName()));
         }
         if (anEnum.getClass().equals(e)) {
             return anEnum;
         }
-        return null;
+        throw new IllegalArgumentException("Couldn't compare an enum class which was created against specific Enum.");
     }
 
     /**

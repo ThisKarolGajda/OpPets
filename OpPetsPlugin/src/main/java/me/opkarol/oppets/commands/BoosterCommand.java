@@ -17,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
@@ -80,14 +81,14 @@ public class BoosterCommand implements ICommand {
             case 6, 7 -> {
                 if (parameter.equalsIgnoreCase("add")) {
                     String name = args[2];
-                    Object object = transformer.getEnumFromString(args[3], Booster.BOOSTER_TYPE.class);
-                    if (object == null) {
+                    Optional<Object> object = Optional.ofNullable(transformer.getEnumFromString(args[3], Booster.BOOSTER_TYPE.class));
+                    if (object.isEmpty()) {
                         return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidObjectProvided"));
                     }
-                    Booster.BOOSTER_TYPE type = (Booster.BOOSTER_TYPE) object;
+                    Booster.BOOSTER_TYPE type = (Booster.BOOSTER_TYPE) object.get();
                     Double multiplier = transformer.getDoubleFromString(args[4]);
                     Integer time = transformer.getIntFromString(args[5]);
-                    if (name == null || multiplier == null || time == null) {
+                    if (name == null || multiplier == -1D || time == -1) {
                         return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidObjectProvided"));
                     }
                     if (!type.equals(Booster.BOOSTER_TYPE.PLAYER)) {

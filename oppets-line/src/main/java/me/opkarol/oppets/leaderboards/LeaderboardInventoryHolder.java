@@ -10,13 +10,12 @@ package me.opkarol.oppets.leaderboards;
 
 import me.opkarol.oppets.interfaces.IHolder;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The type Leaderboard inventory holder.
  */
-public class LeaderboardInventoryHolder implements InventoryHolder, IHolder {
+public class LeaderboardInventoryHolder implements IHolder {
     /**
      * Gets inventory.
      *

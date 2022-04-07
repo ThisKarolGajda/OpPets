@@ -24,7 +24,5 @@ public interface IInventory {
      * @return replaced lore with placeholders
      */
     @NotNull
-    default List<String> setPlaceHolders(@NotNull List<String> lore) {
-        return lore;
-    }
+    List<String> setPlaceHolders(@NotNull List<String> lore);
 }

@@ -92,7 +92,9 @@ public class PDCUtils {
      * @return the boolean
      */
     public static boolean hasNBT(@NotNull ItemStack item, NamespacedKey key) {
-        if (!item.hasItemMeta()) return false;
+        if (!item.hasItemMeta()) {
+            return false;
+        }
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return false;
@@ -120,7 +122,9 @@ public class PDCUtils {
      * @param key  the key
      */
     public static void removeNBT(@NotNull ItemStack item, NamespacedKey key) {
-        if (!item.hasItemMeta()) return;
+        if (!item.hasItemMeta()) {
+            return;
+        }
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return;
@@ -149,7 +153,9 @@ public class PDCUtils {
      */
     public static @NotNull HashMap<String, String> getAllValues(@NotNull ItemStack item) {
         HashMap<String, String> map = new HashMap<>();
-        if (!item.hasItemMeta()) return map;
+        if (!item.hasItemMeta()) {
+            return map;
+        }
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return map;

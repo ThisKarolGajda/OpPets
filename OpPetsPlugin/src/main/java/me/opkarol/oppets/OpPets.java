@@ -139,15 +139,6 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     }
 
     /**
-     * Gets controller.
-     *
-     * @return the controller
-     */
-    public PetPluginController getController() {
-        return controller;
-    }
-
-    /**
      * Gets instance.
      *
      * @return the instance
@@ -320,4 +311,4 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     }
 
 }
-//TODO: panel for oppets, addon manager and addons(Discord integration panel, Recipes addon), add pdc for pets as a backup way to remove / retrieve them (maybe even remove removing pets by own uuid, could be useful and could remove option to store own uuid as a pet)
+//TODO: panel for oppets

@@ -12,15 +12,8 @@ import me.opkarol.oppets.interfaces.IHolder;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The type Settings inventory holder.
- */
-public class SettingsInventoryHolder implements IHolder {
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
+public class SummonInventoryHolder implements IHolder {
+
     @NotNull
     @Override
     public Inventory getInventory() {

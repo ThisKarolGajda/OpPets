@@ -15,7 +15,6 @@ import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static me.opkarol.oppets.utils.InventoryUtils.fillInventory;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
-import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
 /**
  * The type Level inventory.
@@ -68,7 +67,7 @@ public class LevelInventory implements IInventory {
         inventory.setItem(10, itemCreator(path + "informationBook.", this));
         inventory.setItem(13, itemCreator(path + "level.", this));
         inventory.setItem(16, itemCreator(path + "abilities.", this));
-        setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
+        fillInventory(inventory);
 
     }
 

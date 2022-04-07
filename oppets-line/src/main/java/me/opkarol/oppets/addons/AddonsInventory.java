@@ -12,8 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
-import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
+import static me.opkarol.oppets.utils.InventoryUtils.*;
 
 /**
  * The type Addons inventory.
@@ -57,7 +56,7 @@ public class AddonsInventory implements IInventory {
         if (i == 0) {
             inventory.setItem(i, itemCreator(Material.BARRIER, "There are no addons", Collections.singletonList(""), this));
         }
-        setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
+        fillInventory(inventory);
     }
 
     /**

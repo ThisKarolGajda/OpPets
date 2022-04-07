@@ -13,7 +13,6 @@ import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -23,8 +22,8 @@ import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.ConfigUtils.getInt;
 import static me.opkarol.oppets.utils.ConfigUtils.getString;
+import static me.opkarol.oppets.utils.InventoryUtils.fillInventory;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreatorShop;
-import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
 /**
  * The type Shop inventory.
@@ -73,7 +72,7 @@ public class ShopInventory implements IInventory {
             i++;
         }
 
-        setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
+        fillInventory(inventory);
 
     }
 

@@ -17,7 +17,6 @@ import me.opkarol.oppets.utils.ConfigUtils;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
@@ -26,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.opkarol.oppets.utils.InventoryUtils.fillInventory;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
-import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
 /**
  * The type Leaderboard inventory.
@@ -72,7 +71,7 @@ public class LeaderboardInventory implements IInventory {
             currentPath = path + key + ".";
             inventory.setItem(ConfigUtils.getInt(currentPath + "slot"), itemCreator(currentPath, this));
         }
-        setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
+        fillInventory(inventory);
     }
 
     /**

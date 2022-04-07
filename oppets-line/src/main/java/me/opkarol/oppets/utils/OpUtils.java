@@ -14,12 +14,15 @@ import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.PetMainInventory;
 import me.opkarol.oppets.skills.Adder;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -139,10 +142,17 @@ public class OpUtils {
      * from Online of Offline player object.
      *
      * @param name string object which is equal to a player name
-     * @return uuid not null value of resulted method
+     * @return uuid value of resulted method
      */
-    public static @NotNull UUID getUUIDFromName(String name) {
-        return Bukkit.getOfflinePlayer(name).getUniqueId();
+    public static UUID getUUIDFromName(String name) {
+        final Player online = Bukkit.getPlayerExact(name);
+        if (online != null) {
+            return online.getUniqueId();
+        }
+        final Optional<OfflinePlayer> optional = Arrays.stream(Bukkit.getOfflinePlayers())
+                .filter(player -> name.equals(player.getName()))
+                .findAny();
+        return optional.map(OfflinePlayer::getUniqueId).orElse(null);
     }
 
     /**

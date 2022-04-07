@@ -10,13 +10,12 @@ package me.opkarol.oppets.inventories.holders;
 
 import me.opkarol.oppets.interfaces.IHolder;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The type Prestige inventory holder.
  */
-public class PrestigeInventoryHolder implements InventoryHolder, IHolder {
+public class PrestigeInventoryHolder implements IHolder {
     /**
      * Gets inventory.
      *

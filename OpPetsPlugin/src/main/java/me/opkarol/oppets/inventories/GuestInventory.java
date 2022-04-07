@@ -16,15 +16,14 @@ import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.opkarol.oppets.utils.InventoryUtils.fillInventory;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
-import static me.opkarol.oppets.utils.InventoryUtils.setupEmptyGlassPanes;
 
 /**
  * The type Guest inventory.
@@ -66,7 +65,7 @@ public class GuestInventory implements IInventory {
         String path = "GuestInventory.items.";
         inventory.setItem(11, itemCreator(path + "informationBook.", this));
         inventory.setItem(15, itemCreator(path + "level.", this));
-        setupEmptyGlassPanes(Material.BLACK_STAINED_GLASS_PANE, inventory);
+        fillInventory(inventory);
     }
 
     /**

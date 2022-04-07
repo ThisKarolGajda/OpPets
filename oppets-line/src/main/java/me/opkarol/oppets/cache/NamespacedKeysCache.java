@@ -24,4 +24,5 @@ public class NamespacedKeysCache {
      * The constant petKey.
      */
     public static NamespacedKey petKey = new NamespacedKey(plugin, "oppets-entity-key");
+    public static NamespacedKey summonItemKey = new NamespacedKey(plugin, "oppets-summon-item-key");
 }

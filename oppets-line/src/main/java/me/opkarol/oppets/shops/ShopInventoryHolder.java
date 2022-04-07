@@ -10,13 +10,12 @@ package me.opkarol.oppets.shops;
 
 import me.opkarol.oppets.interfaces.IHolder;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The type Shop inventory holder.
  */
-public class ShopInventoryHolder implements InventoryHolder, IHolder {
+public class ShopInventoryHolder implements IHolder {
     /**
      * Gets inventory.
      *

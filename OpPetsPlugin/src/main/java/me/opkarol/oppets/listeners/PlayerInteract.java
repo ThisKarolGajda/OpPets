@@ -11,15 +11,13 @@ package me.opkarol.oppets.listeners;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IHolder;
 import me.opkarol.oppets.interfaces.IUtils;
-import me.opkarol.oppets.inventories.BuyerAdmitInventory;
-import me.opkarol.oppets.inventories.GuestInventory;
-import me.opkarol.oppets.inventories.LevelInventory;
-import me.opkarol.oppets.inventories.SettingsInventory;
+import me.opkarol.oppets.inventories.*;
 import me.opkarol.oppets.inventories.anvil.PrestigeConfirmAnvilInventory;
 import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
 import me.opkarol.oppets.inventories.holders.BuyerAdmitInventoryHolder;
 import me.opkarol.oppets.inventories.holders.PrestigeInventoryHolder;
 import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
+import me.opkarol.oppets.inventories.holders.SummonInventoryHolder;
 import me.opkarol.oppets.misc.StringTransformer;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
@@ -47,8 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-import static me.opkarol.oppets.cache.NamespacedKeysCache.priceKey;
-import static me.opkarol.oppets.cache.NamespacedKeysCache.typeKey;
+import static me.opkarol.oppets.cache.NamespacedKeysCache.*;
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
 /**
@@ -169,8 +166,9 @@ public class PlayerInteract implements Listener {
                     int price = new StringTransformer().getIntFromString(Objects.requireNonNull(PDCUtils.getNBT(item, priceKey)));
                     String type = PDCUtils.getNBT(item, typeKey);
                     Economy economy = Database.getOpPets().getEconomy();
-                    if (economy != null) {
+                    if (economy != null && price != -1) {
                         if (!economy.has(player, price)) {
+                            //TODO add player message
                             return;
                         }
                         economy.withdrawPlayer(player, price);
@@ -195,6 +193,27 @@ public class PlayerInteract implements Listener {
                 }
                 player.closeInventory();
                 new PrestigeConfirmAnvilInventory(pet, player);
+            }
+        } else if (holder instanceof SummonInventoryHolder) {
+            ItemStack item = event.getCurrentItem();
+            if (item == null) {
+                return;
+            }
+            if (!PDCUtils.hasNBT(item, summonItemKey)) {
+                ItemMeta meta = item.getItemMeta();
+                if (meta == null) {
+                    return;
+                }
+                String name = meta.getDisplayName();
+                PetsUtils.summonPet(name, uuid, player);
+                player.closeInventory();
+            } else {
+                String nbtString = PDCUtils.getNBT(item, summonItemKey);
+                if (nbtString == null) {
+                    return;
+                }
+                int page = new StringTransformer().getIntFromString(nbtString);
+                player.openInventory(new SummonInventory(uuid, page).getInventory());
             }
         }
     }
