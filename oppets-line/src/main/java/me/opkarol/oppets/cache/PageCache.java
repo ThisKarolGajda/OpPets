@@ -24,11 +24,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.InventoryUtils.*;
+import static me.opkarol.oppets.utils.InventoryUtils.fillStyledInventory;
+import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 
 /**
  * The type Page cache.
@@ -122,7 +122,6 @@ public class PageCache<K extends IGetter> implements IInventory {
         }
         fillStyledInventory(inventory, InventoryUtils.FillStyles.INVENTORY_STYLE.SQUARE);
         List<ItemStack> items = getMovingPagesItemStacks();
-        Collections.reverse(items);
         for (int i = 0; i < Arrays.stream(objects).count(); i++) {
             if (i > 27) {
                 break;

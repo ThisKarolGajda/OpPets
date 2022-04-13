@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,6 +53,8 @@ public class SummonInventory {
         this.pets = database.getDatabase().getPetList(uuid);
         if (pets == null) {
             pets = new ArrayList<>();
+        } else {
+            Collections.reverse(pets);
         }
         IHolder holder = new SummonInventoryHolder();
         String title = InventoriesCache.summonInventoryTitle;
@@ -70,6 +73,8 @@ public class SummonInventory {
         this.pets = database.getDatabase().getPetList(uuid);
         if (pets == null) {
             pets = new ArrayList<>();
+        } else {
+            Collections.reverse(pets);
         }
         IHolder holder = new SummonInventoryHolder();
         String title = InventoriesCache.summonInventoryTitle;

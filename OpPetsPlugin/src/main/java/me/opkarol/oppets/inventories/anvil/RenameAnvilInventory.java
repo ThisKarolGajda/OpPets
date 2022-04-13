@@ -58,16 +58,11 @@ public class RenameAnvilInventory {
                         /*
                             If formatted message (s) has not equal length to not-formatted one
                             it means that s contains color characters (&x),
-                            in other case, in which message has the same length to string
+                            in other case, which is default -> message has the same length to string
                             it goes through a normal process.
                         */
                         UUID uuid = player.getUniqueId();
-                        database.getDatabase().getPetList(uuid).removeIf(pet1 -> {
-                            if (pet1.getPetName() != null) {
-                                return pet1.getPetName().equals(pet.getPetName());
-                            }
-                            return false;
-                        });
+                        database.getDatabase().removePet(uuid, pet);
 
                         if (FormatUtils.formatMessage(s).length() != s.length()) {
                             if (player.hasPermission("oppets.pet.rename.colors") || player.isOp()) {
