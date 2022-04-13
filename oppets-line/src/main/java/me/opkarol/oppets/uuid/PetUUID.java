@@ -1,11 +1,15 @@
 package me.opkarol.oppets.uuid;
 
-import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.databases.APIDatabase;
 
 /**
  * The type Pet uuid.
  */
 public class PetUUID {
+    /**
+     * The Database.
+     */
+    private final APIDatabase database = APIDatabase.getInstance();
     /**
      * The Id.
      */
@@ -49,8 +53,8 @@ public class PetUUID {
      * Generate new uuid.
      */
     private void generateNewUUID() {
-        id = Database.getLastID() + 1;
-        Database.setLastID(id);
+        id = database.getLastID() + 1;
+        database.setLastID(id);
     }
 
 }

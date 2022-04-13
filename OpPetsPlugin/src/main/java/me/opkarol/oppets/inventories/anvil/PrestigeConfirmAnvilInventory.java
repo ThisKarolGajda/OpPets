@@ -9,6 +9,7 @@ package me.opkarol.oppets.inventories.anvil;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.events.PrestigeChangeEvent;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
@@ -25,6 +26,10 @@ import java.util.Objects;
  * The type Prestige confirm anvil inventory.
  */
 public class PrestigeConfirmAnvilInventory {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Instantiates a new Prestige confirm anvil inventory.
@@ -33,16 +38,16 @@ public class PrestigeConfirmAnvilInventory {
      * @param playerOpened the player opened
      */
     public PrestigeConfirmAnvilInventory(@NotNull Pet pet, Player playerOpened) {
-        String title = Database.getOpPets().getMessages().getMessagesAccess().stringMessage("titlePrestige");
+        String title = database.getOpPets().getMessages().getMessagesAccess().stringMessage("titlePrestige");
         String petName = FormatUtils.getNameString(Objects.requireNonNull(pet.getPetName()));
         new AnvilGUI.Builder()
                 .onComplete((player, s) -> {
                     if (FormatUtils.getNameString(s).equals(FormatUtils.getNameString(petName))) {
                         Bukkit.getPluginManager().callEvent(new PrestigeChangeEvent(player, pet));
                         return AnvilGUI.Response.close();
-                    } else return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("confirmPrestigeMessage"));
+                    } else return AnvilGUI.Response.text(database.getOpPets().getMessages().getMessagesAccess().stringMessage("confirmPrestigeMessage"));
                 })
-                .plugin(Database.getInstance())
+                .plugin(database.getPlugin())
                 .title(title.replace("%pet_name%", petName))
                 .text(String.valueOf(petName.charAt(0)))
                 .itemLeft(new ItemStack(Material.WRITABLE_BOOK))

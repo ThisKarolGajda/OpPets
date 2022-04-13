@@ -9,6 +9,7 @@ package me.opkarol.oppets.boosters;
  */
 
 import me.opkarol.oppets.cache.StringsCache;
+import me.opkarol.oppets.databases.Database;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -21,9 +22,22 @@ import java.util.stream.Collectors;
  */
 public class BoosterProvider {
     /**
+     * The Database.
+     */
+    private final Database database;
+    /**
      * The Boosters.
      */
     private final HashSet<Booster> boosters = new HashSet<>();
+
+    /**
+     * Instantiates a new Booster provider.
+     *
+     * @param database the database
+     */
+    public BoosterProvider(Database database) {
+        this.database = database;
+    }
 
     /**
      * Create new booster.
@@ -34,7 +48,7 @@ public class BoosterProvider {
      * @param type       the type
      */
     public void createNewBooster(String name, double multiplier, long timeToEnd, Booster.BOOSTER_TYPE type) {
-        Booster booster = new Booster(name, multiplier, timeToEnd, false, type);
+        Booster booster = new Booster(name, multiplier, timeToEnd, false, type, database);
         booster.run();
         boosters.add(booster);
     }
@@ -49,7 +63,7 @@ public class BoosterProvider {
      * @param owner      the owner
      */
     public void createNewBooster(String name, double multiplier, long timeToEnd, Booster.BOOSTER_TYPE type, UUID owner) {
-        Booster booster = new Booster(name, multiplier, timeToEnd, false, type, owner);
+        Booster booster = new Booster(name, multiplier, timeToEnd, false, type, owner, database);
         booster.run();
         boosters.add(booster);
     }

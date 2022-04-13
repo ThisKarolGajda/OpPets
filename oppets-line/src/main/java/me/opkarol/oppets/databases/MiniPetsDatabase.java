@@ -11,11 +11,12 @@ package me.opkarol.oppets.databases;
 import me.opkarol.oppets.interfaces.IDatabase;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+
+import static me.opkarol.oppets.utils.FormatUtils.getNameString;
 
 /**
  * The type Mini pets database.
@@ -33,6 +34,10 @@ public class MiniPetsDatabase implements IDatabase {
      * The Id pets map.
      */
     private HashMap<UUID, Integer> idPetsMap;
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance();
 
     /**
      * Start logic.
@@ -58,7 +63,7 @@ public class MiniPetsDatabase implements IDatabase {
      */
     @Override
     public void addIdPet(UUID petUUID, int petId) {
-        idPetsMap.put(petUUID, petId);
+        idPetsMap.replace(petUUID, petId);
     }
 
     /**
@@ -85,22 +90,12 @@ public class MiniPetsDatabase implements IDatabase {
             return;
         }
         if (getCurrentPet(uuid) != null) {
-            if (Objects.equals(getName(Objects.requireNonNull(getCurrentPet(uuid).getPetName())), getName(pet.getPetName()))) {
+            if (Objects.equals(getNameString(Objects.requireNonNull(getCurrentPet(uuid).getPetName())), getNameString(pet.getPetName()))) {
                 removeCurrentPet(uuid);
             }
         }
-        list.removeIf(pet1 -> Objects.equals(getName(pet1.getPetName()), getName(pet.getPetName())));
+        list.removeIf(pet1 -> Objects.equals(getNameString(pet1.getPetName()), getNameString(pet.getPetName())));
         setPets(uuid, list);
-    }
-
-    /**
-     * Gets name.
-     *
-     * @param s the s
-     * @return the name
-     */
-    private String getName(String s) {
-        return ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', s));
     }
 
     /**
@@ -182,7 +177,7 @@ public class MiniPetsDatabase implements IDatabase {
             if (entity != null) {
                 entity.remove();
             }
-            Database.getDatabase().removePet(uuid, pet);
+            database.getDatabase().removePet(uuid, pet);
         });
         activePetMap.remove(uuid);
     }
@@ -211,7 +206,13 @@ public class MiniPetsDatabase implements IDatabase {
      */
     @Override
     public List<Pet> getPetList(UUID uuid) {
-        return petsMap.get(uuid);
+        List<Pet> petList = petsMap.get(uuid);
+        if (petList == null) {
+            petList = new ArrayList<>();
+        } else {
+            petList = new ArrayList<>(petList);
+        }
+        return petList;
     }
 
     /**

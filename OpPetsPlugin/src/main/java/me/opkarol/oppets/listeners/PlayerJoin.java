@@ -9,6 +9,7 @@ package me.opkarol.oppets.listeners;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -25,6 +26,10 @@ import java.util.UUID;
  * The type Player join.
  */
 public class PlayerJoin implements Listener {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Player join.
@@ -35,13 +40,13 @@ public class PlayerJoin implements Listener {
     public void playerJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        if (Database.getOpPets().getDatabase().getPetList(uuid) == null) {
-            Database.getOpPets().getDatabase().setPets(uuid, new ArrayList<>());
+        if (database.getDatabase().getPetList(uuid) == null) {
+            database.getDatabase().setPets(uuid, new ArrayList<>());
             return;
         }
-        Pet currentPet = Database.getOpPets().getDatabase().getCurrentPet(uuid);
+        Pet currentPet = database.getDatabase().getCurrentPet(uuid);
         if (currentPet != null) {
-            Database.getOpPets().getCreator().spawnMiniPet(currentPet, player);
+            database.getOpPets().getCreator().spawnMiniPet(currentPet, player);
         }
     }
 
@@ -52,12 +57,18 @@ public class PlayerJoin implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerJoin2(@NotNull PlayerJoinEvent event) {
-        Database.getOpPets().getDatabase().getActivePetMap().keySet().forEach(uuid -> {
-            if (Bukkit.getPlayer(uuid) == null) return;
-            if (Database.getOpPets().getDatabase().getCurrentPet(uuid) == null) return;
-            if (!Database.getOpPets().getDatabase().getCurrentPet(uuid).isVisibleToOthers()) {
-                if (Database.getOpPets().getDatabase().getCurrentPet(uuid).getOwnUUID() == null) return;
-                Database.getOpPets().getUtils().hideEntityFromPlayer(event.getPlayer(), Database.getOpPets().getDatabase().getIdPet(Database.getOpPets().getDatabase().getCurrentPet(uuid).getOwnUUID()));
+        database.getDatabase().getActivePetMap().keySet().forEach(uuid -> {
+            if (Bukkit.getPlayer(uuid) == null) {
+                return;
+            }
+            if (database.getDatabase().getCurrentPet(uuid) == null) {
+                return;
+            }
+            if (!database.getDatabase().getCurrentPet(uuid).isVisibleToOthers()) {
+                if (database.getDatabase().getCurrentPet(uuid).getOwnUUID() == null) {
+                    return;
+                }
+                database.getOpPets().getUtils().hideEntityFromPlayer(event.getPlayer(), database.getDatabase().getIdPet(database.getDatabase().getCurrentPet(uuid).getOwnUUID()));
             }
         });
     }

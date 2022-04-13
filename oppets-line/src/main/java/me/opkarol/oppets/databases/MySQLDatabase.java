@@ -38,6 +38,10 @@ public class MySQLDatabase implements IDatabase {
      * The Logger.
      */
     private Logger logger;
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance();
 
     /**
      * Gets pets map.
@@ -67,7 +71,13 @@ public class MySQLDatabase implements IDatabase {
      */
     @Override
     public List<Pet> getPetList(UUID uuid) {
-        return petsMap.get(uuid);
+        List<Pet> petList = petsMap.get(uuid);
+        if (petList == null) {
+            petList = new ArrayList<>();
+        } else {
+            petList = new ArrayList<>(petList);
+        }
+        return petList;
     }
 
     /**
@@ -119,14 +129,14 @@ public class MySQLDatabase implements IDatabase {
         idPetsMap = new HashMap<>();
         setupPetsMap();
         setupActiveMap();
-        logger = Database.getInstance().getLogger();
+        logger = database.getPlugin().getLogger();
     }
 
     /**
      * Sets pets map.
      */
     private void setupPetsMap() {
-        List<Pet> petList = MySQL.getPets();
+        List<Pet> petList = database.getMySQL().getPets();
         HashMap<UUID, List<Pet>> hashMap = new HashMap<>();
         for (Pet pet : petList) {
             UUID uuid = pet.getOwnerUUID();
@@ -191,7 +201,7 @@ public class MySQLDatabase implements IDatabase {
      */
     @Override
     public int getIdPet(UUID ownUUID) {
-        return idPetsMap.get(ownUUID);
+        return idPetsMap.getOrDefault(ownUUID, 0);
     }
 
     /**
@@ -206,7 +216,7 @@ public class MySQLDatabase implements IDatabase {
             removeCurrentPet(uuid);
         }
         try {
-            MySQL.deletePet(pet);
+            database.getMySQL().deletePet(pet);
         } catch (SQLException e) {
             logger.warning("Error while trying to delete Pet from UUID: " + uuid.toString());
             e.printStackTrace();
@@ -223,7 +233,7 @@ public class MySQLDatabase implements IDatabase {
      */
     @Override
     public void removeCurrentPet(UUID uuid) {
-        Database.getUtils().killPetFromPlayerUUID(uuid);
+        database.getUtils().killPetFromPlayerUUID(uuid);
         activePetMap.remove(uuid);
     }
 
@@ -237,7 +247,7 @@ public class MySQLDatabase implements IDatabase {
     public void setPets(UUID uuid, List<Pet> objects) {
         petsMap.replace(uuid, objects);
         for (Pet pet : objects) {
-            MySQL.asyncInsertPet(pet);
+            database.getMySQL().asyncInsertPet(pet);
         }
     }
 
@@ -253,9 +263,9 @@ public class MySQLDatabase implements IDatabase {
         if (pet == null) {
             return false;
         }
-        List<Pet> petList = new ArrayList<>(petsMap.get(playerUUID));
+        List<Pet> petList = getPetList(playerUUID);
         petList.add(pet);
-        MySQL.asyncInsertPet(pet);
+        database.getMySQL().asyncInsertPet(pet);
         setPets(playerUUID, petList);
         return true;
     }
@@ -274,10 +284,10 @@ public class MySQLDatabase implements IDatabase {
         List<Pet> list = petsMap.get(playerUUID);
         for (Pet pet : (list != null ? list : new ArrayList<Pet>())) {
             if (async) {
-                MySQL.asyncInsertPet(pet);
+                database.getMySQL().asyncInsertPet(pet);
             } else {
                 try {
-                    MySQL.insertPet(pet);
+                    database.getMySQL().insertPet(pet);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -285,6 +295,4 @@ public class MySQLDatabase implements IDatabase {
         }
         petsMap.replace(playerUUID, list);
     }
-
-
 }

@@ -8,8 +8,8 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.command.CommandSender;
@@ -22,6 +22,11 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  */
 public class HelpCommand implements ICommand {
     /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+
+    /**
      * Execute boolean.
      *
      * @param sender the sender
@@ -31,11 +36,11 @@ public class HelpCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
-        if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
+        if (database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
 
         OpUtils.openMainInventory(player);

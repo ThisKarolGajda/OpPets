@@ -288,7 +288,7 @@ ShopInventory:
         price: 500
         type: "COW"
 BuyerAdmitInventory:
-  title: "&7Confirm purchase!"
+  title: "&e&lConfirm purchase!"
   items:
     confirm:
       material: "GREEN_WOOL"
@@ -366,9 +366,27 @@ LeaderboardInventory:
       slot: 16
 AddonsInventory:
   title: "&e&lAddons!"
-  stringMessage: "%name% - %version% - %description%"
+  stringMessage: "&f&l%name% &7- &f&l%version% &7- &f&l%description%"
 SummonInventory:
   title: "&e&lPets to summon!"
+PagesCache:
+  items:
+    previousPage:
+      material: "BARRIER"
+      name: "&a&lReturn to previous page!"
+      lore:
+        - "&7Go to previous page: &f&l%previous_page%"
+        - "&7Current: &f&l%current_page%"
+      glow: true
+    nextPage:
+      material: "BARRIER"
+      name: "&a&lGo to next page!"
+      lore:
+        - "&7Go to next page: &f&l%next_page%"
+        - "&7Current: &f&l%current_page%"
+      glow: true
+
+
 
 # ------------------------- #
 # Others section:           #

@@ -16,8 +16,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Thrown when a prestige of a pet is changed.
- * Can be cancelled.
+ * The type Prestige change event.
  */
 public class PrestigeChangeEvent extends Event implements Cancellable {
     /**

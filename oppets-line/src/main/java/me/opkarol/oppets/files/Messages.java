@@ -38,10 +38,10 @@ public class Messages {
     }
 
     /**
-     * Returns a formatted message which is taken from hash map, which values were saved at the onEnable method.
+     * String message string.
      *
-     * @param name string object from which map will try to get a result
-     * @return formatted string message / basic message
+     * @param name the name
+     * @return the string
      */
     public @NotNull String stringMessage(String name) {
         if (map == null) {
@@ -83,7 +83,7 @@ public class Messages {
      * @param value the value
      */
     private void setSection(@NotNull String value) {
-        ConfigurationSection section = getConfiguration().getConfigurationSection(value.substring(0, value.length() - 1));
+        ConfigurationSection section = getConfiguration().getConfigurationSection(value.endsWith(".") ? value.substring(0, value.length() - 1) : value);
         if (section == null) {
             return;
         }

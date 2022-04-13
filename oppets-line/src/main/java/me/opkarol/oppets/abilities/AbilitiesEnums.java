@@ -1,4 +1,4 @@
-package me.opkarol.oppets.misc;
+package me.opkarol.oppets.abilities;
 
 /*
  = Copyright (c) 2021-2022.

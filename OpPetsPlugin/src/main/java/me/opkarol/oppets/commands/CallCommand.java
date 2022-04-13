@@ -9,7 +9,7 @@ package me.opkarol.oppets.commands;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.Messages;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.command.CommandSender;
@@ -23,6 +23,11 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  */
 public class CallCommand implements ICommand {
     /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+
+    /**
      * Execute boolean.
      *
      * @param sender the sender
@@ -32,18 +37,18 @@ public class CallCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
-        Pet pet = Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId());
+        Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
         if (pet == null) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
-        Entity entity = Database.getOpPets().getUtils().getEntityByUniqueId(pet.getOwnUUID());
+        Entity entity = database.getOpPets().getUtils().getEntityByUniqueId(pet.getOwnUUID());
         if (entity == null) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
         entity.teleport(player.getLocation());
-        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("calledSuccessfully"));
+        return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("calledSuccessfully"));
     }
 
     /**

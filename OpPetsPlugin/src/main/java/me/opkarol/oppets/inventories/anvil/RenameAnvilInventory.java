@@ -8,11 +8,11 @@ package me.opkarol.oppets.inventories.anvil;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.OpPets;
+import me.opkarol.oppets.commands.OpPetsCommand;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.commands.OpPetsCommand;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,6 +26,10 @@ import java.util.UUID;
  * The type Rename anvil inventory.
  */
 public class RenameAnvilInventory {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Instantiates a new Rename anvil inventory.
@@ -34,7 +38,7 @@ public class RenameAnvilInventory {
      * @param playerOpened the player opened
      */
     public RenameAnvilInventory(@NotNull Pet pet, @NotNull Player playerOpened) {
-        String title = Database.getOpPets().getMessages().getMessagesAccess().stringMessage("titleRename");
+        String title = database.getOpPets().getMessages().getMessagesAccess().stringMessage("titleRename");
         assert pet.getPetName() != null;
         String petName = pet.getPetName();
         new AnvilGUI.Builder()
@@ -42,14 +46,14 @@ public class RenameAnvilInventory {
                 .onComplete(((player, s) -> {
                     if (s != null) {
                         if (s.equals(OpPetsCommand.noPetsString)) {
-                            return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("thisNameIsBlocked"));
+                            return AnvilGUI.Response.text(database.getOpPets().getMessages().getMessagesAccess().stringMessage("thisNameIsBlocked"));
                         }
                         for (char character : s.toCharArray()) {
                             if (String.valueOf(character).equals(" ")) {
-                                return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("nameWithSpaces"));
+                                return AnvilGUI.Response.text(database.getOpPets().getMessages().getMessagesAccess().stringMessage("nameWithSpaces"));
                             }
                         }
-                        Database.getOpPets().getUtils().killPetFromPlayerUUID(player.getUniqueId());
+                        database.getOpPets().getUtils().killPetFromPlayerUUID(player.getUniqueId());
 
                         /*
                             If formatted message (s) has not equal length to not-formatted one
@@ -58,36 +62,38 @@ public class RenameAnvilInventory {
                             it goes through a normal process.
                         */
                         UUID uuid = player.getUniqueId();
-                        Database.getDatabase().getPetList(uuid).removeIf(pet1 -> {
-                            assert pet1.getPetName() != null;
-                            return pet1.getPetName().equals(pet.getPetName());
+                        database.getDatabase().getPetList(uuid).removeIf(pet1 -> {
+                            if (pet1.getPetName() != null) {
+                                return pet1.getPetName().equals(pet.getPetName());
+                            }
+                            return false;
                         });
 
                         if (FormatUtils.formatMessage(s).length() != s.length()) {
                             if (player.hasPermission("oppets.pet.rename.colors") || player.isOp()) {
                                 pet.setPetName(s);
-                                player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("changedName").replace("%new_pet_name%", FormatUtils.formatMessage(s)));
+                                player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("changedName").replace("%new_pet_name%", FormatUtils.formatMessage(s)));
                             } else {
-                                player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noPermission").replace("%permission%", "oppets.pet.rename.colors"));
+                                player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("noPermission").replace("%permission%", "oppets.pet.rename.colors"));
                                 return AnvilGUI.Response.close();
                             }
                         } else {
                             pet.setPetName(s);
-                            player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("changedName").replace("%new_pet_name%", s));
+                            player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("changedName").replace("%new_pet_name%", s));
                         }
 
-                        Database.getOpPets().getCreator().spawnMiniPet(pet, player);
-                        List<Pet> petList = Database.getOpPets().getDatabase().getPetList(uuid);
+                        database.getOpPets().getCreator().spawnMiniPet(pet, player);
+                        List<Pet> petList = database.getDatabase().getPetList(uuid);
                         petList.add(pet);
-                        Database.getOpPets().getDatabase().setPets(uuid, petList);
+                        database.getDatabase().setPets(uuid, petList);
                         return AnvilGUI.Response.close();
                     } else {
-                        return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("incorrectValueName"));
+                        return AnvilGUI.Response.text(database.getOpPets().getMessages().getMessagesAccess().stringMessage("incorrectValueName"));
                     }
                 }))
                 .text(petName)
                 .title(title)
-                .plugin(Database.getInstance())
+                .plugin(database.getPlugin())
                 .open(playerOpened);
     }
 

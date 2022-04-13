@@ -29,6 +29,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.Nullable;
+import v1_16_1R.SessionHolder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,13 +45,21 @@ import java.util.UUID;
  */
 public class PetPluginController {
     /**
+     * The Session.
+     */
+    private final String session = OpPets.getInstance().getSessionIdentifier().getSession();
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(session);
+    /**
      * The Instance.
      */
     private final OpPets instance;
     /**
      * The Local path.
      */
-    private final String localPath = Database.getInstance().getDataFolder().getAbsolutePath();
+    private final String localPath = database.getPlugin().getDataFolder().getAbsolutePath();
     /**
      * The Packet event.
      */
@@ -87,7 +96,6 @@ public class PetPluginController {
     public void init() {
         getInstance().saveDefaultConfig();
         loadFiles();
-        registerEvents();
         registerCommands();
         bStatsActivation(13211);
     }
@@ -101,7 +109,7 @@ public class PetPluginController {
      */
     public void bStatsActivation(int pluginId) {
         Metrics metrics = new Metrics(getInstance(), pluginId);
-        metrics.addCustomChart(new Metrics.SingleLineChart("pets", () -> Database.getDatabase().getPetsMap().keySet().stream().mapToInt(uuid -> Database.getDatabase().getPetList(uuid).size()).sum()));
+        metrics.addCustomChart(new Metrics.SingleLineChart("pets", () -> database.getDatabase().getPetsMap().keySet().stream().mapToInt(uuid -> database.getDatabase().getPetList(uuid).size()).sum()));
     }
 
     /**
@@ -112,11 +120,11 @@ public class PetPluginController {
      * @see me.opkarol.oppets.OpPets
      */
     public void saveFiles() {
-        if (!Database.mySQLAccess) {
-            new FileManager<HashMap<UUID, List<Pet>>>().saveObject(localPath + "/PetsMap.db", Database.getDatabase().getPetsMap());
-            new FileManager<HashMap<UUID, Pet>>().saveObject(localPath + "/ActivePetMap.db", Database.getDatabase().getActivePetMap());
+        if (!database.mySQLAccess) {
+            new FileManager<HashMap<UUID, List<Pet>>>().saveObject(localPath + "/PetsMap.db", database.getDatabase().getPetsMap());
+            new FileManager<HashMap<UUID, Pet>>().saveObject(localPath + "/ActivePetMap.db", database.getDatabase().getActivePetMap());
         } else {
-            Bukkit.getOnlinePlayers().forEach(player -> Database.getDatabase().databaseUUIDSaver(player.getUniqueId(), false));
+            Bukkit.getOnlinePlayers().forEach(player -> database.getDatabase().databaseUUIDSaver(player.getUniqueId(), false));
         }
         killAllPets();
     }
@@ -129,9 +137,9 @@ public class PetPluginController {
      * @see me.opkarol.oppets.OpPets
      */
     public void loadFiles() {
-        if (!Database.mySQLAccess) {
-            Database.getDatabase().setPetsMap(new FileManager<HashMap<UUID, List<Pet>>>().loadObject(localPath + "/PetsMap.db"));
-            Database.getDatabase().setActivePetMap(new FileManager<HashMap<UUID, Pet>>().loadObject(localPath + "/ActivePetMap.db"));
+        if (!database.mySQLAccess) {
+            database.getDatabase().setPetsMap(new FileManager<HashMap<UUID, List<Pet>>>().loadObject(localPath + "/PetsMap.db"));
+            database.getDatabase().setActivePetMap(new FileManager<HashMap<UUID, Pet>>().loadObject(localPath + "/ActivePetMap.db"));
         }
     }
 
@@ -168,9 +176,9 @@ public class PetPluginController {
      * If result is valid, it can be successfully removed using Bukkit method.
      */
     public void killAllPets() {
-        Database.getDatabase().getActivePetMap().keySet().forEach(uuid -> {
+        database.getDatabase().getActivePetMap().keySet().forEach(uuid -> {
             if (uuid != null) {
-                Database.getUtils().killPetFromPlayerUUID(uuid);
+                database.getUtils().killPetFromPlayerUUID(uuid);
             }
         });
         Bukkit.getWorlds()
@@ -191,8 +199,8 @@ public class PetPluginController {
         try {
             version = Bukkit.getBukkitVersion().split("-")[0];
             this.setVersion(version);
-        } catch (ArrayIndexOutOfBoundsException var5) {
-            new OpPets().disablePlugin(var5.getCause().getMessage());
+        } catch (ArrayIndexOutOfBoundsException exception) {
+            instance.disablePlugin(exception.getCause().getMessage());
             return false;
         }
 
@@ -200,25 +208,42 @@ public class PetPluginController {
         PluginManager manager = this.instance.getServer().getPluginManager();
         String versionR;
         switch (getVersion()) {
-            case "1.16", "1.16.1", "1.16.2" -> versionR = "v1_16_1R.";
-            case "1.16.3", "1.16.4" -> versionR = "v1_16_3R.";
-            case "1.16.5" -> versionR = "v1_16_5R.";
-            case "1.17" -> versionR = "v1_17R.";
-            case "1.17.1" -> versionR = "v1_17_1R.";
-            case "1.18" -> versionR = "v1_18_1R.";
+            case "1.16", "1.16.1", "1.16.2" -> {
+                versionR = "v1_16_1R.";
+                SessionHolder.setSession(session);
+            }
+            case "1.16.3", "1.16.4" -> {
+                versionR = "v1_16_3R.";
+                v1_16_3R.SessionHolder.setSession(session);
+            }
+            case "1.16.5" -> {
+                versionR = "v1_16_5R.";
+                v1_16_5R.SessionHolder.setSession(session);
+            }
+            case "1.17" -> {
+                versionR = "v1_17R.";
+                v1_17R.SessionHolder.setSession(session);
+            }
+            case "1.17.1" -> {
+                versionR = "v1_17_1R.";
+                v1_17_1R.SessionHolder.setSession(session);
+            }
+            case "1.18" -> {
+                versionR = "v1_18_1R.";
+                v1_18_1R.SessionHolder.setSession(session);
+            }
             default -> throw new IllegalStateException("Unexpected value: " + getVersion());
         }
         String substring = versionR.substring(0, versionR.length() - 2);
 
         try {
-            OpPets.setCreator((IBabyEntityCreator) Class.forName(versionR + "BabyEntityCreator").newInstance());
-            OpPets.setEntityManager((IEntityManager) Class.forName(versionR + "entities.EntityManager").newInstance());
+            instance.setCreator((IBabyEntityCreator) Class.forName(versionR + "BabyEntityCreator").newInstance());
+            instance.setEntityManager((IEntityManager) Class.forName(versionR + "entities.EntityManager").newInstance());
             this.setPacketEvent((IPacketPlayInSteerVehicleEvent) Class.forName(versionR + "PacketPlayInSteerVehicleEvent_" + substring).newInstance());
-            manager.registerEvents((Listener) Class.forName(versionR + "PlayerSteerVehicleEvent_" + substring).newInstance(), this.instance);
+            manager.registerEvents((Listener) Class.forName(versionR + "PlayerSteerVehicleEvent_" + substring).newInstance(), instance);
             IUtils utils = (IUtils) Class.forName(versionR + "Utils").newInstance();
-            OpPets.setUtils(utils);
+            instance.setUtils(utils);
             PacketManager.setUtils(utils);
-            Database.setUtils(utils);
             PacketManager.setEvent(getPacketEvent());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -267,7 +292,7 @@ public class PetPluginController {
      *
      * @return the economy
      */
-    public @Nullable Economy setupEconomy() {
+    public @Nullable Object setupEconomy() {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
             return null;
         }

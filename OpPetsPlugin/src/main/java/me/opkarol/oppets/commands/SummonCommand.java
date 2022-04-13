@@ -9,6 +9,7 @@ package me.opkarol.oppets.commands;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.inventories.SummonInventory;
 import me.opkarol.oppets.pets.Pet;
@@ -26,6 +27,10 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  * The type Summon command.
  */
 public class SummonCommand implements ICommand {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Execute boolean.
@@ -37,7 +42,7 @@ public class SummonCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
         UUID playerUUID = player.getUniqueId();
         if (args.length == 1) {
@@ -45,18 +50,19 @@ public class SummonCommand implements ICommand {
             return true;
         }
         if (args.length != 2) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets summon <PET>"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets summon <PET>"));
         }
-        Pet activePet = Database.getOpPets().getDatabase().getCurrentPet(playerUUID);
         if (args[1].equals(noPetsString)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petBlockedName").replace("%blocked_word%", noPetsString));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("petBlockedName").replace("%blocked_word%", noPetsString));
         }
-        List<Pet> playerPets = Database.getOpPets().getDatabase().getPetList(playerUUID);
+        List<Pet> playerPets = database.getDatabase().getPetList(playerUUID);
         if (playerPets == null || playerPets.size() == 0) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petListEmpty"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("petListEmpty"));
         }
-        PetsUtils.summonPet(args[1], playerUUID, player);
-        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
+        if (PetsUtils.summonPet(args[1], playerUUID, player)) {
+            return true;
+        }
+        return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
     }
 
     /**

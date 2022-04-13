@@ -16,7 +16,6 @@ import java.util.List;
  * The type Skill.
  */
 public class Skill extends SkillEnums {
-
     /**
      * The Name.
      */
@@ -62,9 +61,9 @@ public class Skill extends SkillEnums {
     }
 
     /**
-     * Gets a.
+     * Gets name.
      *
-     * @return the a
+     * @return the name
      */
     public String getName() {
         return name;
@@ -80,9 +79,9 @@ public class Skill extends SkillEnums {
     }
 
     /**
-     * Gets b.
+     * Gets ability list.
      *
-     * @return the b
+     * @return the ability list
      */
     public List<Ability> getAbilityList() {
         return abilityList;
@@ -98,9 +97,9 @@ public class Skill extends SkillEnums {
     }
 
     /**
-     * Gets c.
+     * Gets requirement list.
      *
-     * @return the c
+     * @return the requirement list
      */
     public List<Requirement> getRequirementList() {
         return requirementList;
@@ -116,9 +115,9 @@ public class Skill extends SkillEnums {
     }
 
     /**
-     * Gets e.
+     * Gets adder list.
      *
-     * @return the e
+     * @return the adder list
      */
     public List<Adder> getAdderList() {
         return adderList;
@@ -134,9 +133,9 @@ public class Skill extends SkillEnums {
     }
 
     /**
-     * Gets f.
+     * Gets type of entity list.
      *
-     * @return the f
+     * @return the type of entity list
      */
     public List<OpPetsEntityTypes.TypeOfEntity> getTypeOfEntityList() {
         return typeOfEntityList;
@@ -152,9 +151,9 @@ public class Skill extends SkillEnums {
     }
 
     /**
-     * Gets h.
+     * Gets max level.
      *
-     * @return the h
+     * @return the max level
      */
     public int getMaxLevel() {
         return maxLevel;

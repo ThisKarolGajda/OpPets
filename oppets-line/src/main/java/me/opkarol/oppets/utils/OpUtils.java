@@ -26,77 +26,53 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * OpUtils class is a main utils class, that can be also accessed as under-api
- * to in-source files.
- * It contains a lot of useful methods which are based around Pet and Player.
+ * The type Op utils.
  */
 public class OpUtils {
     /**
      * The constant cache.
      */
     private static InventoryCache cache;
+    /**
+     * The constant database.
+     */
+    private static Database database;
 
     /**
-     * Returns a level Integer value which is taken
-     * from Pet object that was previously provided
-     * in the method.
-     * <p>
-     * <p>
-     * This method won't return an object if a
-     * provided is null.
+     * Gets level.
      *
-     * @param pet class object from which level will be read
-     * @return level integer level localized in object class
+     * @param pet the pet
+     * @return the level
      */
     public static int getLevel(@NotNull Pet pet) {
         return pet.getLevel();
     }
 
     /**
-     * Returns a max level Integer value which is taken
-     * from Pet object that was previously provided
-     * in this method.
-     * <p>
-     * This method will not return any object if a
-     * pet provided is null.
+     * Gets max level.
      *
-     * @param pet class object from which level will be read
-     * @return level max level from skill which name was read from pet class
-     * @see me.opkarol.oppets.skills.SkillDatabase
+     * @param pet the pet
+     * @return the max level
      */
     public static int getMaxLevel(@NotNull Pet pet) {
-        return Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getMaxLevel();
+        return database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getMaxLevel();
     }
 
     /**
-     * Returns a pet level experience Integer value that
-     * is transformed from divided from adderPoints of
-     * provided pet`s experience, which next is rounded
-     * using Math.round method and selected using
-     * Math.toIntExact method.
-     * <p>
-     * This method will throw an error if pet is invalid.
+     * Gets pet level experience.
      *
-     * @param pet class object from which level will be read
-     * @return experience is a divided operation from pet`s experience and adderPoints
-     * @see me.opkarol.oppets.utils.OpUtils#getAdderPoints me.opkarol.oppets.utils.OpUtils#getAdderPointsme.opkarol.oppets.utils.OpUtils#getAdderPoints
+     * @param pet the pet
+     * @return the pet level experience
      */
     public static int getPetLevelExperience(@NotNull Pet pet) {
         return Math.toIntExact(Math.round(getAdderPoints(pet.getSkillName(), true, pet) - pet.getPetExperience()));
     }
 
     /**
-     * Returns a String formatted object that has been
-     * transformed from a skill name of pet.
-     * Returned string contains "%" character at the end,
-     * and has 4 character capacity. [x.xx, xx.x]
-     * <p>
-     * Returned object is a percentage calculation, using method:
-     * a * 100 / b,
-     * which provides real-time calculation of current level progress.
+     * Gets percentage of next level.
      *
-     * @param pet class object from which object will be read
-     * @return percentage special mathematics operation that transforms pet and skill information into readable string
+     * @param pet the pet
+     * @return the percentage of next level
      */
     public static @NotNull String getPercentageOfNextLevel(@NotNull Pet pet) {
         String skillName = pet.getSkillName();
@@ -106,18 +82,16 @@ public class OpUtils {
     }
 
     /**
-     * Returns a double object that is being specified by
-     * using the lowest and highest number, which is looped
-     * through every Adder from the skill.
+     * Gets adder points.
      *
-     * @param skillName    string object that is equals to a skill name
-     * @param lowestOutput boolean value which represents if method has to do lowestOutput operation
-     * @param pet          class object from which object will be read
-     * @return adderPoints double object that is a upper value
+     * @param skillName    the skill name
+     * @param lowestOutput the lowest output
+     * @param pet          the pet
+     * @return the adder points
      */
     public static double getAdderPoints(String skillName, boolean lowestOutput, Pet pet) {
         double number = 0D;
-        List<Adder> list = Database.getOpPets().getSkillDatabase().getSkillFromMap(skillName).getAdderList();
+        List<Adder> list = database.getOpPets().getSkillDatabase().getSkillFromMap(skillName).getAdderList();
         for (Adder adder : list) {
             double calculated = adder.calculateMaxCurrent(pet.getLevel());
             if (number == 0) {
@@ -138,11 +112,10 @@ public class OpUtils {
     }
 
     /**
-     * Returns a UUID object that is being created
-     * from Online of Offline player object.
+     * Gets uuid from name.
      *
-     * @param name string object which is equal to a player name
-     * @return uuid value of resulted method
+     * @param name the name
+     * @return the uuid from name
      */
     public static UUID getUUIDFromName(String name) {
         final Player online = Bukkit.getPlayerExact(name);
@@ -156,30 +129,20 @@ public class OpUtils {
     }
 
     /**
-     * Returns a name object that is being created
-     * from Online of Offline player object, using
-     * player uuid.
-     * <p>
-     * Will return null if the player wasn't before
-     * on the server / hasn't been registered.
+     * Gets name from uuid.
      *
-     * @param uuid value of resulted method
-     * @return name string object which is equal to a player name
+     * @param uuid the uuid
+     * @return the name from uuid
      */
     public static String getNameFromUUID(UUID uuid) {
         return Bukkit.getOfflinePlayer(uuid).getName();
     }
 
     /**
-     * Returns a boolean object that is being
-     * a representation of equals operation
-     * between pet level and pet max level.
-     * <p>
-     * If the result is bigger or equal to
-     * than itself, it returns true.
+     * Can prestige boolean.
      *
-     * @param pet class object from which object will be read
-     * @return prestige boolean value from specified operation
+     * @param pet the pet
+     * @return the boolean
      */
     public static boolean canPrestige(@NotNull Pet pet) {
         return pet.getLevel() >= getMaxLevel(pet);
@@ -192,17 +155,16 @@ public class OpUtils {
      * @return the reward message
      */
     @Contract(pure = true)
+    //TODO
     public static @NotNull String getRewardMessage(@NotNull Pet pet) {
         return "";
     }
 
     /**
-     * Returns a integer value that has been calculated
-     * from operation: a - b, where a stands for
-     * maximum pet level, and b for pet level.
+     * Gets levels for prestige.
      *
-     * @param pet class object from which object will be read
-     * @return level needed for next prestige
+     * @param pet the pet
+     * @return the levels for prestige
      */
     public static int getLevelsForPrestige(Pet pet) {
         if (canPrestige(pet)) {
@@ -212,11 +174,9 @@ public class OpUtils {
     }
 
     /**
-     * This method opens a saved in a cache, pet main inventory
-     * and if it doesn't exist, it will generate it own.
-     * It will repeat itself if an inventory is invalid.
+     * Open main inventory.
      *
-     * @param player used as an object whose inventory will be open
+     * @param player the player
      */
     public static void openMainInventory(Player player) {
         if (cache == null) {
@@ -231,4 +191,12 @@ public class OpUtils {
         }
     }
 
+    /**
+     * Sets database.
+     *
+     * @param database the database
+     */
+    public static void setDatabase(Database database) {
+        OpUtils.database = database;
+    }
 }

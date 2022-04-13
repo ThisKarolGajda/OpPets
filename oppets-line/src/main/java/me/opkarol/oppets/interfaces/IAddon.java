@@ -7,8 +7,7 @@ import java.util.List;
 /**
  * The interface Addon.
  */
-public interface IAddon {
-
+public interface IAddon extends IGetter {
     /**
      * Gets name.
      *

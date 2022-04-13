@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * The type Addon config.
  */
-@SuppressWarnings("unused")
 public class AddonConfig implements IAddon {
     /**
      * The Name.
@@ -152,4 +151,25 @@ public class AddonConfig implements IAddon {
     public void setVersion(String version) {
         this.version = version;
     }
+
+    /**
+     * Gets type.
+     *
+     * @return the type
+     */
+    @Override
+    public GETTER_TYPE getType() {
+        return GETTER_TYPE.ADDON;
+    }
+
+    /**
+     * Gets object.
+     *
+     * @return the object
+     */
+    @Override
+    public Object getObject() {
+        return this;
+    }
+
 }

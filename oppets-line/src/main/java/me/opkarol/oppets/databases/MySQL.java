@@ -32,23 +32,29 @@ import java.util.stream.Stream;
  */
 public class MySQL {
     /**
-     * The constant source.
+     * The Source.
      */
-    private static DataSource source;
+    private DataSource source;
     /**
-     * The constant hikariDataSource.
+     * The Hikari data source.
      */
-    private static HikariDataSource hikariDataSource;
+    private HikariDataSource hikariDataSource;
     /**
-     * The constant plugin.
+     * The Plugin.
      */
-    private static Plugin plugin;
+    private Plugin plugin;
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance();
 
     /**
      * Sets my sql.
+     *
+     * @return the my sql
      */
-    public static void setupMySQL() {
-        plugin = Database.getInstance();
+    public MySQL setupMySQL() {
+        plugin = database.getPlugin();
         FileConfiguration configuration = plugin.getConfig();
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(configuration.getString("mysql.url"));
@@ -62,12 +68,13 @@ public class MySQL {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return this;
     }
 
     /**
      * Close connection.
      */
-    public static void closeConnection() {
+    public void closeConnection() {
         if (hikariDataSource != null && !hikariDataSource.isClosed()) {
             hikariDataSource.close();
         }
@@ -78,7 +85,7 @@ public class MySQL {
      *
      * @param error the error
      */
-    private static void logSQLError(String error) {
+    private void logSQLError(String error) {
         plugin.getLogger().warning(error);
     }
 
@@ -87,7 +94,7 @@ public class MySQL {
      *
      * @throws SQLException the sql exception
      */
-    private static void initDb() throws SQLException {
+    private void initDb() throws SQLException {
         try (Connection conn = source.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS oppets (" +
@@ -112,7 +119,7 @@ public class MySQL {
      * @param pet the pet
      * @throws SQLException the sql exception
      */
-    public static void insertPet(@NotNull Pet pet) throws SQLException {
+    public void insertPet(@NotNull Pet pet) throws SQLException {
         try (Connection conn = source.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "INSERT INTO oppets(id, name, settings, skill, experience, level, type, active, ownerUUID, prestige) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, settings = ?, skill = ?, experience = ?, level = ?, type = ?, active = ?, ownerUUID = ?, prestige = ?;")) {
@@ -156,7 +163,7 @@ public class MySQL {
      *
      * @param pet the pet
      */
-    public static void asyncInsertPet(Pet pet) {
+    public void asyncInsertPet(Pet pet) {
         new BukkitRunnable() {
             boolean b = false;
             @Override
@@ -180,7 +187,7 @@ public class MySQL {
      * @param pet the pet
      * @throws SQLException the sql exception
      */
-    public static void deletePet(@NotNull Pet pet) throws SQLException {
+    public void deletePet(@NotNull Pet pet) throws SQLException {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -205,7 +212,7 @@ public class MySQL {
      *
      * @return the pets
      */
-    public static @NotNull List<Pet> getPets() {
+    public @NotNull List<Pet> getPets() {
         final List<Pet> pets = new ArrayList<>();
         try (Connection conn = source.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
@@ -229,7 +236,7 @@ public class MySQL {
      * @return the boolean
      */
     @SuppressWarnings("unused")
-    public static synchronized boolean containsID(int id) {
+    public synchronized boolean containsID(int id) {
         final boolean[] supplier = new boolean[1];
         new BukkitRunnable() {
             @Override

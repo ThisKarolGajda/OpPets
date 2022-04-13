@@ -16,26 +16,25 @@ import org.bukkit.command.CommandSender;
 public interface ICommand {
 
     /**
-     * Main method which takes sender and arguments, which then it analyzes and configures
-     * what have been chosen before.
+     * Execute boolean.
      *
-     * @param sender command sender
-     * @param args   table of string
-     * @return boolean if statement was successfully launched
+     * @param sender the sender
+     * @param args   the args
+     * @return the boolean
      */
     boolean execute(CommandSender sender, String[] args);
 
     /**
      * Gets permission.
      *
-     * @return string permission which is required to use specific command
+     * @return the permission
      */
     String getPermission();
 
     /**
      * Gets sub command.
      *
-     * @return string sub command which is a tabComplete and command executor provider.
+     * @return the sub command
      */
     String getSubCommand();
 }

@@ -8,10 +8,11 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.addons.AddonManager;
 import me.opkarol.oppets.boosters.Booster;
 import me.opkarol.oppets.broadcasts.Broadcast;
-import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
@@ -34,6 +35,10 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  * The type Op pets command.
  */
 public class OpPetsCommand implements CommandExecutor, TabCompleter {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
     /**
      * The constant noPetsString.
      */
@@ -90,7 +95,7 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
                 switch (args[0].toLowerCase()) {
                     case "delete", "summon", "rename", "gift" -> result.addAll(getCompletedPetList(player.getUniqueId(), args[1]));
                     case "create" -> {
-                        HashSet<String> completions = Database.getOpPets().getEntityManager().getAllowedEntities();
+                        HashSet<String> completions = database.getOpPets().getEntityManager().getAllowedEntities();
                         StringUtil.copyPartialMatches(args[1], completions, result);
                     }
                     case "admin" -> result.addAll(getPlayers(args[1]));
@@ -111,7 +116,7 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
                     case "booster" -> {
                         switch (args[1]) {
                             case "remove" -> {
-                                List<String> completions = new ArrayList<>(Database.getOpPets().getBoosterProvider().getBoosters().stream().map(Booster::getName).toList());
+                                List<String> completions = new ArrayList<>(database.getOpPets().getBoosterProvider().getBoosters().stream().map(Booster::getName).toList());
                                 StringUtil.copyPartialMatches(args[2], completions, result);
                             }
                             case "add" -> StringUtil.copyPartialMatches(args[2], List.of("(name)"), result);
@@ -139,7 +144,7 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
             case 5 -> {
                 switch (args[0].toLowerCase()) {
                     case "booster" -> StringUtil.copyPartialMatches(args[4], List.of("(multiplier)"), result);
-                    case "admin" -> Database.getOpPets().getDatabase().getPetList(OpUtils.getUUIDFromName(args[1])).stream().filter(pet -> Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(args[2]))).collect(Collectors.toList()).forEach(pet -> {
+                    case "admin" -> database.getDatabase().getPetList(OpUtils.getUUIDFromName(args[1])).stream().filter(pet -> Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(args[2]))).collect(Collectors.toList()).forEach(pet -> {
                         switch (args[3]) {
                             case "level" -> result.add(String.valueOf(pet.getLevel()));
                             case "xp" -> result.add(String.valueOf(pet.getPetExperience()));
@@ -196,9 +201,9 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
      */
     private @NotNull @Unmodifiable List<String> getCompletedPetList(UUID uuid, String args) {
         List<String> list = new ArrayList<>();
-        if (Database.getOpPets().getDatabase().getPetList(uuid) == null) return Collections.singletonList(noPetsString);
+        if (database.getDatabase().getPetList(uuid) == null) return Collections.singletonList(noPetsString);
         List<String> completions = new ArrayList<>();
-        Database.getOpPets().getDatabase().getPetList(uuid).forEach(pet -> completions.add(FormatUtils.getNameString(pet.getPetName())));
+        database.getDatabase().getPetList(uuid).forEach(pet -> completions.add(FormatUtils.getNameString(pet.getPetName())));
         StringUtil.copyPartialMatches(args, completions, list);
         if (list.size() == 0) return Collections.singletonList(noPetsString);
         return list;
@@ -220,14 +225,14 @@ public class OpPetsCommand implements CommandExecutor, TabCompleter {
             if (subCommandInterface.getSubCommand().equals(cmd)) {
                 if (sender.hasPermission(subCommandInterface.getPermission()) || sender.isOp() || subCommandInterface.getPermission() == null) {
                     if (!subCommandInterface.execute(sender, args)) {
-                        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "Error occurred"));
+                        return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "Error occurred"));
                     }
                     return true;
                 }
-                return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noPermission").replace("%permission%", subCommandInterface.getPermission()));
+                return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noPermission").replace("%permission%", subCommandInterface.getPermission()));
             }
         }
-        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets <create/summon/gift/help/rename/ride/shop/summon>"));
+        return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets <create/summon/gift/help/rename/ride/shop/summon>"));
     }
 
 }

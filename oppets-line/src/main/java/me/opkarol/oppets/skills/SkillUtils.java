@@ -8,9 +8,10 @@ package me.opkarol.oppets.skills;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.databases.APIDatabase;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.utils.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -28,18 +29,17 @@ public class SkillUtils {
     /**
      * The Config.
      */
-    private final FileConfiguration config;
+    private final FileConfiguration config = ConfigUtils.getConfig();
     /**
-     * The Database.
+     * The Skill database.
      */
-    private final SkillDatabase database;
+    private final SkillDatabase skillDatabase;
 
     /**
      * Instantiates a new Skill utils.
      */
     public SkillUtils() {
-        config = Database.getInstance().getConfig();
-        database = Database.getOpPets().getSkillDatabase();
+        skillDatabase = APIDatabase.getInstance().getSkillDatabase();
     }
 
     /**
@@ -48,8 +48,7 @@ public class SkillUtils {
      * @param database the database
      */
     public SkillUtils(SkillDatabase database) {
-        config = Database.getInstance().getConfig();
-        this.database = database;
+        this.skillDatabase = database;
     }
 
     /**
@@ -161,7 +160,7 @@ public class SkillUtils {
      * @return the granted points from enum
      */
     public double getGrantedPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
-        List<Double> values = database.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
+        List<Double> values = skillDatabase.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
                 .filter(adder -> adder.getAdder() == skillsAdder)
                 .filter(adder -> !adder.progressiveAdderEnabled())
                 .map(Adder::getGrantedPoints).collect(Collectors.toList());
@@ -179,7 +178,7 @@ public class SkillUtils {
      * @return the max points from enum
      */
     public double getMaxPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
-        List<Object> values = database.getSkillFromMap(pet.getSkillName()).getAdderList()
+        List<Object> values = skillDatabase.getSkillFromMap(pet.getSkillName()).getAdderList()
                 .stream().map(adder -> {
                     if (adder.progressiveAdderEnabled()) {
                         return adder.calculateMaxCurrent(pet.getLevel());
@@ -203,7 +202,7 @@ public class SkillUtils {
      * @return the random skill name
      */
     public String getRandomSkillName(OpPetsEntityTypes.TypeOfEntity type) {
-        List<Skill> list = database.getAccessibleSkillsToPetType(type);
+        List<Skill> list = skillDatabase.getAccessibleSkillsToPetType(type);
         if (list == null) return null;
         if (list.size() == 1) {
             return list.get(0).getName();

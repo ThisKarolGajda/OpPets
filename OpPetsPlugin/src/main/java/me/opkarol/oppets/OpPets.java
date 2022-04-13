@@ -12,25 +12,17 @@ import me.opkarol.oppets.abilities.AbilitiesDatabase;
 import me.opkarol.oppets.boosters.BoosterProvider;
 import me.opkarol.oppets.broadcasts.BroadcastManager;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.databases.MySQL;
 import me.opkarol.oppets.databases.PetsDatabase;
 import me.opkarol.oppets.files.MessagesFile;
 import me.opkarol.oppets.interfaces.*;
 import me.opkarol.oppets.leaderboards.LeaderboardCounter;
+import me.opkarol.oppets.misc.SessionIdentifier;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import me.opkarol.oppets.skills.SkillDatabase;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * OpPets main Class which extends JavaPlugin.
- * Used as a getter and setter for all classes objects.
- * <p>
- * Overrides main methods of JavaPlugin - onEnable and onDisable
- * creating custom methods which sets private static objects.
- * <p>
- * This class also contains disablePlugin method
- * which can be used to disable OpPets functionality.
+ * The type Op pets.
  */
 public final class OpPets extends JavaPlugin implements IOpPets {
     /**
@@ -38,57 +30,157 @@ public final class OpPets extends JavaPlugin implements IOpPets {
      */
     private static OpPets opPets;
     /**
-     * The constant controller.
+     * The Database.
      */
-    private static PetPluginController controller;
+    private Database database;
     /**
-     * The constant creator.
+     * The Controller.
      */
-    private static IBabyEntityCreator creator;
+    private PetPluginController controller;
     /**
-     * The constant entityManager.
+     * The Creator.
      */
-    private static IEntityManager entityManager;
+    private IBabyEntityCreator creator;
     /**
-     * The constant utils.
+     * The Entity manager.
      */
-    private static IUtils utils;
+    private IEntityManager entityManager;
     /**
-     * The constant skillDatabase.
+     * The Utils.
      */
-    private static SkillDatabase skillDatabase;
+    private IUtils utils;
     /**
-     * The constant prestigeManager.
+     * The Messages.
      */
-    private static PrestigeManager prestigeManager;
+    private MessagesFile messages;
     /**
-     * The constant messages.
+     * The Skill database.
      */
-    private static MessagesFile messages;
+    private SkillDatabase skillDatabase;
     /**
-     * The constant petsDatabase.
+     * The Prestige manager.
      */
-    private static PetsDatabase petsDatabase;
+    private PrestigeManager prestigeManager;
     /**
-     * The constant abilitiesDatabase.
+     * The Pets database.
      */
-    private static AbilitiesDatabase abilitiesDatabase;
+    private PetsDatabase petsDatabase;
     /**
-     * The constant boosterProvider.
+     * The Abilities database.
      */
-    private static Economy economy;
+    private AbilitiesDatabase abilitiesDatabase;
     /**
-     * The constant boosterProvider.
+     * The Booster provider.
      */
-    private static BoosterProvider boosterProvider;
+    private BoosterProvider boosterProvider;
     /**
-     * The constant leaderboard.
+     * The Leaderboard counter.
      */
-    private static LeaderboardCounter leaderboard;
+    private LeaderboardCounter leaderboardCounter;
     /**
-     * The constant broadcastManager.
+     * The Broadcast manager.
      */
-    private static BroadcastManager broadcastManager;
+    private BroadcastManager broadcastManager;
+    /**
+     * The Session identifier.
+     */
+    private SessionIdentifier sessionIdentifier;
+
+    /**
+     * On enable.
+     */
+    @Override
+    public void onEnable() {
+        opPets = this;
+        sessionIdentifier = new SessionIdentifier();
+        database = new Database(opPets, sessionIdentifier);
+        database.setOpPets(opPets);
+        messages = new MessagesFile();
+        petsDatabase = new PetsDatabase();
+        abilitiesDatabase = new AbilitiesDatabase();
+        controller = new PetPluginController(opPets);
+        skillDatabase = new SkillDatabase();
+        this.setEnabled(controller.setupVersion());
+        boosterProvider = new BoosterProvider(database);
+        prestigeManager = new PrestigeManager();
+        leaderboardCounter = new LeaderboardCounter(database);
+        broadcastManager = new BroadcastManager();
+        database.setOpPets(opPets);
+        controller.registerEvents();
+    }
+
+    /**
+     * On disable.
+     */
+    @Override
+    public void onDisable() {
+        controller.saveFiles();
+        database.getMySQL().closeConnection();
+        opPets = null;
+        creator = null;
+        controller = null;
+        skillDatabase = null;
+        entityManager = null;
+        utils = null;
+        messages = null;
+        prestigeManager = null;
+        boosterProvider = null;
+    }
+
+    /**
+     * Disable plugin.
+     *
+     * @param reason the reason
+     */
+    public void disablePlugin(String reason) {
+        this.getLogger().info(reason);
+        this.setEnabled(false);
+    }
+
+    /**
+     * Sets entity manager.
+     *
+     * @param entityManager the entity manager
+     */
+    public void setEntityManager(IEntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    /**
+     * Sets utils.
+     *
+     * @param utils the utils
+     */
+    public void setUtils(IUtils utils) {
+        this.utils = utils;
+    }
+
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     */
+    public static OpPets getInstance() {
+        return opPets;
+    }
+
+    /**
+     * Sets creator.
+     *
+     * @param creator2 the creator 2
+     */
+    public void setCreator(IBabyEntityCreator creator2) {
+        this.creator = creator2;
+    }
+
+    /**
+     * Gets database.
+     *
+     * @return the database
+     */
+    public IDatabase getDatabase() {
+        return database.getDatabase();
+    }
 
     /**
      * Gets messages.
@@ -111,15 +203,6 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     }
 
     /**
-     * Sets entity manager.
-     *
-     * @param entityManager the entity manager
-     */
-    public static void setEntityManager(IEntityManager entityManager) {
-        OpPets.entityManager = entityManager;
-    }
-
-    /**
      * Gets utils.
      *
      * @return the utils
@@ -130,24 +213,6 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     }
 
     /**
-     * Sets utils.
-     *
-     * @param utils the utils
-     */
-    public static void setUtils(IUtils utils) {
-        OpPets.utils = utils;
-    }
-
-    /**
-     * Gets instance.
-     *
-     * @return the instance
-     */
-    public OpPets getInstance() {
-        return opPets;
-    }
-
-    /**
      * Gets creator.
      *
      * @return the creator
@@ -155,24 +220,6 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     @Override
     public IBabyEntityCreator getCreator() {
         return creator;
-    }
-
-    /**
-     * Sets creator.
-     *
-     * @param creator2 the creator 2
-     */
-    public static void setCreator(IBabyEntityCreator creator2) {
-        OpPets.creator = creator2;
-    }
-
-    /**
-     * Gets database.
-     *
-     * @return the database
-     */
-    public IDatabase getDatabase() {
-        return Database.getDatabase();
     }
 
     /**
@@ -232,7 +279,7 @@ public final class OpPets extends JavaPlugin implements IOpPets {
      */
     @Override
     public LeaderboardCounter getLeaderboard() {
-        return leaderboard;
+        return leaderboardCounter;
     }
 
     /**
@@ -246,69 +293,22 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     }
 
     /**
-     * On enable.
-     */
-    @Override
-    public void onEnable() {
-        opPets = this;
-        Database.setInstance(opPets);
-        Database.setOpPets(opPets);
-        messages = new MessagesFile();
-        petsDatabase = new PetsDatabase();
-        abilitiesDatabase = new AbilitiesDatabase();
-        controller = new PetPluginController(opPets);
-        skillDatabase = new SkillDatabase();
-        if (!skillDatabase.isCanRun()) {
-            disablePlugin("Config file is invalid!");
-        }
-        this.setEnabled(controller.setupVersion());
-        prestigeManager = new PrestigeManager();
-        economy = controller.setupEconomy();
-        boosterProvider = new BoosterProvider();
-        leaderboard = new LeaderboardCounter();
-        broadcastManager = new BroadcastManager();
-        Database.setOpPets(opPets);
-    }
-
-    /**
-     * On disable.
-     */
-    @Override
-    public void onDisable() {
-        controller.saveFiles();
-        MySQL.closeConnection();
-        opPets = null;
-        creator = null;
-        controller = null;
-        skillDatabase = null;
-        entityManager = null;
-        utils = null;
-        messages = null;
-        prestigeManager = null;
-        economy = null;
-        boosterProvider = null;
-    }
-
-    /**
      * Gets economy.
      *
      * @return the economy
      */
     @Override
-    public Economy getEconomy() {
-        return economy;
+    public Object getEconomy() {
+        return controller.setupEconomy();
     }
 
     /**
-     * Method that informs a server with provided reason about
-     * OpPets`s shutdown and logs it as a class method.
+     * Gets session identifier.
      *
-     * @param reason string value is a message shown in the server's console
+     * @return the session identifier
      */
-    public void disablePlugin(String reason) {
-        this.getLogger().info(reason);
-        this.setEnabled(false);
+    public SessionIdentifier getSessionIdentifier() {
+        return sessionIdentifier;
     }
-
 }
 //TODO: panel for oppets

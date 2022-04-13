@@ -14,14 +14,13 @@ package me.opkarol.oppets.skills;
 public class SkillEnums {
 
     /**
-     * SkillsAbilities are abilities that are given to a player         ->
-     * for every * action / for every level upgrade / every level * action
+     * The enum Skills abilities.
      */
     public enum SkillsAbilities {
         /**
          * The Custom command.
          */
-        // CURRENT PLUGIN CONNECTIONS: Vault
+// CURRENT PLUGIN CONNECTIONS: Vault
         CUSTOM_COMMAND,
         /**
          * Plugin connection skills abilities.
@@ -35,11 +34,14 @@ public class SkillEnums {
          * Treasure skills abilities.
          */
         TREASURE,
+        /**
+         * Custom message skills abilities.
+         */
         CUSTOM_MESSAGE
     }
 
     /**
-     * SkillsRequirements are requirements that are needed to level up such as:
+     * The enum Skills requirements.
      */
     public enum SkillsRequirements {
         /**
@@ -49,7 +51,7 @@ public class SkillEnums {
     }
 
     /**
-     * SkillBoosters are addons that can help players to level up their pets
+     * The enum Skills boosters.
      */
     public enum SkillsBoosters {
         /**
@@ -75,7 +77,7 @@ public class SkillEnums {
     }
 
     /**
-     * SkillAdders are selective group of actions that leads to leveling up your pet
+     * The enum Skills adders.
      */
     public enum SkillsAdders {
         /**

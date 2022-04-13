@@ -12,8 +12,10 @@ import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.inventories.holders.BuyerAdmitInventoryHolder;
 import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.InventoryUtils;
 import me.opkarol.oppets.utils.PDCUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
@@ -24,7 +26,8 @@ import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.cache.NamespacedKeysCache.priceKey;
 import static me.opkarol.oppets.cache.NamespacedKeysCache.typeKey;
-import static me.opkarol.oppets.utils.InventoryUtils.*;
+import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
+import static me.opkarol.oppets.utils.InventoryUtils.itemCreatorShop;
 
 /**
  * The type Buyer admit inventory.
@@ -72,7 +75,7 @@ public class BuyerAdmitInventory implements IInventory {
         inventory.setItem(10, itemCreator(path + "decline.", this));
         inventory.setItem(13, itemCreator(path + "informationBook.", this));
         inventory.setItem(16, itemCreatorShop(type, Integer.parseInt(price), path + "confirm.", this));
-        fillInventory(inventory);
+        InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE);
     }
 
     /**

@@ -8,9 +8,8 @@ package me.opkarol.oppets.abilities;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.databases.APIDatabase;
 import me.opkarol.oppets.databases.PetsDatabase;
-import me.opkarol.oppets.misc.AbilitiesEnums;
 import me.opkarol.oppets.misc.CooldownModule;
 import me.opkarol.oppets.misc.PetDatabaseObject;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
@@ -40,9 +39,10 @@ public class AbilitiesDatabase {
      * Instantiates a new Abilities database.
      */
     public AbilitiesDatabase() {
-        PetsDatabase database = Database.getPetsDatabase();
-        for (OpPetsEntityTypes.TypeOfEntity type : database.getMap().keySet()) {
-            PetDatabaseObject object = database.getObjectFromDatabase(type);
+        APIDatabase database = APIDatabase.getInstance();
+        PetsDatabase petsDatabase = database.getPetsDatabase();
+        for (OpPetsEntityTypes.TypeOfEntity type : petsDatabase.getMap().keySet()) {
+            PetDatabaseObject object = petsDatabase.getObjectFromDatabase(type);
             if (object.isAbilityEnabled()) {
                 set.add(new PetAbility(getAbilityTypeFromEntity(type), type, getDescriptionFromEntity(type)));
             }

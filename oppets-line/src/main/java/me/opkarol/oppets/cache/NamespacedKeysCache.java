@@ -1,6 +1,6 @@
 package me.opkarol.oppets.cache;
 
-import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.databases.APIDatabase;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.Plugin;
 
@@ -11,7 +11,7 @@ public class NamespacedKeysCache {
     /**
      * The constant plugin.
      */
-    private static final Plugin plugin = Database.getInstance();
+    private static final Plugin plugin = APIDatabase.getInstance().getPlugin();
     /**
      * The constant typeKey.
      */
@@ -24,5 +24,8 @@ public class NamespacedKeysCache {
      * The constant petKey.
      */
     public static NamespacedKey petKey = new NamespacedKey(plugin, "oppets-entity-key");
+    /**
+     * The constant summonItemKey.
+     */
     public static NamespacedKey summonItemKey = new NamespacedKey(plugin, "oppets-summon-item-key");
 }

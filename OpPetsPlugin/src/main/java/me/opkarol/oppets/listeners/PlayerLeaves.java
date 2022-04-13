@@ -9,6 +9,7 @@ package me.opkarol.oppets.listeners;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,6 +23,10 @@ import java.util.UUID;
  * The type Player leaves.
  */
 public class PlayerLeaves implements Listener {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Player leaves.
@@ -32,7 +37,7 @@ public class PlayerLeaves implements Listener {
     public void playerLeaves(@NotNull PlayerQuitEvent event) {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
-        Database.getDatabase().databaseUUIDSaver(playerUUID, true);
-        Database.getOpPets().getUtils().killPetFromPlayerUUID(playerUUID);
+        database.getDatabase().databaseUUIDSaver(playerUUID, true);
+        database.getOpPets().getUtils().killPetFromPlayerUUID(playerUUID);
     }
 }

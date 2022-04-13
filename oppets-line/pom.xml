@@ -103,7 +103,7 @@
 
     <repositories>
         <repository>
-            <id>spigot-vault-api</id>
+            <id>vault-api</id>
             <url>https://ci.ender.zone/plugin/repository/everything/</url>
         </repository>
         <repository>

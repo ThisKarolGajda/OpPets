@@ -38,6 +38,7 @@ import java.util.*;
  * The type Utils.
  */
 public class Utils implements IUtils {
+    private final Database database = Database.getInstance(SessionHolder.getInstance().getSession());
 
     /**
      * Gets entity by unique id.
@@ -78,7 +79,7 @@ public class Utils implements IUtils {
             public void run() {
                 ((CraftPlayer) player).getHandle().connection.send(new PacketPlayOutEntityDestroy(entityId));
             }
-        }.runTask(Database.getInstance());
+        }.runTask(database.getPlugin());
     }
 
     /**
@@ -105,11 +106,11 @@ public class Utils implements IUtils {
         if (playerUUID == null) {
             return;
         }
-        Pet pet = Database.getDatabase().getCurrentPet(playerUUID);
+        Pet pet = database.getDatabase().getCurrentPet(playerUUID);
         if (pet == null) {
             return;
         }
-        Database.getDatabase().getActivePetMap()
+        database.getDatabase().getActivePetMap()
                 .values().stream()
                 .filter(pet1 -> pet1.getPetUUID().getID() == pet.getPetUUID().getID())
                 .map(Pet::getOwnUUID)

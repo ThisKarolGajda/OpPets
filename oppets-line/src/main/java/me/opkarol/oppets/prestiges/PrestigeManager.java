@@ -8,8 +8,8 @@ package me.opkarol.oppets.prestiges;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.databases.Database;
-import net.md_5.bungee.api.ChatColor;
+import me.opkarol.oppets.utils.ConfigUtils;
+import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class PrestigeManager {
      * Instantiates a new Prestige manager.
      */
     public PrestigeManager() {
-        FileConfiguration config = Database.getInstance().getConfig();
+        FileConfiguration config = ConfigUtils.getConfig();
         format = config.getString("Prestiges.format");
         if (!config.getBoolean("Prestiges.enabled")) {
             format = null;
@@ -74,16 +74,6 @@ public class PrestigeManager {
     }
 
     /**
-     * Format string string.
-     *
-     * @param s the s
-     * @return the string
-     */
-    private @NotNull String formatString(String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
-    }
-
-    /**
      * Gets filled prestige.
      *
      * @param prestige the prestige
@@ -105,7 +95,7 @@ public class PrestigeManager {
             i++;
         }
 
-        return formatString(format.replace("%prestige%", formatString(builder.toString())));
+        return FormatUtils.formatMessage(format.replace("%prestige%", FormatUtils.formatMessage((builder.toString()))));
     }
 
 }

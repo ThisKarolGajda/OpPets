@@ -9,7 +9,7 @@ package me.opkarol.oppets.inventories.anvil;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.Messages;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -25,6 +25,10 @@ import java.util.UUID;
  * The type Delete anvil inventory.
  */
 public class DeleteAnvilInventory {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Instantiates a new Delete anvil inventory.
@@ -33,7 +37,7 @@ public class DeleteAnvilInventory {
      * @param playerOpened the player opened
      */
     public DeleteAnvilInventory(@NotNull Pet pet, @NotNull Player playerOpened) {
-        String title = Database.getOpPets().getMessages().getMessagesAccess().stringMessage("titleDelete");
+        String title = database.getOpPets().getMessages().getMessagesAccess().stringMessage("titleDelete");
         String petName = FormatUtils.getNameString(Objects.requireNonNull(pet.getPetName()));
         UUID uuid = playerOpened.getUniqueId();
         final boolean[] b = {true};
@@ -41,12 +45,12 @@ public class DeleteAnvilInventory {
                 .onComplete((player, s) -> {
                     if (b[0] && FormatUtils.getNameString(s).equals(FormatUtils.getNameString(petName))) {
                         b[0] = false;
-                        Database.getOpPets().getDatabase().removePet(uuid, pet);
-                        player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("deletedMessage").replace("%pet_name%", petName));
+                        database.getDatabase().removePet(uuid, pet);
+                        player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("deletedMessage").replace("%pet_name%", petName));
                         return AnvilGUI.Response.close();
-                    } else return AnvilGUI.Response.text(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("confirmMessage"));
+                    } else return AnvilGUI.Response.text(database.getOpPets().getMessages().getMessagesAccess().stringMessage("confirmMessage"));
                 })
-                .plugin(Database.getInstance())
+                .plugin(database.getPlugin())
                 .title(title.replace("%pet_name%", petName))
                 .text(String.valueOf(petName.charAt(0)))
                 .itemLeft(new ItemStack(Material.WRITABLE_BOOK))

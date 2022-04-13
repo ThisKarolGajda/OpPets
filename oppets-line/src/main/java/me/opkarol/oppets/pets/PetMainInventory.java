@@ -10,13 +10,14 @@ package me.opkarol.oppets.pets;
 
 import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.interfaces.IInventory;
+import me.opkarol.oppets.utils.InventoryUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.opkarol.oppets.utils.InventoryUtils.fillInventory;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 
 /**
@@ -53,9 +54,15 @@ public class PetMainInventory implements IInventory {
         inventory.setItem(12, itemCreator(path + "name.", this));
         inventory.setItem(14, itemCreator(path + "settings.", this));
         inventory.setItem(16, itemCreator(path + "respawn.", this));
-        fillInventory(inventory);
+        InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE);
     }
 
+    /**
+     * Sets place holders.
+     *
+     * @param lore the lore
+     * @return the place holders
+     */
     @Override
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         return lore;

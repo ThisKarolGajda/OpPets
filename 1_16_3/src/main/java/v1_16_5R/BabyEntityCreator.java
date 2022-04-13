@@ -26,6 +26,7 @@ import v1_16_5R.entities.*;
  * The type Baby entity creator.
  */
 public class BabyEntityCreator implements IBabyEntityCreator {
+    private final Database database = Database.getInstance(SessionHolder.getInstance().getSession());
 
     /**
      * Spawn mini pet.
@@ -42,10 +43,10 @@ public class BabyEntityCreator implements IBabyEntityCreator {
         entityAnimal.setCustomName(new ChatMessage(PetsUtils.getPetFormattedName(pet)));
         entityAnimal.glowing = pet.isGlowing();
         pet.setOwnUUID(entityAnimal.getUniqueID());
-        Database.getDatabase().setCurrentPet(player.getUniqueId(), pet);
+        database.getDatabase().setCurrentPet(player.getUniqueId(), pet);
         world.addEntity(entityAnimal);
         int id = entityAnimal.getId();
-        Database.getDatabase().addIdPet(pet.getOwnUUID(), id);
+        database.getDatabase().addIdPet(pet.getOwnUUID(), id);
         PDCUtils.addNBT(entityAnimal.getBukkitEntity(), NamespacedKeysCache.petKey, "valid");
         if (pet.isVisibleToOthers()) return;
         new Utils().hideEntityFromServer(player, id);

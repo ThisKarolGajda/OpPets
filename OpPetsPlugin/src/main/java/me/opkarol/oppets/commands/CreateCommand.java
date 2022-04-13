@@ -9,6 +9,7 @@ package me.opkarol.oppets.commands;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
@@ -26,6 +27,11 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  */
 public class CreateCommand implements ICommand {
     /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+
+    /**
      * Execute boolean.
      *
      * @param sender the sender
@@ -35,10 +41,10 @@ public class CreateCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
         if (args.length != 3) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets create <TYPE> <NAME>"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets create <TYPE> <NAME>"));
         }
         UUID playerUUID = player.getUniqueId();
         String petType = args[1];
@@ -46,18 +52,18 @@ public class CreateCommand implements ICommand {
             petType = "Polar_Bear";
         } else if (petType.equalsIgnoreCase("mushroom")) {
             petType = "Mushroom_Cow";
-        } else if (!(Database.getOpPets().getEntityManager().getAllowedEntities()
+        } else if (!(database.getOpPets().getEntityManager().getAllowedEntities()
                 .stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toList()).contains(petType.toLowerCase()))) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("wrongType").replace("%pet_type%", petType));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("wrongType").replace("%pet_type%", petType));
         }
         String petName = args[2];
-        if (Database.getOpPets().getDatabase().getPetList(playerUUID) != null) {
-            for (Pet pet : Database.getOpPets().getDatabase().getPetList(playerUUID)) {
+        if (database.getDatabase().getPetList(playerUUID) != null) {
+            for (Pet pet : database.getDatabase().getPetList(playerUUID)) {
                 assert pet.getPetName() != null;
                 if (pet.getPetName().equals(petName)) {
-                    return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petWithSameName").replace("%pet_name%", petName));
+                    return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("petWithSameName").replace("%pet_name%", petName));
                 }
             }
         }
@@ -65,11 +71,11 @@ public class CreateCommand implements ICommand {
         try {
             type = OpPetsEntityTypes.TypeOfEntity.valueOf(petType.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("wrongType").replace("%pet_type%", petType));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("wrongType").replace("%pet_type%", petType));
         }
         Pet pet = new Pet(petName, type, null, playerUUID, new SkillUtils().getRandomSkillName(type), true);
-        if (Database.getOpPets().getDatabase().addPetToPetsList(playerUUID, pet)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("createdPet").replace("%pet_name%", petName).replace("%pet_type%", petType));
+        if (database.getDatabase().addPetToPetsList(playerUUID, pet)) {
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("createdPet").replace("%pet_name%", petName).replace("%pet_type%", petType));
         }
         try {
             throw new Exception("Unexpected error: AddPetToPetsList ins't working");

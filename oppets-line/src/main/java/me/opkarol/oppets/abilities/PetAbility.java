@@ -8,7 +8,6 @@ package me.opkarol.oppets.abilities;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.misc.AbilitiesEnums;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 
 /**
@@ -18,15 +17,15 @@ public class PetAbility {
     /**
      * The Type.
      */
-    AbilitiesEnums.AbilityCategory type;
+    private final AbilitiesEnums.AbilityCategory type;
     /**
      * The Entity type.
      */
-    OpPetsEntityTypes.TypeOfEntity entityType;
+    private final OpPetsEntityTypes.TypeOfEntity entityType;
     /**
      * The Description.
      */
-    String description;
+    private final String description;
 
     /**
      * Instantiates a new Pet ability.

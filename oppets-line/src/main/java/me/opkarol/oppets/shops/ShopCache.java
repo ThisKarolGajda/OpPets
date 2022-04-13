@@ -9,30 +9,38 @@ package me.opkarol.oppets.shops;
  */
 
 import me.opkarol.oppets.cache.InventoryCache;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The type Shop cache.
  */
 public class ShopCache {
     /**
-     * The constant cache.
+     * The Cache.
      */
-    private static InventoryCache cache;
+    private static List<InventoryCache> cache;
 
     /**
      * Gets cache.
      *
+     * @param page the page
      * @return the cache
      */
-    public static InventoryCache getCache() {
-        return cache;
+    public static @NotNull InventoryCache getCache(int page) {
+        if (cache == null) {
+            cache = new ArrayList<>();
+        }
+        if (cache.size() <= page) {
+            cache.add(page, new InventoryCache());
+        }
+        InventoryCache current = cache.get(page);
+        if (current.getInventory() == null) {
+            current.setInventory(new ShopInventory(page).getInventory());
+        }
+        return current;
     }
 
-    /**
-     * Sets cache.
-     */
-    public static void setCache() {
-        cache = new InventoryCache();
-        cache.setInventory(new ShopInventory().getInventory());
-    }
 }

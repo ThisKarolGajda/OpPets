@@ -16,8 +16,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Thrown when a pet levels up.
- * Can be cancelled.
+ * The type Pet levelup event.
  */
 public class PetLevelupEvent extends Event implements Cancellable {
     /**

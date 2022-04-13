@@ -18,10 +18,10 @@ import java.util.List;
 public interface IInventory {
 
     /**
-     * Used to set class built placeholders which replace specific text values with text objects.
+     * Sets place holders.
      *
-     * @param lore list of string that will be replaced
-     * @return replaced lore with placeholders
+     * @param lore the lore
+     * @return the place holders
      */
     @NotNull
     List<String> setPlaceHolders(@NotNull List<String> lore);

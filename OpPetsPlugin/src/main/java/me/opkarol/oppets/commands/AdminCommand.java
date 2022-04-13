@@ -8,13 +8,14 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.PetsUtils;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,6 +29,11 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  */
 public class AdminCommand implements ICommand {
     /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+
+    /**
      * Execute boolean.
      *
      * @param sender the sender
@@ -37,19 +43,19 @@ public class AdminCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         if (args.length != 5) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets admin <PLAYER> <PET> <KEY> <VALUE>"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets admin <PLAYER> <PET> <KEY> <VALUE>"));
         }
 
         String name = args[1];
         UUID uuid = OpUtils.getUUIDFromName(name);
 
-        List<Pet> petList = Database.getOpPets().getDatabase().getPetList(uuid);
+        List<Pet> petList = database.getDatabase().getPetList(uuid);
         if (petList.size() == 0) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petListEmpty"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("petListEmpty"));
         }
 
         String petName = args[2];
@@ -62,7 +68,7 @@ public class AdminCommand implements ICommand {
         }
 
         if (pet == null) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
 
         petList.removeIf(pet1 -> FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName)));
@@ -80,11 +86,11 @@ public class AdminCommand implements ICommand {
         }
 
         petList.add(pet);
-        Database.getOpPets().getDatabase().setPets(uuid, petList);
+        database.getDatabase().setPets(uuid, petList);
 
         PetsUtils.savePetProgress(pet, uuid);
 
-        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("changedAdminValue").replace("%value%", value).replace("%key%", args[3]).replace("%player_name%", name).replace("%pet_name%", petName));
+        return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("changedAdminValue").replace("%value%", value).replace("%key%", args[3]).replace("%player_name%", name).replace("%pet_name%", petName));
     }
 
     /**

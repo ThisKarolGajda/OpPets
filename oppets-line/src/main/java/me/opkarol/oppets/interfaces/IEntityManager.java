@@ -19,26 +19,26 @@ import java.util.HashSet;
 public interface IEntityManager {
 
     /**
-     * Used to initialize pathfinder values in a specific entity object.
+     * Init pathfinder.
      *
-     * @param entity object that can be cast to a specific version value
-     * @param type   entity type that will be used to read float values
+     * @param entity the entity
+     * @param type   the type
      */
     void initPathfinder(@NotNull Object entity, OpPetsEntityTypes.TypeOfEntity type);
 
     /**
-     * Method that will spawn an entire entity from provided arguments.
+     * Spawn entity.
      *
-     * @param obj1 player object
-     * @param obj2 specific version animal entity object
-     * @param obj3 pet object
+     * @param obj1 the obj 1
+     * @param obj2 the obj 2
+     * @param obj3 the obj 3
      */
     void spawnEntity(@NotNull Object obj1, @NotNull Object obj2, @NotNull Object obj3);
 
     /**
-     * Used to retrieve entities for version specific server.
+     * Gets allowed entities.
      *
-     * @return list of string containing - specific version - available pets
+     * @return the allowed entities
      */
     HashSet<String> getAllowedEntities();
 }

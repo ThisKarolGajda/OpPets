@@ -9,6 +9,7 @@ package me.opkarol.oppets.commands;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.inventories.anvil.DeleteAnvilInventory;
 import me.opkarol.oppets.pets.Pet;
@@ -27,6 +28,11 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  */
 public class DeleteCommand implements ICommand {
     /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+
+    /**
      * Execute boolean.
      *
      * @param sender the sender
@@ -36,16 +42,16 @@ public class DeleteCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         if (args.length != 2) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets delete <PET>"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets delete <PET>"));
         }
 
         Pet pet = getPetByName(player.getUniqueId(), FormatUtils.getNameString(args[1]));
         if (pet == null) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         } else {
             new DeleteAnvilInventory(pet, player);
             return true;
@@ -80,7 +86,7 @@ public class DeleteCommand implements ICommand {
      * @return the pet by name
      */
     private Pet getPetByName(UUID playerUUID, String petName) {
-        return Database.getOpPets().getDatabase().getPetList(playerUUID).stream()
+        return database.getDatabase().getPetList(playerUUID).stream()
                 .filter(pet -> Objects.equals(FormatUtils.getNameString(pet.getPetName()), FormatUtils.getNameString(petName))).collect(Collectors.toList())
                 .get(0);
     }

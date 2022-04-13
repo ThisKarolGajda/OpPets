@@ -9,10 +9,10 @@ package me.opkarol.oppets.commands;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.interfaces.ICommand;
-import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.files.Messages;
 import me.opkarol.oppets.inventories.anvil.RenameAnvilInventory;
+import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,6 +27,11 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  */
 public class RenameCommand implements ICommand {
     /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+
+    /**
      * Execute boolean.
      *
      * @param sender the sender
@@ -36,20 +41,20 @@ public class RenameCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         UUID uuid = player.getUniqueId();
-        if (Database.getOpPets().getDatabase().getPetList(uuid) == null) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
+        if (database.getDatabase().getPetList(uuid) == null) {
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
 
         if (args.length == 1) {
-            new RenameAnvilInventory(Database.getDatabase().getCurrentPet(uuid), player);
+            new RenameAnvilInventory(database.getDatabase().getCurrentPet(uuid), player);
             return true;
         } else if (args.length == 2) {
             String petName = args[1];
-            List<Pet> list = Database.getDatabase().getPetList(uuid);
+            List<Pet> list = database.getDatabase().getPetList(uuid);
             for (Pet pet : list) {
                 assert pet.getPetName() != null;
                 if (FormatUtils.getNameString(pet.getPetName()).equals(FormatUtils.getNameString(petName))) {
@@ -59,7 +64,7 @@ public class RenameCommand implements ICommand {
             return true;
         }
 
-        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets rename <PET>"));
+        return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets rename <PET>"));
     }
 
     /**

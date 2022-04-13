@@ -29,7 +29,8 @@ public class PetsDatabase {
      */
     public PetsDatabase() {
         String iPath;
-        FileConfiguration config = Database.getInstance().getConfig();
+        Database database = Database.getInstance();
+        FileConfiguration config = database.getPlugin().getConfig();
         for (OpPetsEntityTypes.TypeOfEntity type : OpPetsEntityTypes.TypeOfEntity.values()) {
             iPath = "Pets." + type.toString() + ".";
             List<String> abilityEnabled = config.getStringList(iPath + "special_ability");

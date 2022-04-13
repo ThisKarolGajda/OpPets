@@ -8,6 +8,7 @@ package me.opkarol.oppets.pets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.interfaces.IGetter;
 import me.opkarol.oppets.uuid.PetUUID;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,11 +19,9 @@ import static me.opkarol.oppets.utils.PetsUtils.getBinaryFromStringAndChar;
 import static me.opkarol.oppets.utils.PetsUtils.getBinaryFromStringToChar;
 
 /**
- * Pet class is a main serializable public class that is used to create save-able pets objects.
- * It contains all necessary method to manage pet itself.
- * Every method from this class can work as an external API.
+ * The type Pet.
  */
-public class Pet implements Serializable {
+public class Pet implements Serializable, IGetter {
     /**
      * The Name.
      */
@@ -69,17 +68,14 @@ public class Pet implements Serializable {
     private PetUUID uuid;
 
     /**
-     * This method is used to create new pet object.
-     * Should be only used to generate not value-specific objects.
-     * <p>
-     * Pet name could= be invalid which will return in a error.
+     * Instantiates a new Pet.
      *
-     * @param petName   name of the pet
-     * @param petType   type of the pet
-     * @param ownUUID   own uuid of the pet
-     * @param ownerUUID uuid of the owner's pet
-     * @param skillName skill name that pet contains
-     * @param active    boolean value - is active
+     * @param petName   the pet name
+     * @param petType   the pet type
+     * @param ownUUID   the own uuid
+     * @param ownerUUID the owner uuid
+     * @param skillName the skill name
+     * @param active    the active
      */
     public Pet(String petName, OpPetsEntityTypes.TypeOfEntity petType, UUID ownUUID, UUID ownerUUID, String skillName, boolean active) {
         setPetName(petName);
@@ -97,23 +93,19 @@ public class Pet implements Serializable {
     }
 
     /**
-     * This method creates pet entire from scratch.
-     * It can be used as an external api connect to create and add own pet objects.
-     * All params are focused on pet suitability.
-     * <p>
-     * This can provide null if params are invalid.
+     * Instantiates a new Pet.
      *
-     * @param a        string pet name
-     * @param b1       double pet experience
-     * @param b2       int level
-     * @param c        pet type
-     * @param d        boolean active
-     * @param e1       own uuid
-     * @param e2       owner uuid
-     * @param sS       string settings "Serialized as a binary"
-     * @param skill    string skill name
-     * @param prestige string prestige combination "level;codes"
-     * @param petUUID  own pet uuid which contains unique value for pet
+     * @param a        the a
+     * @param b1       the b 1
+     * @param b2       the b 2
+     * @param c        the c
+     * @param d        the d
+     * @param e1       the e 1
+     * @param e2       the e 2
+     * @param sS       the s s
+     * @param skill    the skill
+     * @param prestige the prestige
+     * @param petUUID  the pet uuid
      */
     public Pet(String a, double b1, int b2, OpPetsEntityTypes.TypeOfEntity c, boolean d, UUID e1, UUID e2, String sS, String skill, String prestige, PetUUID petUUID) {
         setPetName(a);
@@ -166,12 +158,23 @@ public class Pet implements Serializable {
     }
 
     /**
-     * Gets pet type.
+     * Gets type.
      *
-     * @return the pet type
+     * @return the type
      */
-    public OpPetsEntityTypes.TypeOfEntity getPetType() {
-        return type;
+    @Override
+    public GETTER_TYPE getType() {
+        return GETTER_TYPE.PET;
+    }
+
+    /**
+     * Gets object.
+     *
+     * @return the object
+     */
+    @Override
+    public Object getObject() {
+        return this;
     }
 
     /**
@@ -477,4 +480,23 @@ public class Pet implements Serializable {
     public void setPetUUID(PetUUID uuid) {
         this.uuid = uuid;
     }
+
+    /**
+     * Sets type.
+     *
+     * @param type the type
+     */
+    public void setType(OpPetsEntityTypes.TypeOfEntity type) {
+        this.type = type;
+    }
+
+    /**
+     * Gets pet type.
+     *
+     * @return the pet type
+     */
+    public OpPetsEntityTypes.TypeOfEntity getPetType() {
+        return type;
+    }
+
 }

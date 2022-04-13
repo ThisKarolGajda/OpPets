@@ -8,7 +8,7 @@ package me.opkarol.oppets.files;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.databases.APIDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -37,7 +37,8 @@ public class MessagesFile {
      * Instantiates a new Messages file.
      */
     public MessagesFile() {
-        File childFile = Database.getInstance().getDataFolder();
+        APIDatabase database = APIDatabase.getInstance();
+        File childFile = database.getDataFolder();
         if (!childFile.exists()) {
             childFile.mkdir();
         }
@@ -98,13 +99,14 @@ public class MessagesFile {
         setPath("Commands.invalidObjectProvided", "&cProvided object / argument is invalid.");
         setPath("Messages.petLevelUpMessage", "&2-------------------------------%newline%&eNew level &6&l%pet_name%&e!%newline%&eYour pet is now level &6&l%current_level%&e!%newline%Your pet needs &6&l%experience_level% &eexp &eto reach next level.%newline%&2-------------------------------%newline%");
         setPath("Messages.prestigeUpMessage", "&2-------------------------------%newline%&eNew prestige &6&l%pet_name%&e!%newline%&eYour pet is now on prestige &6&l%current_prestige%&e!%newline%Your pet needs &6&l%max_level% &elevels &eto reach next prestige.%newline%&2-------------------------------%newline%");
+        setPath("Messages.notEnoughMoney", "&cYou don't have enough money to buy it.");
+        setPath("Messages.successfullyBought", "&7You successfully purchased it.");
         saveData();
     }
 
     /**
      * Reload data.
      */
-    @SuppressWarnings("unused")
     public void reloadData() {
         this.data = YamlConfiguration.loadConfiguration(this.file);
     }

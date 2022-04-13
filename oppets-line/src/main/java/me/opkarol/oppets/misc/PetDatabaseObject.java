@@ -8,6 +8,7 @@ package me.opkarol.oppets.misc;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.abilities.AbilitiesEnums;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -25,8 +26,7 @@ public class PetDatabaseObject {
      */
     private final float entitySpeed;
     /**
-     * Is a float value after which a^2 from player distance, entity will be teleported.
-     * Example: entityDistance = 15, a^2 = 225, entity will be teleported after 225 blocks distance.
+     * The Entity distance.
      */
     private final float entityDistance;
 

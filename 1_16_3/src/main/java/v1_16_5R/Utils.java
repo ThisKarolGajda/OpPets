@@ -35,6 +35,7 @@ import java.util.*;
  * The type Utils.
  */
 public class Utils implements IUtils {
+    private final Database database = Database.getInstance(SessionHolder.getInstance().getSession());
     /**
      * Gets entity by unique id.
      *
@@ -77,7 +78,7 @@ public class Utils implements IUtils {
             public void run() {
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(entityId));
             }
-        }.runTask(Database.getInstance());
+        }.runTask(database.getPlugin());
     }
 
     /**
@@ -104,11 +105,11 @@ public class Utils implements IUtils {
         if (playerUUID == null) {
             return;
         }
-        Pet pet = Database.getDatabase().getCurrentPet(playerUUID);
+        Pet pet = database.getDatabase().getCurrentPet(playerUUID);
         if (pet == null) {
             return;
         }
-        Database.getDatabase().getActivePetMap().values().stream().filter(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName())).forEach(pet1 -> {
+        database.getDatabase().getActivePetMap().values().stream().filter(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName())).forEach(pet1 -> {
             UUID uuid = pet.getOwnUUID();
             if (uuid == null) {
                 return;
@@ -212,12 +213,7 @@ public class Utils implements IUtils {
     @Override
     public void rideEventRegister(Object event, Object packet, Player player) {
         if (packet instanceof PacketPlayInSteerVehicle) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    Bukkit.getPluginManager().callEvent((Event) ((IPacketPlayInSteerVehicleEvent) event).initialize(packet, player));
-                }
-            }.runTask(Database.getInstance());
+            Bukkit.getPluginManager().callEvent((Event) ((IPacketPlayInSteerVehicleEvent) event).initialize(packet, player));
         }
     }
 }

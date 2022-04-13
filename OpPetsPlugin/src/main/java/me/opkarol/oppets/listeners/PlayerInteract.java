@@ -9,6 +9,7 @@ package me.opkarol.oppets.listeners;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.interfaces.IHolder;
 import me.opkarol.oppets.interfaces.IUtils;
 import me.opkarol.oppets.inventories.*;
@@ -30,6 +31,7 @@ import me.opkarol.oppets.utils.PDCUtils;
 import me.opkarol.oppets.utils.PetsUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -52,6 +54,10 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  * The type Player interact.
  */
 public class PlayerInteract implements Listener {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Player interact.
@@ -64,16 +70,16 @@ public class PlayerInteract implements Listener {
         if (player.isSneaking()) {
             return;
         }
-        if (Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId()) != null) {
-            if (Database.getOpPets().getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
+        if (database.getDatabase().getCurrentPet(player.getUniqueId()) != null) {
+            if (database.getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
                 event.setCancelled(true);
                 OpUtils.openMainInventory(player);
                 event.getPlayer().updateInventory();
                 return;
             }
         }
-        for (UUID uuid : Database.getOpPets().getDatabase().getActivePetMap().keySet()) {
-            Pet pet = Database.getOpPets().getDatabase().getCurrentPet(uuid);
+        for (UUID uuid : database.getDatabase().getActivePetMap().keySet()) {
+            Pet pet = database.getDatabase().getCurrentPet(uuid);
             if (pet == null || pet.getOwnUUID() == null) {
                 return;
             }
@@ -100,9 +106,9 @@ public class PlayerInteract implements Listener {
         }
         Player player = (Player) event.getWhoClicked();
         UUID uuid = player.getUniqueId();
-        Pet pet = Database.getDatabase().getCurrentPet(uuid);
+        Pet pet = database.getDatabase().getCurrentPet(uuid);
         int slot = event.getSlot();
-        IUtils utils = Database.getOpPets().getUtils();
+        IUtils utils = database.getUtils();
         if (!(holder instanceof IHolder)) {
             return;
         }
@@ -142,8 +148,8 @@ public class PlayerInteract implements Listener {
             if (meta == null) {
                 return;
             }
-            String displayName = meta.getDisplayName();
-            if (FormatUtils.formatMessage(displayName).equals("") || displayName.contains("PANE")) {
+            Material type = item.getType();
+            if (type.equals(Material.BARRIER) || type.name().contains("STAINED_GLASS_PANE") || item.getType().equals(Material.AIR)) {
                 return;
             }
             player.openInventory(new BuyerAdmitInventory(item).getInventory());
@@ -165,30 +171,33 @@ public class PlayerInteract implements Listener {
                     }
                     int price = new StringTransformer().getIntFromString(Objects.requireNonNull(PDCUtils.getNBT(item, priceKey)));
                     String type = PDCUtils.getNBT(item, typeKey);
-                    Economy economy = Database.getOpPets().getEconomy();
+                    Object economy = database.getOpPets().getEconomy();
                     if (economy != null && price != -1) {
-                        if (!economy.has(player, price)) {
-                            //TODO add player message
+                        Economy economy1 = (Economy) economy;
+                        if (!economy1.has(player, price)) {
+                            player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("notEnoughMoney"));
+                            player.closeInventory();
                             return;
                         }
-                        economy.withdrawPlayer(player, price);
+                        economy1.withdrawPlayer(player, price);
                     }
                     final String[] name = {type};
                     int i = 0;
-                    while (Database.getOpPets().getDatabase().getPetList(uuid).stream().anyMatch(pet1 -> FormatUtils.getNameString(name[0]).equals(FormatUtils.getNameString(pet1.getPetName())))) {
+                    while (database.getDatabase().getPetList(uuid).stream().anyMatch(pet1 -> FormatUtils.getNameString(name[0]).equals(FormatUtils.getNameString(pet1.getPetName())))) {
                         name[0] = type + "-" + i;
                         i++;
                     }
                     OpPetsEntityTypes.TypeOfEntity entity = OpPetsEntityTypes.TypeOfEntity.valueOf(type);
                     Pet pet1 = new Pet(name[0], entity, null, uuid, new SkillUtils().getRandomSkillName(entity), true);
-                    Database.getOpPets().getDatabase().addPetToPetsList(uuid, pet1);
+                    database.getDatabase().addPetToPetsList(uuid, pet1);
+                    player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("successfullyBought"));
                     player.closeInventory();
                 }
             }
         } else if (holder instanceof PrestigeInventoryHolder) {
             if (slot == 15) {
                 if (!OpUtils.canPrestige(pet)) {
-                    returnMessage(player, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("cantPrestige").replace("%more_levels%", String.valueOf(OpUtils.getLevelsForPrestige(pet))));
+                    returnMessage(player, database.getOpPets().getMessages().getMessagesAccess().stringMessage("cantPrestige").replace("%more_levels%", String.valueOf(OpUtils.getLevelsForPrestige(pet))));
                     return;
                 }
                 player.closeInventory();
@@ -199,21 +208,22 @@ public class PlayerInteract implements Listener {
             if (item == null) {
                 return;
             }
-            if (!PDCUtils.hasNBT(item, summonItemKey)) {
-                ItemMeta meta = item.getItemMeta();
-                if (meta == null) {
-                    return;
-                }
-                String name = meta.getDisplayName();
-                PetsUtils.summonPet(name, uuid, player);
-                player.closeInventory();
-            } else {
+            if (PDCUtils.hasNBT(item, summonItemKey)) {
                 String nbtString = PDCUtils.getNBT(item, summonItemKey);
                 if (nbtString == null) {
                     return;
                 }
                 int page = new StringTransformer().getIntFromString(nbtString);
                 player.openInventory(new SummonInventory(uuid, page).getInventory());
+            } else {
+                ItemMeta meta = item.getItemMeta();
+                if (meta == null) {
+                    return;
+                }
+                String name = meta.getDisplayName();
+                if (PetsUtils.summonPet(name, uuid, player)) {
+                    player.closeInventory();
+                }
             }
         }
     }

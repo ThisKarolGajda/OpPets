@@ -11,8 +11,7 @@ package me.opkarol.oppets.interfaces;
 import org.bukkit.inventory.InventoryHolder;
 
 /**
- * This interface doesn't have any method, because
- * it is only used as a representative to Holder subclasses.
+ * The interface Holder.
  */
 public interface IHolder extends InventoryHolder {
 }

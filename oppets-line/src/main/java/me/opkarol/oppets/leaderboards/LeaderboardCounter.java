@@ -12,6 +12,7 @@ import me.opkarol.oppets.cache.InventoryCache;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,14 +26,21 @@ public class LeaderboardCounter {
      */
     private final HashSet<Leaderboard> activeLeaderboards = new HashSet<>();
     /**
+     * The Database.
+     */
+    private final Database database;
+    /**
      * The Cache.
      */
     private InventoryCache cache;
 
     /**
      * Instantiates a new Leaderboard counter.
+     *
+     * @param database the database
      */
-    public LeaderboardCounter() {
+    public LeaderboardCounter(Database database) {
+        this.database = database;
         setupLeaderboards();
         updateTick();
         cache = new InventoryCache();
@@ -57,7 +65,7 @@ public class LeaderboardCounter {
             public void run() {
                 updateLeaderboards();
             }
-        }.runTaskTimerAsynchronously(Database.getInstance(), 20 * 60, 20 * 60);
+        }.runTaskTimerAsynchronously(database.getPlugin(), 1200, 1200);
     }
 
     /**
@@ -67,7 +75,7 @@ public class LeaderboardCounter {
         new BukkitRunnable() {
             @Override
             public void run() {
-                HashMap<UUID, Pet> pets = Database.getOpPets().getDatabase().getActivePetMap();
+                HashMap<UUID, Pet> pets = database.getDatabase().getActivePetMap();
                 activeLeaderboards.forEach(leaderboard -> {
                     Collection<Pet> value = pets.values();
                     List<Pet> places;
@@ -95,7 +103,7 @@ public class LeaderboardCounter {
                 });
                 cache.setInventory(new LeaderboardInventory().getInventory());
             }
-        }.runTaskAsynchronously(Database.getInstance());
+        }.runTaskAsynchronously(database.getPlugin());
     }
 
     /**
@@ -123,7 +131,13 @@ public class LeaderboardCounter {
      *
      * @return the cache
      */
-    public InventoryCache getCache() {
+    public @NotNull InventoryCache getCache() {
+        if (cache == null) {
+            cache = new InventoryCache();
+        }
+        if (cache.getInventory() == null) {
+            cache.setInventory(new LeaderboardInventory().getInventory());
+        }
         return cache;
     }
 

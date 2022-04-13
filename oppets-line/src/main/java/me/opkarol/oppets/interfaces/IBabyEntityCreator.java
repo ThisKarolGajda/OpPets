@@ -17,11 +17,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IBabyEntityCreator {
     /**
-     * This method takes pet and player object.
-     * It generates and creates in-game pet object that will be assigned to a provided player.
+     * Spawn mini pet.
      *
-     * @param pet    pet object which from data will be read
-     * @param player sender / owner of the pet
+     * @param pet    the pet
+     * @param player the player
      */
     void spawnMiniPet(@NotNull Pet pet, @NotNull Player player);
 }

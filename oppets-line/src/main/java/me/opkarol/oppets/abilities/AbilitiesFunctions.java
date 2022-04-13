@@ -150,9 +150,12 @@ public class AbilitiesFunctions {
 
     /**
      * Revive.
+     *
+     * @param player the player
      */
-    public void revive() {
-        //TODO
+    public void revive(@NotNull Player player) {
+        player.setHealth(20);
+        player.setNoDamageTicks(60);
     }
 
     /**
@@ -206,7 +209,7 @@ public class AbilitiesFunctions {
      * @param player the player
      */
     public void fireball(Player player) {
-        launch(player, 10, 5, Fireball.class);
+        launch(player, 25, 7, Fireball.class);
     }
 
     /**
@@ -217,7 +220,7 @@ public class AbilitiesFunctions {
      * @param distToFacing    the dist to facing
      * @param projectileClass the projectile class
      */
-    public void launch(@NotNull Player player, double distOverHead, double distToFacing, Class<? extends Projectile> projectileClass) {
+    private void launch(@NotNull Player player, double distOverHead, double distToFacing, Class<? extends Projectile> projectileClass) {
         final Location start = player.getLocation().add(0, distOverHead, 0);
         final Vector facing = player.getEyeLocation().add(player.getLocation().getDirection().multiply(distToFacing)).toVector();
         final Vector initialV = facing.subtract(start.toVector()).normalize();

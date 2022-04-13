@@ -8,10 +8,11 @@ package me.opkarol.oppets.skills;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.databases.APIDatabase;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.utils.ConfigUtils;
 import me.opkarol.oppets.utils.PetsUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -29,6 +30,10 @@ import java.util.stream.Stream;
  */
 public class SkillDatabase {
     /**
+     * The Database.
+     */
+    private final APIDatabase database = APIDatabase.getInstance();
+    /**
      * The Skill map.
      */
     private final HashMap<String, Skill> skillMap = new HashMap<>();
@@ -39,26 +44,20 @@ public class SkillDatabase {
     /**
      * The Config.
      */
-    private final FileConfiguration config;
+    private final FileConfiguration config = ConfigUtils.getConfig();
     /**
      * The Basic path.
      */
     private String basicPath = "Skills";
-    /**
-     * The Can run.
-     */
-    private boolean canRun = true;
 
     /**
      * Instantiates a new Skill database.
      */
     public SkillDatabase() {
         utils = new SkillUtils(this);
-        config = Database.getInstance().getConfig();
         ConfigurationSection sec = config.getConfigurationSection(basicPath);
         basicPath = "Skills.";
         if (sec == null) {
-            canRun = false;
             return;
         }
         for (String key : sec.getKeys(false)) {
@@ -135,10 +134,10 @@ public class SkillDatabase {
     public void addPoint(SkillEnums.SkillsAdders skillEnums, @NotNull Pet pet, @NotNull Player player) {
         double experience = pet.getPetExperience();
         double grantedPoints = utils.getGrantedPointsFromEnum(pet, skillEnums);
-        double multiplier = Database.getOpPets().getBoosterProvider().getMultiplier(player.getUniqueId().toString());
+        double multiplier = database.getBoosterProvider().getMultiplier(player.getUniqueId().toString());
         pet.setPetExperience(experience + grantedPoints * multiplier);
         double maxPoints = utils.getMaxPointsFromEnum(pet, skillEnums);
-        Stream<Requirement> stream = Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getRequirementList().stream().filter(requirement -> requirement.getRequirement().equals(SkillEnums.SkillsRequirements.PET_LEVEL));
+        Stream<Requirement> stream = database.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getRequirementList().stream().filter(requirement -> requirement.getRequirement().equals(SkillEnums.SkillsRequirements.PET_LEVEL));
         if (stream.findAny().isPresent()) {
             if (maxPoints <= pet.getPetExperience()) {
                 Bukkit.getPluginManager().callEvent(new PetLevelupEvent(player, pet));
@@ -148,11 +147,10 @@ public class SkillDatabase {
     }
 
     /**
-     * Returns string that has been connected from table of strings,
-     * which can later be used to transform it.
+     * Gets string from strings.
      *
-     * @param strings table of strings
-     * @return string result from connecting strings
+     * @param strings the strings
+     * @return the string from strings
      */
     @Contract(pure = true)
     private @NotNull String getStringFromStrings(String[] strings) {
@@ -169,12 +167,10 @@ public class SkillDatabase {
     }
 
     /**
-     * This method is based as on types taken.
-     * It generates all possible materials that can be used in order to get through validation process.
+     * Gets available materials.
      *
-     * @param types table of Materials
-     * @return materials string result
-     * @see org.bukkit.Material
+     * @param types the types
+     * @return the available materials
      */
     @Contract(pure = true)
     private @NotNull String getAvailableMaterials(Material[] types) {
@@ -191,11 +187,10 @@ public class SkillDatabase {
     }
 
     /**
-     * This method can generate all available pets to string, using provided types.
+     * Gets available pets.
      *
-     * @param types list of type of entity objects
-     * @return pets string object containing all pet types
-     * @see me.opkarol.oppets.pets.OpPetsEntityTypes
+     * @param types the types
+     * @return the available pets
      */
     private @NotNull String getAvailablePets(List<OpPetsEntityTypes.TypeOfEntity> types) {
         StringBuilder builder = new StringBuilder().append("[");
@@ -210,12 +205,4 @@ public class SkillDatabase {
         return builder.append("]").toString();
     }
 
-    /**
-     * Is can run boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isCanRun() {
-        return canRun;
-    }
 }

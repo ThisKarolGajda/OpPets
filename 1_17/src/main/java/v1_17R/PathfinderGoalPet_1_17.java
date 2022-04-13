@@ -22,6 +22,7 @@ import java.util.EnumSet;
  * The type Pathfinder goal pet 1 17.
  */
 public class PathfinderGoalPet_1_17 extends Goal {
+    private final Database database = Database.getInstance(SessionHolder.getInstance().getSession());
     /**
      * The A.
      */
@@ -78,7 +79,7 @@ public class PathfinderGoalPet_1_17 extends Goal {
     public void tick() {
         this.b = this.a.getTarget();
         if (p == null && b != null)
-            p = Database.getDatabase().getCurrentPet(b.getUUID());
+            p = database.getDatabase().getCurrentPet(b.getUUID());
         if (b == null || this.a.getDisplayName() == null) {
             return;
         }

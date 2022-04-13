@@ -9,7 +9,7 @@ package me.opkarol.oppets.commands;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.Messages;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.interfaces.ICommand;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
@@ -27,6 +27,11 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  */
 public class GiftCommand implements ICommand {
     /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+
+    /**
      * Execute boolean.
      *
      * @param sender the sender
@@ -36,18 +41,18 @@ public class GiftCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
 
         if (args.length != 3) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets gift <PET> <PLAYER>"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets gift <PET> <PLAYER>"));
         }
 
         UUID uuid = player.getUniqueId();
         String petName = args[1];
         Pet pet = null;
 
-        for (Pet pet1 : Database.getOpPets().getDatabase().getPetList(uuid)) {
+        for (Pet pet1 : database.getDatabase().getPetList(uuid)) {
             assert pet1.getPetName() != null;
             if (FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName))) {
                 pet = pet1;
@@ -55,11 +60,11 @@ public class GiftCommand implements ICommand {
         }
 
         if (pet == null) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
 
         if (!pet.isGiftable()) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petIsntGiftable"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("petIsntGiftable"));
         }
 
         String playerName = args[2];
@@ -79,18 +84,18 @@ public class GiftCommand implements ICommand {
             playerIName = playerI.getName();
         }
 
-        if (Database.getOpPets().getDatabase().getPetList(uuid1).stream().anyMatch(pet1 -> FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName)))) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("receiverSameNamedPet").replace("%pet_name%", petName));
+        if (database.getDatabase().getPetList(uuid1).stream().anyMatch(pet1 -> FormatUtils.getNameString(pet1.getPetName()).equals(FormatUtils.getNameString(petName)))) {
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("receiverSameNamedPet").replace("%pet_name%", petName));
         }
 
         if (!b || uuid1.toString().length() == 0) {
-            return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("receiverInvalid"));
+            return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("receiverInvalid"));
         }
 
-        Database.getOpPets().getDatabase().removePet(uuid, pet);
-        Database.getOpPets().getDatabase().addPetToPetsList(uuid1, pet);
+        database.getDatabase().removePet(uuid, pet);
+        database.getDatabase().addPetToPetsList(uuid1, pet);
 
-        return returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petGifted").replace("%pet_name%", petName).replace("%player_name%", playerIName));
+        return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("petGifted").replace("%pet_name%", petName).replace("%player_name%", playerIName));
     }
 
     /**

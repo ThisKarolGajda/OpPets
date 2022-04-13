@@ -8,62 +8,92 @@ package me.opkarol.oppets.databases;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.cache.LastIDCache;
 import me.opkarol.oppets.interfaces.IDatabase;
 import me.opkarol.oppets.interfaces.IOpPets;
 import me.opkarol.oppets.interfaces.IUtils;
-import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.misc.SessionIdentifier;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The type Database.
  */
 public class Database {
     /**
-     * The constant mySQLAccess.
-     */
-    public static boolean mySQLAccess = false;
-    /**
-     * The constant instance.
-     */
-    private static Plugin instance;
-    /**
      * The constant database.
      */
-    private static IDatabase database;
+    protected static Database database;
+
     /**
-     * The constant utils.
+     * The My sql access.
      */
-    private static IUtils utils;
+    public boolean mySQLAccess = false;
     /**
-     * The constant petsDatabase.
+     * The Instance.
      */
-    private static PetsDatabase petsDatabase;
+    private final Plugin instance;
     /**
-     * The constant opPets.
+     * The Op pets.
      */
-    private static IOpPets opPets;
+    private IOpPets opPets;
     /**
-     * The constant lastID.
+     * The Utils.
      */
-    private static int lastID;
+    private IUtils utils;
+    /**
+     * The Database.
+     */
+    private IDatabase iDatabase;
+    /**
+     * The Pets database.
+     */
+    private PetsDatabase petsDatabase;
+    /**
+     * The My sql.
+     */
+    private MySQL mySQL;
+    /**
+     * The Cache.
+     */
+    private LastIDCache cache;
+    /**
+     * The Api database.
+     */
+    private APIDatabase apiDatabase;
+    /**
+     * The Session identifier.
+     */
+    private final SessionIdentifier sessionIdentifier;
+
+    /**
+     * Instantiates a new Database.
+     *
+     * @param plugin            the plugin
+     * @param sessionIdentifier the session identifier
+     */
+    public Database(Plugin plugin, SessionIdentifier sessionIdentifier) {
+        database = this;
+        this.sessionIdentifier = sessionIdentifier;
+        this.instance = plugin;
+        setupDatabase();
+    }
 
     /**
      * Sets database.
      */
-    public static void setupDatabase() {
+    public void setupDatabase() {
         mySQLAccess = instance.getConfig().getBoolean("mysql.enabled");
         if (mySQLAccess) {
-            MySQL.setupMySQL();
+            cache = new LastIDCache(this);
+            mySQL = new MySQL().setupMySQL();
             setDatabase(new MySQLDatabase());
-            setupLastID();
         } else {
             setDatabase(new MiniPetsDatabase());
         }
-        database.startLogic();
+        iDatabase.startLogic();
         petsDatabase = new PetsDatabase();
+        apiDatabase = new APIDatabase(this);
     }
 
     /**
@@ -71,8 +101,8 @@ public class Database {
      *
      * @return the database
      */
-    public static IDatabase getDatabase() {
-        return database;
+    public IDatabase getDatabase() {
+        return iDatabase;
     }
 
     /**
@@ -80,27 +110,17 @@ public class Database {
      *
      * @param database the database
      */
-    public static void setDatabase(IDatabase database) {
-        Database.database = database;
+    public void setDatabase(IDatabase database) {
+        this.iDatabase = database;
     }
 
     /**
-     * Gets instance.
+     * Gets plugin.
      *
-     * @return the instance
+     * @return the plugin
      */
-    public static Plugin getInstance() {
+    public Plugin getPlugin() {
         return instance;
-    }
-
-    /**
-     * Sets instance.
-     *
-     * @param instance the instance
-     */
-    public static void setInstance(Plugin instance) {
-        Database.instance = instance;
-        setupDatabase();
     }
 
     /**
@@ -108,17 +128,8 @@ public class Database {
      *
      * @return the utils
      */
-    public static IUtils getUtils() {
+    public IUtils getUtils() {
         return utils;
-    }
-
-    /**
-     * Sets utils.
-     *
-     * @param utils the utils
-     */
-    public static void setUtils(IUtils utils) {
-        Database.utils = utils;
     }
 
     /**
@@ -126,7 +137,7 @@ public class Database {
      *
      * @return the pets database
      */
-    public static PetsDatabase getPetsDatabase() {
+    public PetsDatabase getPetsDatabase() {
         return petsDatabase;
     }
 
@@ -135,56 +146,66 @@ public class Database {
      *
      * @return the op pets
      */
-    public static IOpPets getOpPets() {
+    public IOpPets getOpPets() {
         return opPets;
+    }
+
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     */
+    protected static Database getInstance() {
+        return database;
+    }
+
+    /**
+     * Gets cache.
+     *
+     * @return the cache
+     */
+    public LastIDCache getCache() {
+        return cache;
+    }
+
+    /**
+     * Gets instance.
+     *
+     * @param session the session
+     * @return the instance
+     */
+    public static Database getInstance(String session) {
+        if (!database.sessionIdentifier.getSession().equals(session)) {
+            return new Database(database.getPlugin(), null);
+        }
+        return database;
+    }
+
+    /**
+     * Gets my sql.
+     *
+     * @return the my sql
+     */
+    public MySQL getMySQL() {
+        return mySQL;
     }
 
     /**
      * Sets op pets.
      *
-     * @param opPetsInterface the op pets interface
+     * @param opPets the op pets
      */
-    public static void setOpPets(IOpPets opPetsInterface) {
-        opPets = opPetsInterface;
+    public void setOpPets(@NotNull IOpPets opPets) {
+        this.opPets = opPets;
+        this.utils = opPets.getUtils();
     }
 
     /**
-     * Sets last id.
-     */
-    private static void setupLastID() {
-        new BukkitRunnable() {
-            int largestID = 0;
-            @Override
-            public void run() {
-                for (List<Pet> list : getDatabase().getPetsMap().values()) {
-                    for (Pet pet : list) {
-                        int id = pet.getPetUUID().getID();
-                        if (id > largestID) {
-                            largestID = id;
-                        }
-                    }
-                }
-                lastID = largestID;
-            }
-        }.runTaskAsynchronously(getInstance());
-
-    }
-
-    /**
-     * Gets last id.
+     * Gets api database.
      *
-     * @return the last id
+     * @return the api database
      */
-    public static int getLastID() {
-        return lastID;
-    }
-
-    /**
-     * Sets last id.
-     *
-     * @param lastID the last id
-     */
-    public static void setLastID(int lastID) {
-        Database.lastID = lastID;
+    public APIDatabase getAPIDatabase() {
+        return apiDatabase;
     }
 }

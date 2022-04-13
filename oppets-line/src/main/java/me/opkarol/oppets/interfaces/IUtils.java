@@ -100,12 +100,11 @@ public interface IUtils {
     Object getPlayerPipeline(Player player);
 
     /**
-     * Used to register a player ride event.
-     * Since it's version specific, all parameters are objects which are later on assigned.
+     * Ride event register.
      *
-     * @param event  specific version event object
-     * @param packet received packet
-     * @param player owner
+     * @param event  the event
+     * @param packet the packet
+     * @param player the player
      */
     void rideEventRegister(Object event, Object packet, Player player);
 }

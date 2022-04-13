@@ -51,6 +51,10 @@ public class Booster {
      * The Type.
      */
     private BOOSTER_TYPE type;
+    /**
+     * The Database.
+     */
+    private final Database database;
 
     /**
      * Instantiates a new Booster.
@@ -60,13 +64,15 @@ public class Booster {
      * @param timeToEnd  the time to end
      * @param running    the running
      * @param type       the type
+     * @param database   the database
      */
-    public Booster(String name, double multiplier, long timeToEnd, boolean running, BOOSTER_TYPE type) {
+    public Booster(String name, double multiplier, long timeToEnd, boolean running, BOOSTER_TYPE type, Database database) {
         this.name = name;
         this.multiplier = multiplier;
         this.timeToEnd = timeToEnd * 20;
         this.running = running;
         this.type = type;
+        this.database = database;
         this.message = StringsCache.boosterEnabledMessage;
         this.owner = StringsCache.defaultServerValue;
     }
@@ -80,15 +86,17 @@ public class Booster {
      * @param running    the running
      * @param type       the type
      * @param owner      the owner
+     * @param database   the database
      */
     @Contract(pure = true)
-    public Booster(String name, double multiplier, long timeToEnd, boolean running, BOOSTER_TYPE type, @NotNull UUID owner) {
+    public Booster(String name, double multiplier, long timeToEnd, boolean running, BOOSTER_TYPE type, @NotNull UUID owner, Database database) {
         this.name = name;
         this.multiplier = multiplier;
         this.timeToEnd = timeToEnd * 20;
         this.running = running;
         this.type = type;
         this.owner = owner.toString();
+        this.database = database;
         this.message = StringsCache.boosterEnabledMessage;
     }
 
@@ -97,7 +105,7 @@ public class Booster {
      */
     public void run() {
         running = true;
-        BroadcastManager manager = Database.getOpPets().getBroadcastManager();
+        BroadcastManager manager = database.getOpPets().getBroadcastManager();
         List<Broadcast> broadcast = manager.getBroadcast(Broadcast.BROADCAST_TYPE.BOOSTER);
         if (owner.equalsIgnoreCase(StringsCache.defaultServerValue) && broadcast.get(0) != null) {
             broadcast.get(0).broadcastMessage(message.replace("%time%", String.valueOf(timeToEnd / 20)).replace("%name%", name));
@@ -107,7 +115,7 @@ public class Booster {
             public void run() {
                 running = false;
             }
-        }.runTaskLaterAsynchronously(Database.getInstance(), timeToEnd);
+        }.runTaskLaterAsynchronously(database.getPlugin(), timeToEnd);
     }
 
     /**
@@ -129,30 +137,12 @@ public class Booster {
     }
 
     /**
-     * Gets time to end.
-     *
-     * @return the time to end
-     */
-    public long getTimeToEnd() {
-        return timeToEnd;
-    }
-
-    /**
      * Is running boolean.
      *
      * @return the boolean
      */
     public boolean isRunning() {
         return running;
-    }
-
-    /**
-     * Sets running.
-     *
-     * @param running the running
-     */
-    public void setRunning(boolean running) {
-        this.running = running;
     }
 
     /**

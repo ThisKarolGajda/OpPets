@@ -9,6 +9,7 @@ package me.opkarol.oppets.listeners;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.skills.Adder;
 import me.opkarol.oppets.skills.Skill;
@@ -36,6 +37,10 @@ import java.util.List;
  * The type Skills listeners.
  */
 public class SkillsListeners implements Listener {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Player mine.
@@ -49,20 +54,20 @@ public class SkillsListeners implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
+        if (database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
             return;
         }
-        Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
-        SkillDatabase database = Database.getOpPets().getSkillDatabase();
+        Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
+        SkillDatabase skillDatabase = database.getOpPets().getSkillDatabase();
         List<Material> materials = new ArrayList<>();
-        database.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
+        skillDatabase.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
                 .filter(adder1 -> adder1.getAdder().equals(SkillEnums.SkillsAdders.MINING))
                 .map(Adder::getTypes)
                 .forEach(materials1 -> materials.addAll(List.of(materials1)));
         if (!materials.contains(event.getBlock().getType())) {
             return;
         }
-        database.addPoint(SkillEnums.SkillsAdders.MINING, pet, player);
+        skillDatabase.addPoint(SkillEnums.SkillsAdders.MINING, pet, player);
     }
 
     /**
@@ -73,12 +78,12 @@ public class SkillsListeners implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerHarvest(@NotNull PlayerHarvestBlockEvent event) {
         Player player = event.getPlayer();
-        if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
+        if (database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
             return;
         }
-        Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
-        SkillDatabase database = Database.getOpPets().getSkillDatabase();
-        Skill skill = database.getSkillFromMap(pet.getSkillName());
+        Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
+        SkillDatabase skillDatabase = database.getOpPets().getSkillDatabase();
+        Skill skill = skillDatabase.getSkillFromMap(pet.getSkillName());
         List<Material> materials = new ArrayList<>();
         skill.getAdderList().stream()
                 .filter(adder1 -> adder1.getAdder().equals(SkillEnums.SkillsAdders.HARVESTING))
@@ -87,7 +92,7 @@ public class SkillsListeners implements Listener {
         if (!materials.contains(event.getHarvestedBlock().getType())) {
             return;
         }
-        database.addPoint(SkillEnums.SkillsAdders.HARVESTING, pet, player);
+        skillDatabase.addPoint(SkillEnums.SkillsAdders.HARVESTING, pet, player);
     }
 
     /**
@@ -98,20 +103,20 @@ public class SkillsListeners implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerHarvest(@NotNull BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
+        if (database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
             return;
         }
-        Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
-        SkillDatabase database = Database.getOpPets().getSkillDatabase();
+        Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
+        SkillDatabase skillDatabase = database.getOpPets().getSkillDatabase();
         List<Material> materials = new ArrayList<>();
-        database.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
+        skillDatabase.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
                 .filter(adder1 -> adder1.getAdder().equals(SkillEnums.SkillsAdders.HARVESTING))
                 .map(Adder::getTypes)
                 .forEach(materials1 -> materials.addAll(List.of(materials1)));
         if (!materials.contains(event.getBlock().getType())) {
             return;
         }
-        database.addPoint(SkillEnums.SkillsAdders.HARVESTING, pet, player);
+        skillDatabase.addPoint(SkillEnums.SkillsAdders.HARVESTING, pet, player);
     }
 
     /**
@@ -125,20 +130,20 @@ public class SkillsListeners implements Listener {
             return;
         }
         Player player = (Player) event.getWhoClicked();
-        if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
+        if (database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
             return;
         }
-        Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
-        SkillDatabase database = Database.getOpPets().getSkillDatabase();
+        Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
+        SkillDatabase skillDatabase = database.getOpPets().getSkillDatabase();
         List<Material> materials = new ArrayList<>();
-        database.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
+        skillDatabase.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
                 .filter(adder1 -> adder1.getAdder().equals(SkillEnums.SkillsAdders.CRAFTING))
                 .map(Adder::getTypes)
                 .forEach(materials1 -> materials.addAll(List.of(materials1)));
         if (!materials.contains(event.getCurrentItem().getType())) {
             return;
         }
-        database.addPoint(SkillEnums.SkillsAdders.CRAFTING, pet, player);
+        skillDatabase.addPoint(SkillEnums.SkillsAdders.CRAFTING, pet, player);
     }
 
     /**
@@ -149,20 +154,20 @@ public class SkillsListeners implements Listener {
     @EventHandler
     public void playerSmelt(@NotNull FurnaceExtractEvent event) {
         Player player = event.getPlayer();
-        if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
+        if (database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
             return;
         }
-        Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
-        SkillDatabase database = Database.getOpPets().getSkillDatabase();
+        Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
+        SkillDatabase skillDatabase = database.getOpPets().getSkillDatabase();
         List<Material> materials = new ArrayList<>();
-        database.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
+        skillDatabase.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
                 .filter(adder1 -> adder1.getAdder().equals(SkillEnums.SkillsAdders.SMELTING))
                 .map(Adder::getTypes)
                 .forEach(materials1 -> materials.addAll(List.of(materials1)));
         if (!materials.contains(event.getBlock().getType())) {
             return;
         }
-        database.addPoint(SkillEnums.SkillsAdders.SMELTING, pet, player);
+        skillDatabase.addPoint(SkillEnums.SkillsAdders.SMELTING, pet, player);
     }
 
     /**
@@ -173,23 +178,23 @@ public class SkillsListeners implements Listener {
     @EventHandler
     public void playerFish(@NotNull PlayerFishEvent event) {
         Player player = event.getPlayer();
-        if (Database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
+        if (database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
             return;
         }
         Item item = (Item) event.getCaught();
         if (event.getCaught() == null || item == null) {
             return;
         }
-        Pet pet = Database.getDatabase().getCurrentPet(player.getUniqueId());
-        SkillDatabase database = Database.getOpPets().getSkillDatabase();
+        Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
+        SkillDatabase skillDatabase = database.getOpPets().getSkillDatabase();
         List<Material> materials = new ArrayList<>();
-        database.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
+        skillDatabase.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
                 .filter(adder1 -> adder1.getAdder().equals(SkillEnums.SkillsAdders.FISHING))
                 .map(Adder::getTypes)
                 .forEach(materials1 -> materials.addAll(List.of(materials1)));
         if (!materials.contains(item.getItemStack().getType())) {
             return;
         }
-        database.addPoint(SkillEnums.SkillsAdders.FISHING, pet, player);
+        skillDatabase.addPoint(SkillEnums.SkillsAdders.FISHING, pet, player);
     }
 }

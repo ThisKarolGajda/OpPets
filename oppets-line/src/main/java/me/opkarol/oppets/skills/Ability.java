@@ -8,7 +8,7 @@ package me.opkarol.oppets.skills;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.utils.ConfigUtils;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -36,9 +36,10 @@ public class Ability {
      * The Treasure.
      */
     private String TREASURE;
-
+    /**
+     * The Message.
+     */
     private String MESSAGE;
-
     /**
      * The Plugin action.
      */
@@ -53,7 +54,7 @@ public class Ability {
      */
     public Ability(SkillEnums.SkillsAbilities ability, String iPath) {
         setAbility(ability);
-        FileConfiguration config = Database.getInstance().getConfig();
+        FileConfiguration config = ConfigUtils.getConfig();
         switch (ability) {
             case CUSTOM_COMMAND:
                 COMMAND = config.getString(iPath + "options.command");
@@ -195,14 +196,29 @@ public class Ability {
         this.EFFECT = EFFECT;
     }
 
+    /**
+     * Gets effect.
+     *
+     * @return the effect
+     */
     public String getEFFECT() {
         return EFFECT;
     }
 
+    /**
+     * Gets message.
+     *
+     * @return the message
+     */
     public String getMESSAGE() {
         return MESSAGE;
     }
 
+    /**
+     * Sets message.
+     *
+     * @param MESSAGE the message
+     */
     public void setMESSAGE(String MESSAGE) {
         this.MESSAGE = MESSAGE;
     }

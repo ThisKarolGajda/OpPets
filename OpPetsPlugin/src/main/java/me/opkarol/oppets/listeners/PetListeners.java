@@ -9,6 +9,7 @@ package me.opkarol.oppets.listeners;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.events.PrestigeChangeEvent;
 import me.opkarol.oppets.particles.ParticlesManager;
@@ -36,6 +37,14 @@ import java.util.UUID;
  * The type Pet listeners.
  */
 public class PetListeners implements Listener {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+    /**
+     * The Particles manager.
+     */
+    private final ParticlesManager particlesManager = new ParticlesManager();
 
     /**
      * Pet levelup.
@@ -44,7 +53,9 @@ public class PetListeners implements Listener {
      */
     @EventHandler
     public void petLevelup(@NotNull PetLevelupEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) {
+            return;
+        }
         Pet pet = event.getPet();
         pet.setLevel(pet.getLevel() + 1);
         pet.setPetExperience(0);
@@ -52,18 +63,19 @@ public class PetListeners implements Listener {
         if (pet.getPetName() == null) {
             return;
         }
-        player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("petLevelUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_level%", String.valueOf(OpUtils.getLevel(pet))).replace("%max_level%", String.valueOf(OpUtils.getMaxLevel(pet))).replace("%experience_level%", String.valueOf(OpUtils.getPetLevelExperience(pet))));
+        player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("petLevelUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_level%", String.valueOf(OpUtils.getLevel(pet))).replace("%max_level%", String.valueOf(OpUtils.getMaxLevel(pet))).replace("%experience_level%", String.valueOf(OpUtils.getPetLevelExperience(pet))));
         if (pet.areParticlesEnabled()) {
-            ParticlesManager.spawnLevelUpPetEffect(player, Database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
+            particlesManager.spawnLevelUpPetEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
         }
-        List<Ability> abilities = Database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getAbilityList();
+        List<Ability> abilities = database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getAbilityList();
         for (Ability ability : abilities) {
             switch (ability.getAbility()) {
                 case PLUGIN_CONNECTION -> {
                     if (ability.getPLUGIN_CONNECTION().equalsIgnoreCase("Vault")) {
-                        Economy economy = Database.getOpPets().getEconomy();
+                        Object economy = database.getOpPets().getEconomy();
                         if (economy != null) {
-                            economy.depositPlayer(player, Double.parseDouble(ability.getPluginAction()));
+                            Economy economy1 = (Economy) economy;
+                            economy1.depositPlayer(player, Double.parseDouble(ability.getPluginAction()));
                         }
                     }
                 }
@@ -95,17 +107,19 @@ public class PetListeners implements Listener {
      */
     @EventHandler
     public void prestigeChange(@NotNull PrestigeChangeEvent event) {
-        PrestigeManager pm = Database.getOpPets().getPrestigeManager();
-        if (event.isCancelled() || pm.format == null) return;
+        PrestigeManager pm = database.getOpPets().getPrestigeManager();
+        if (event.isCancelled() || pm.format == null) {
+            return;
+        }
         Pet pet = event.getPet();
         pet.setLevel(0);
         pet.setPetExperience(0);
         pet.setPrestige(pm.getFormatForNumber(pm.getPrestigeLevel(pet.getPrestige()) + 1));
         Player player = event.getPlayer();
-        player.sendMessage(Database.getOpPets().getMessages().getMessagesAccess().stringMessage("prestigeUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_prestige%", pm.getFilledPrestige(pet.getPrestige())).replace("%max_level%", String.valueOf(OpUtils.getMaxLevel(pet))));
-        Database.getOpPets().getUtils().respawnPet(pet, player);
+        player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("prestigeUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_prestige%", pm.getFilledPrestige(pet.getPrestige())).replace("%max_level%", String.valueOf(OpUtils.getMaxLevel(pet))));
+        database.getOpPets().getUtils().respawnPet(pet, player);
         if (pet.areParticlesEnabled()) {
-            ParticlesManager.prestigeChangeEffect(player, Database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
+            particlesManager.prestigeChangeEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
         }
     }
 
@@ -145,7 +159,7 @@ public class PetListeners implements Listener {
             }
             Player player = (Player) entity;
             UUID uuid = player.getUniqueId();
-            Pet pet = Database.getOpPets().getDatabase().getCurrentPet(uuid);
+            Pet pet = database.getDatabase().getCurrentPet(uuid);
             if (pet == null) {
                 continue;
             }

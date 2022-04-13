@@ -12,7 +12,6 @@ import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.prestiges.PrestigeManager;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
@@ -30,6 +30,10 @@ import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
  * The type Pets utils.
  */
 public class PetsUtils {
+    /**
+     * The constant database.
+     */
+    private static Database database;
 
     /**
      * Gets binary from string and char.
@@ -76,12 +80,12 @@ public class PetsUtils {
         new BukkitRunnable() {
             @Override
             public void run() {
-                List<Pet> list = Database.getDatabase().getPetList(playerUUID);
+                List<Pet> list = database.getDatabase().getPetList(playerUUID);
                 list.removeIf(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName()));
                 list.add(pet);
-                Database.getDatabase().setPets(playerUUID, list);
+                database.getDatabase().setPets(playerUUID, list);
             }
-        }.runTaskAsynchronously(Database.getInstance());
+        }.runTaskAsynchronously(database.getPlugin());
     }
 
     /**
@@ -92,11 +96,18 @@ public class PetsUtils {
      */
     public static @Nullable String getPetFormattedName(@NotNull Pet pet) {
         if (pet.getPetName() != null) {
-            return ChatColor.translateAlternateColorCodes('&', pet.getPetName().replace("%p%", new PrestigeManager().getFilledPrestige(pet.getPrestige())));
+            return FormatUtils.formatMessage(pet.getPetName().replace("%p%", new PrestigeManager().getFilledPrestige(pet.getPrestige())));
         }
         return null;
     }
 
+    /**
+     * Gets material by pet type.
+     *
+     * @param pet the pet
+     * @return the material by pet type
+     */
+    @Deprecated
     public static Material getMaterialByPetType(@NotNull Pet pet) {
         if (pet.getPetType().equals(OpPetsEntityTypes.TypeOfEntity.MUSHROOM_COW)) {
             return Material.MOOSHROOM_SPAWN_EGG;
@@ -104,20 +115,54 @@ public class PetsUtils {
         return Material.valueOf(pet.getPetType().name() + "_SPAWN_EGG");
     }
 
-    public static void summonPet(String name, UUID uuid, Player sender) {
-        Pet activePet = Database.getDatabase().getCurrentPet(uuid);
-        Database.getDatabase().getPetList(uuid).stream()
+    /**
+     * Gets material by pet type.
+     *
+     * @param type the type
+     * @return the material by pet type
+     */
+    public static Material getMaterialByPetType(@NotNull OpPetsEntityTypes.TypeOfEntity type) {
+        if (type.equals(OpPetsEntityTypes.TypeOfEntity.MUSHROOM_COW)) {
+            return Material.MOOSHROOM_SPAWN_EGG;
+        }
+        return Material.valueOf(type.name() + "_SPAWN_EGG");
+    }
+
+    /**
+     * Summon pet boolean.
+     *
+     * @param name   the name
+     * @param uuid   the uuid
+     * @param sender the sender
+     * @return the boolean
+     */
+    public static boolean summonPet(String name, UUID uuid, Player sender) {
+        Pet activePet = database.getDatabase().getCurrentPet(uuid);
+        Optional<Pet> pets = database.getDatabase().getPetList(uuid).stream()
                 .filter(pet -> FormatUtils.getNameString(pet.getPetName()).equals(FormatUtils.getNameString(name)))
-                .forEach(pet -> {
-                    if (activePet == pet) {
-                        returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("samePet"));
-                    } else {
-                        if (activePet != null) {
-                            Database.getOpPets().getUtils().killPetFromPlayerUUID(uuid);
-                        }
-                        Database.getOpPets().getCreator().spawnMiniPet(pet, sender);
-                        returnMessage(sender, Database.getOpPets().getMessages().getMessagesAccess().stringMessage("summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
-                    }
-                });
+                .findAny();
+        if (pets.isPresent()) {
+            Pet pet = pets.get();
+            if (activePet == pet) {
+                returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("samePet"));
+            } else {
+                if (activePet != null) {
+                    database.getOpPets().getUtils().killPetFromPlayerUUID(uuid);
+                }
+                database.getOpPets().getCreator().spawnMiniPet(pet, sender);
+                returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets database.
+     *
+     * @param database the database
+     */
+    public static void setDatabase(Database database) {
+        PetsUtils.database = database;
     }
 }

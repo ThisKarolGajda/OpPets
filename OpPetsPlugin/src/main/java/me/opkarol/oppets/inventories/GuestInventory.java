@@ -8,21 +8,23 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.inventories.holders.GuestInventoryHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.InventoryUtils;
 import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.InventoryUtils.fillInventory;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 
 /**
@@ -37,6 +39,10 @@ public class GuestInventory implements IInventory {
      * The Inventory.
      */
     private final Inventory inventory;
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Instantiates a new Guest inventory.
@@ -65,7 +71,7 @@ public class GuestInventory implements IInventory {
         String path = "GuestInventory.items.";
         inventory.setItem(11, itemCreator(path + "informationBook.", this));
         inventory.setItem(15, itemCreator(path + "level.", this));
-        fillInventory(inventory);
+        InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE);
     }
 
     /**
@@ -85,7 +91,7 @@ public class GuestInventory implements IInventory {
         String level = String.valueOf(OpUtils.getLevel(pet));
         String percentageOfNext = OpUtils.getPercentageOfNextLevel(pet);
         String petExperience = String.valueOf(OpUtils.getPetLevelExperience(pet));
-        String prestige = Database.getOpPets().getPrestigeManager().getFilledPrestige(pet.getPrestige());
+        String prestige = database.getOpPets().getPrestigeManager().getFilledPrestige(pet.getPrestige());
         return lore.stream().map(s -> FormatUtils.formatMessage(s
                 .replace("%current_prestige%", prestige)
                 .replace("%max_pet_level%", maxLevel)

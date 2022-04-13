@@ -9,8 +9,8 @@ package v1_17_1R.entities;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.misc.PetDatabaseObject;
 import me.opkarol.oppets.interfaces.IEntityManager;
+import me.opkarol.oppets.misc.PetDatabaseObject;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.jetbrains.annotations.NotNull;
 import v1_17_1R.PathfinderGoalPet_1_17_1;
+import v1_17_1R.SessionHolder;
 import v1_17_1R.Utils;
 
 import java.util.Arrays;
@@ -31,6 +32,7 @@ import java.util.HashSet;
  * The type Entity manager.
  */
 public class EntityManager implements IEntityManager {
+    private final Database database = Database.getInstance(SessionHolder.getInstance().getSession());
 
     /**
      * Init pathfinder.
@@ -40,7 +42,7 @@ public class EntityManager implements IEntityManager {
      */
     public void initPathfinder(@NotNull Object entity, OpPetsEntityTypes.TypeOfEntity type) {
         Animal e = (Animal) entity;
-        PetDatabaseObject object = Database.getPetsDatabase().getObjectFromDatabase(type);
+        PetDatabaseObject object = database.getPetsDatabase().getObjectFromDatabase(type);
         e.goalSelector.getAvailableGoals().clear();
         e.goalSelector.addGoal(1, new PathfinderGoalPet_1_17_1(e, object.getEntitySpeed(), object.getEntityDistance()));
         e.goalSelector.addGoal(0, new FloatGoal(e));

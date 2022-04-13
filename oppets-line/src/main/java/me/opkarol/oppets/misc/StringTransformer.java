@@ -42,9 +42,11 @@ public class StringTransformer {
     /**
      * Gets enum from string.
      *
-     * @param s the s
-     * @param e the e
+     * @param <K> the type parameter
+     * @param s   the s
+     * @param e   the e
      * @return the enum from string
+     * @throws IllegalArgumentException the illegal argument exception
      */
     public <K extends Enum<K>> Enum<K> getEnumFromString(String s, Class<K> e) throws IllegalArgumentException {
         Enum<K> anEnum;
@@ -64,7 +66,6 @@ public class StringTransformer {
      *
      * @param s the s
      * @return the boolean
-     * @since 0.8.3.3
      */
     @Deprecated
     public boolean containsNotNumbers(@NotNull String s) {

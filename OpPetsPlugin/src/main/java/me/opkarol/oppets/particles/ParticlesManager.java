@@ -9,6 +9,7 @@ package me.opkarol.oppets.particles;
  */
 
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.OpPets;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
@@ -19,6 +20,10 @@ import org.bukkit.scheduler.BukkitRunnable;
  * The type Particles manager.
  */
 public class ParticlesManager {
+    /**
+     * The Database.
+     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
     /**
      * Spawn level up pet effect.
@@ -26,7 +31,7 @@ public class ParticlesManager {
      * @param player the player
      * @param entity the entity
      */
-    public static void spawnLevelUpPetEffect(Player player, Entity entity) {
+    public void spawnLevelUpPetEffect(Player player, Entity entity) {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -40,7 +45,7 @@ public class ParticlesManager {
                     location.subtract(x, 0, z);
                 }
             }
-        }.runTaskAsynchronously(Database.getInstance());
+        }.runTaskAsynchronously(database.getPlugin());
     }
 
     /**
@@ -49,7 +54,7 @@ public class ParticlesManager {
      * @param player the player
      * @param entity the entity
      */
-    public static void prestigeChangeEffect(Player player, Entity entity) {
+    public void prestigeChangeEffect(Player player, Entity entity) {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -63,6 +68,6 @@ public class ParticlesManager {
                     location.subtract(x, 0, z);
                 }
             }
-        }.runTaskAsynchronously(Database.getInstance());
+        }.runTaskAsynchronously(database.getPlugin());
     }
 }

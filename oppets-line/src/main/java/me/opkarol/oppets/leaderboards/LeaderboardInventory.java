@@ -9,23 +9,23 @@ package me.opkarol.oppets.leaderboards;
  */
 
 import me.opkarol.oppets.cache.InventoriesCache;
-import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.databases.APIDatabase;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import me.opkarol.oppets.utils.ConfigUtils;
 import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.InventoryUtils;
 import me.opkarol.oppets.utils.OpUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.opkarol.oppets.utils.InventoryUtils.fillInventory;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 
 /**
@@ -63,7 +63,7 @@ public class LeaderboardInventory implements IInventory {
      */
     private void setupInventory() {
         String path = "LeaderboardInventory.items.";
-        ConfigurationSection section = Database.getInstance().getConfig().getConfigurationSection("LeaderboardInventory.items");
+        ConfigurationSection section = ConfigUtils.getConfig().getConfigurationSection("LeaderboardInventory.items");
         if (section == null) {
             return;
         }
@@ -71,7 +71,7 @@ public class LeaderboardInventory implements IInventory {
             currentPath = path + key + ".";
             inventory.setItem(ConfigUtils.getInt(currentPath + "slot"), itemCreator(currentPath, this));
         }
-        fillInventory(inventory);
+        InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE);
     }
 
     /**
@@ -81,9 +81,8 @@ public class LeaderboardInventory implements IInventory {
      * @return the place holders
      */
     @Override
-    @Contract(pure = true)
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
-        LeaderboardCounter counter = Database.getOpPets().getLeaderboard();
+        LeaderboardCounter counter = APIDatabase.getInstance().getLeaderboard();
         Leaderboard leaderboard = counter.getLeaderboardsFromName(ConfigUtils.getString(currentPath + "leaderboardName")).get(0);
         if (leaderboard == null) {
             return lore;
@@ -110,17 +109,17 @@ public class LeaderboardInventory implements IInventory {
                     continue;
                 }
                 if (replaced.substring(1).equals("_player_name")) {
-                    toAdd = lambdaString.replace("%" + number + "_player_name%", OpUtils.getNameFromUUID(pet.getOwnerUUID()));
+                    toAdd = toAdd.replace("%" + number + "_player_name%", OpUtils.getNameFromUUID(pet.getOwnerUUID()));
                 } else {
                     switch (leaderboard.getType()) {
                         case TOP_LEVEL:
-                            toAdd = lambdaString.replace("%" + number + "_player_object%", String.valueOf(pet.getLevel()));
+                            toAdd = toAdd.replace("%" + number + "_player_object%", String.valueOf(pet.getLevel()));
                             break;
                         case TOP_PRESTIGE:
-                            toAdd = lambdaString.replace("%" + number + "_player_object%", new PrestigeManager().getFilledPrestige(pet.getPrestige()));
+                            toAdd = toAdd.replace("%" + number + "_player_object%", new PrestigeManager().getFilledPrestige(pet.getPrestige()));
                             break;
                         case TOP_EXPERIENCE:
-                            toAdd = lambdaString.replace("%" + number + "_player_object%", String.valueOf(pet.getPetExperience()));
+                            toAdd = toAdd.replace("%" + number + "_player_object%", String.valueOf(pet.getPetExperience()));
                             break;
                         default:
                             throw new IllegalStateException("Unexpected value: " + leaderboard.getType());

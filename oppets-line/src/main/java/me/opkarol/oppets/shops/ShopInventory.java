@@ -9,41 +9,51 @@ package me.opkarol.oppets.shops;
  */
 
 import me.opkarol.oppets.cache.InventoriesCache;
-import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.interfaces.IInventory;
-import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.cache.PageCache;
+import me.opkarol.oppets.utils.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.ConfigUtils.getInt;
 import static me.opkarol.oppets.utils.ConfigUtils.getString;
-import static me.opkarol.oppets.utils.InventoryUtils.fillInventory;
-import static me.opkarol.oppets.utils.InventoryUtils.itemCreatorShop;
 
 /**
  * The type Shop inventory.
  */
-public class ShopInventory implements IInventory {
+public class ShopInventory {
     /**
      * The Inventory.
      */
     private final Inventory inventory;
+
     /**
-     * The Path.
+     * The Cache.
      */
-    private String path;
+    public PageCache<Shop> cache;
 
     /**
      * Instantiates a new Shop inventory.
+     *
+     * @param page the page
      */
-    public ShopInventory() {
+    public ShopInventory(int page) {
         inventory = Bukkit.createInventory(new ShopInventoryHolder(), 54, InventoriesCache.shopInventoryTitle);
-        setupInventory();
+        ConfigurationSection sec = ConfigUtils.getConfig().getConfigurationSection("ShopInventory.items");
+        if (sec == null) {
+            return;
+        }
+        String path = "ShopInventory.items.";
+        List<Shop> shopList = new ArrayList<>();
+        for (String key : sec.getKeys(false)) {
+            key = key + ".";
+            shopList.add(new Shop(getInt(path + key + "options.price"), getString(path + key + "options.type"), path + key));
+        }
+        cache = new PageCache<>(inventory, shopList, 28);
+        cache.setupInventory(page);
     }
 
     /**
@@ -53,42 +63,5 @@ public class ShopInventory implements IInventory {
      */
     public Inventory getInventory() {
         return inventory;
-    }
-
-    /**
-     * Sets inventory.
-     */
-    private void setupInventory() {
-        String path = "ShopInventory.items.";
-        ConfigurationSection sec = Database.getInstance().getConfig().getConfigurationSection("ShopInventory.items");
-        if (sec == null) return;
-
-        int i = 0;
-        for (String key : sec.getKeys(false)) {
-            if (i > 53) break;
-            key = key + ".";
-            this.path = path + key;
-            inventory.setItem(i, itemCreatorShop(getString(path + key + "options.type"), getInt(path + key + "options.price"), path + key, this));
-            i++;
-        }
-
-        fillInventory(inventory);
-
-    }
-
-    /**
-     * Sets place holders.
-     *
-     * @param lore the lore
-     * @return the place holders
-     */
-    @Override
-    public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
-        String type = getString(path + ".options.type");
-        String price = String.valueOf(getInt(path + ".options.price"));
-        return lore.stream().map(s -> FormatUtils.formatMessage(s
-                .replace("%type%", type)
-                .replace("%price%", price)))
-                .collect(Collectors.toList());
     }
 }

@@ -13,7 +13,9 @@ import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.InventoryUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +24,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.InventoryUtils.*;
+import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
+import static me.opkarol.oppets.utils.InventoryUtils.itemCreatorLamp;
 
 /**
  * The type Settings inventory.
@@ -106,7 +109,7 @@ public class SettingsInventory implements IInventory {
         inventory.setItem(15, itemCreatorLamp(path + "otherRideable.", otherRideable, this));
         inventory.setItem(16, itemCreatorLamp(path + "particlesEnabled.", particlesEnabled, this));
         inventory.setItem(17, itemCreator(path + "resetSettings.", this));
-        fillInventory(inventory);
+        InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE);
 
     }
 

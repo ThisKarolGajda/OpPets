@@ -11,6 +11,7 @@ package me.opkarol.oppets.inventories;
 import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.inventories.holders.PrestigeInventoryHolder;
+import me.opkarol.oppets.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.opkarol.oppets.utils.InventoryUtils.*;
+import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 
 /**
  * The type Prestige inventory.
@@ -53,9 +54,15 @@ public class PrestigeInventory implements IInventory {
         String path = "PrestigeInventory.items.";
         inventory.setItem(11, itemCreator(path + "informationBook.", this));
         inventory.setItem(15, itemCreator(path + "prestige.", this));
-        fillInventory(inventory);
+        InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE);
     }
 
+    /**
+     * Sets place holders.
+     *
+     * @param lore the lore
+     * @return the place holders
+     */
     @Override
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         return lore;

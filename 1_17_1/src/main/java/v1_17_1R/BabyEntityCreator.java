@@ -18,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import v1_17_1R.entities.*;
@@ -27,6 +26,7 @@ import v1_17_1R.entities.*;
  * The type Baby entity creator.
  */
 public class BabyEntityCreator implements IBabyEntityCreator {
+    private final Database database = Database.getInstance(SessionHolder.getInstance().getSession());
 
     /**
      * Spawn mini pet.
@@ -42,10 +42,10 @@ public class BabyEntityCreator implements IBabyEntityCreator {
         entityAnimal.setCustomName(Component.nullToEmpty(PetsUtils.getPetFormattedName(pet)));
         entityAnimal.setGlowingTag(pet.isGlowing());
         pet.setOwnUUID(entityAnimal.getUUID());
-        Database.getDatabase().setCurrentPet(player.getUniqueId(), pet);
+        database.getDatabase().setCurrentPet(player.getUniqueId(), pet);
         world.addFreshEntity(entityAnimal);
         int id = entityAnimal.getId();
-        Database.getDatabase().addIdPet(pet.getOwnUUID(), id);
+        database.getDatabase().addIdPet(pet.getOwnUUID(), id);
         PDCUtils.addNBT(entityAnimal.getBukkitEntity(), NamespacedKeysCache.petKey, "valid");
         if (pet.isVisibleToOthers()) return;
         new Utils().hideEntityFromServer(player, id);
