@@ -10,20 +10,25 @@ package me.opkarol.oppets.utils;
 
 import me.opkarol.oppets.cache.InventoryCache;
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.misc.StringTransformer;
+import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.pets.PetMainInventory;
 import me.opkarol.oppets.skills.Adder;
+import me.opkarol.oppets.skills.SkillUtils;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
+import static me.opkarol.oppets.cache.NamespacedKeysCache.priceKey;
+import static me.opkarol.oppets.cache.NamespacedKeysCache.typeKey;
 
 /**
  * The type Op utils.
@@ -173,22 +178,42 @@ public class OpUtils {
         return getMaxLevel(pet) - pet.getLevel();
     }
 
-    /**
-     * Open main inventory.
-     *
-     * @param player the player
-     */
-    public static void openMainInventory(Player player) {
-        if (cache == null) {
-            cache = new InventoryCache();
-        }
-        Inventory inventory = cache.getInventory();
+    public static void tryToBuyItemFromInventory(@NotNull Player player, Inventory inventory, int slot) {
+        UUID uuid = player.getUniqueId();
         if (inventory == null) {
-            cache.setInventory(new PetMainInventory().getInventory());
-            openMainInventory(player);
-        } else {
-            player.openInventory(inventory);
+            return;
         }
+        ItemStack item = inventory.getItem(slot);
+        if (item == null) {
+            return;
+        }
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+        int price = new StringTransformer().getIntFromString(Objects.requireNonNull(PDCUtils.getNBT(item, priceKey)));
+        String type = PDCUtils.getNBT(item, typeKey);
+        Object economy = database.getOpPets().getEconomy();
+        if (economy != null && price != -1) {
+            Economy economy1 = (Economy) economy;
+            if (!economy1.has(player, price)) {
+                player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("notEnoughMoney"));
+                player.closeInventory();
+                return;
+            }
+            economy1.withdrawPlayer(player, price);
+        }
+        final String[] name = {type};
+        int i = 0;
+        while (database.getDatabase().getPetList(uuid).stream().anyMatch(pet1 -> FormatUtils.getNameString(name[0]).equals(FormatUtils.getNameString(pet1.getPetName())))) {
+            name[0] = type + "-" + i;
+            i++;
+        }
+        OpPetsEntityTypes.TypeOfEntity entity = OpPetsEntityTypes.TypeOfEntity.valueOf(type);
+        Pet pet1 = new Pet(name[0], entity, null, uuid, new SkillUtils().getRandomSkillName(entity), true);
+        database.getDatabase().addPetToPetsList(uuid, pet1);
+        player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("successfullyBought"));
+        player.closeInventory();
     }
 
     /**

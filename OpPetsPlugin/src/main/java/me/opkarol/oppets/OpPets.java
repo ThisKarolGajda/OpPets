@@ -105,7 +105,6 @@ public final class OpPets extends JavaPlugin implements IOpPets {
         prestigeManager = new PrestigeManager();
         leaderboardCounter = new LeaderboardCounter(database);
         broadcastManager = new BroadcastManager();
-        database.setOpPets(opPets);
         controller.registerEvents();
     }
 

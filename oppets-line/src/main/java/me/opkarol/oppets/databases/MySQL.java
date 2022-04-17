@@ -9,6 +9,9 @@ package me.opkarol.oppets.databases;
  */
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.opkarol.oppets.exceptions.Exception;
+import me.opkarol.oppets.exceptions.ExceptionLogger;
+import me.opkarol.oppets.exceptions.InvalidDatabaseException;
 import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.uuid.PetUUID;
@@ -47,6 +50,7 @@ public class MySQL {
      * The Database.
      */
     private final Database database = Database.getInstance();
+    private final String NOT_CONNECTED_TO_MYSQL = "Database connection isn't stable, make sure you are connected to a working SQL provider.";
 
     /**
      * Sets my sql.
@@ -63,11 +67,7 @@ public class MySQL {
         dataSource.setMaximumPoolSize(10);
         source = dataSource;
         hikariDataSource = dataSource;
-        try {
-            initDb();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        initDb();
         return this;
     }
 
@@ -80,21 +80,7 @@ public class MySQL {
         }
     }
 
-    /**
-     * Log sql error.
-     *
-     * @param error the error
-     */
-    private void logSQLError(String error) {
-        plugin.getLogger().warning(error);
-    }
-
-    /**
-     * Init db.
-     *
-     * @throws SQLException the sql exception
-     */
-    private void initDb() throws SQLException {
+    private void initDb() {
         try (Connection conn = source.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS oppets (" +
@@ -110,6 +96,8 @@ public class MySQL {
                              ", prestige TINYTEXT NOT NULL" +
                              ", PRIMARY KEY (id));")) {
             stmt.execute();
+        } catch (SQLException e) {
+            ExceptionLogger.getInstance().addException(new Exception(this.getClass().toString(), e.fillInStackTrace(), new InvalidDatabaseException(NOT_CONNECTED_TO_MYSQL)));
         }
     }
 
@@ -117,9 +105,8 @@ public class MySQL {
      * Insert pet.
      *
      * @param pet the pet
-     * @throws SQLException the sql exception
      */
-    public void insertPet(@NotNull Pet pet) throws SQLException {
+    public void insertPet(@NotNull Pet pet) {
         try (Connection conn = source.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "INSERT INTO oppets(id, name, settings, skill, experience, level, type, active, ownerUUID, prestige) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, settings = ?, skill = ?, experience = ?, level = ?, type = ?, active = ?, ownerUUID = ?, prestige = ?;")) {
@@ -154,7 +141,7 @@ public class MySQL {
             stmt.setString(19, prestige);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            logSQLError("Could not insert pet " + e.getLocalizedMessage());
+            ExceptionLogger.getInstance().addException(new Exception(this.getClass().toString(), e.fillInStackTrace(), new InvalidDatabaseException(NOT_CONNECTED_TO_MYSQL)));
         }
     }
 
@@ -168,14 +155,9 @@ public class MySQL {
             boolean b = false;
             @Override
             public void run() {
-                try {
-                    if (!b) {
-                        insertPet(pet);
-                        b = true;
-                    }
-                } catch (SQLException e) {
-                    logSQLError("Error while trying to save pet from UUID (asyncInsertPet)");
-                    e.printStackTrace();
+                if (!b) {
+                    insertPet(pet);
+                    b = true;
                 }
             }
         }.runTaskAsynchronously(plugin);
@@ -185,9 +167,8 @@ public class MySQL {
      * Delete pet.
      *
      * @param pet the pet
-     * @throws SQLException the sql exception
      */
-    public void deletePet(@NotNull Pet pet) throws SQLException {
+    public void deletePet(@NotNull Pet pet) {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -198,10 +179,14 @@ public class MySQL {
                     stmt.setString(1, pet.getPetUUID().getStringID());
                     int updated = stmt.executeUpdate();
                     if (updated != 1) {
-                        throw new SQLException("Could not find a pet to delete for specific id: " + pet.getPetUUID().getStringID());
+                        try {
+                            throw new InvalidDatabaseException("Could not find a pet to delete for specific id: " + pet.getPetUUID().getStringID());
+                        } catch (InvalidDatabaseException exception) {
+                        ExceptionLogger.getInstance().addException(new Exception(exception.getCause().toString(), this.getClass().toString(), exception.fillInStackTrace()));
+                        }
                     }
                 } catch (SQLException e) {
-                    logSQLError("Could not delete pet of player. " + e.getLocalizedMessage());
+                    ExceptionLogger.getInstance().addException(new Exception(this.getClass().toString(), e.fillInStackTrace(), new InvalidDatabaseException(NOT_CONNECTED_TO_MYSQL)));
                 }
             }
         }.runTaskAsynchronously(plugin);
@@ -224,7 +209,7 @@ public class MySQL {
                 Stream.of(pet).forEachOrdered(pets::add);
             }
         } catch (SQLException e) {
-            logSQLError("Could not fetch all player pets " + e.getLocalizedMessage());
+            ExceptionLogger.getInstance().addException(new Exception(this.getClass().toString(), e.fillInStackTrace(), new InvalidDatabaseException(NOT_CONNECTED_TO_MYSQL)));
         }
         return pets;
     }
@@ -249,7 +234,7 @@ public class MySQL {
                     ResultSet resultSet = stmt.executeQuery();
                     supplier[0] = resultSet.next();
                 } catch (SQLException e) {
-                    logSQLError("Could not check player pet " + e.getLocalizedMessage());
+                    ExceptionLogger.getInstance().addException(new Exception(this.getClass().toString(), e.fillInStackTrace(), new InvalidDatabaseException(NOT_CONNECTED_TO_MYSQL)));
                 }
             }
         }.runTaskAsynchronously(plugin);

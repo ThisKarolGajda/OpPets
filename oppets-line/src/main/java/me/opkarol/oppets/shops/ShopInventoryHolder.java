@@ -26,4 +26,9 @@ public class ShopInventoryHolder implements IHolder {
     public Inventory getInventory() {
         return null;
     }
+
+    @Override
+    public String getName() {
+        return "ShopInventory";
+    }
 }

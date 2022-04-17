@@ -4,9 +4,78 @@ main: me.opkarol.oppets.OpPets
 api-version: 1.16
 authors: [ OpKarol, ThisOpKarol, NotOpKarol ]
 softdepend: [ Vault ]
+description: This plugin allows your players to enjoy vanilla animals with custom additions such as pet levelling, riding, presitge, leaderboards, shops, broadcasts, gifts and more!
 
 commands:
   oppets:
-    description: "OpPets core command. Used to do everything with using your pet up to managing it."
+    description: "This command is responsible for the entire plugin OpPets. There are many sub-commands pinned to it."
+    aliases:
+      - pets
+      - pet
+    usage: "Usage: /<command> [addons|admin|booster|broadcast|call|create|delete|gift|help|leaderboard|prestige|rename|ride|shop|summon]"
 
-
+permissions:
+  oppets.*:
+    description: "Permission designed for operators"
+    default: op
+    children:
+      - oppets.command.addons
+      - oppets.command.admin
+      - oppets.command.booster
+      - oppets.command.broadcast
+      - oppets.command.call
+      - oppets.command.create
+      - oppets.command.delete
+      - oppets.command.gift
+      - oppets.command.help
+      - oppets.command.leaderboard
+      - oppets.command.prestige
+      - oppets.command.rename
+      - oppets.command.ride
+      - oppets.command.shop
+      - oppets.command.summon
+  oppets.command.addons:
+    description: "This permission allows to use and view current addons, which are connected to OpPets"
+    default: false
+  oppets.command.admin:
+    description: "This permission allows to use admin command, which can change values of pets for each player"
+    default: false
+  oppets.command.booster:
+    description: "This permission allows to create/remove/see boosters on the server"
+    default: false
+  oppets.command.broadcast:
+    description: "This permission allows to create/remove/see broadcasts on the server"
+    default: false
+  oppets.command.call:
+    description: "This permission allows to call your`s pet to your localization"
+    default: true
+  oppets.command.create:
+    description: "This permission allows to create pets using create command"
+    default: false
+  oppets.command.delete:
+    description: "This permission allows to delete/remove own pets"
+    default: true
+  oppets.command.gift:
+    description: "This permission allows to gift pets to other players"
+    default: false
+  oppets.command.help:
+    description: "This permission manages command which opens main OpPets view"
+    default: true
+  oppets.command.leaderboard:
+    description: "This permission allows to open leaderboards"
+    default: false
+  oppets.command.prestige:
+    description: "This permission allows to open prestige view"
+    default: false
+  oppets.command.rename:
+    description: "This permission allows to change pet`s name"
+    default: false
+  oppets.command.ride:
+    description: "This permission allows to ride your`s pet"
+    default: false
+  oppets.command.shop:
+    description: "This permission allows to open shop view and use it"
+    default: false
+  oppets.command.summon:
+    description: "This permission allows to summon your`s pets"
+    default: true

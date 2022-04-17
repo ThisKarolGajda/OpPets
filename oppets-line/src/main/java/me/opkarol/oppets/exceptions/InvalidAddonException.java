@@ -3,7 +3,7 @@ package me.opkarol.oppets.exceptions;
 /**
  * The type Invalid addon exception.
  */
-public class InvalidAddonException extends RuntimeException {
+public class InvalidAddonException extends java.lang.Exception {
 
     /**
      * Instantiates a new Invalid addon exception.

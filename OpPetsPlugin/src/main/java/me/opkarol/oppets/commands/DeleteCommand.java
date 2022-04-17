@@ -44,11 +44,18 @@ public class DeleteCommand implements ICommand {
         if (!(sender instanceof Player player)) {
             return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
-
+        if (args.length == 1) {
+            UUID uuid = player.getUniqueId();
+            Pet pet = database.getDatabase().getCurrentPet(uuid);
+            if (pet == null) {
+                return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
+            }
+            new DeleteAnvilInventory(pet, player);
+            return true;
+        }
         if (args.length != 2) {
             return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("badCommandUsage").replace("%proper_usage%", "/oppets delete <PET>"));
         }
-
         Pet pet = getPetByName(player.getUniqueId(), FormatUtils.getNameString(args[1]));
         if (pet == null) {
             return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));

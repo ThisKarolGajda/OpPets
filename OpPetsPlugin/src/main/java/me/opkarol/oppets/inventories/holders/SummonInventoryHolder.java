@@ -12,19 +12,15 @@ import me.opkarol.oppets.interfaces.IHolder;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The type Summon inventory holder.
- */
 public class SummonInventoryHolder implements IHolder {
 
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
-    @NotNull
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return "SummonInventory";
     }
 }

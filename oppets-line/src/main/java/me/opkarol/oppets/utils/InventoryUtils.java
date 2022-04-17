@@ -8,6 +8,7 @@ package me.opkarol.oppets.utils;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.databases.APIDatabase;
 import me.opkarol.oppets.interfaces.IInventory;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.cache.NamespacedKeysCache.priceKey;
@@ -87,7 +89,7 @@ public class InventoryUtils {
      * @param inventory the inventory
      * @return the item stack
      */
-    public static @Nullable ItemStack itemCreatorLamp(String path, boolean lights, @NotNull IInventory inventory) {
+    public static @NotNull ItemStack itemCreatorLamp(String path, boolean lights, @NotNull IInventory inventory) {
         Material material;
         switch (String.valueOf(lights)) {
             case "true": {
@@ -106,7 +108,7 @@ public class InventoryUtils {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
-            return null;
+            return item;
         }
         meta.setDisplayName(formatMessage(config.getString(path + "name")));
         meta.setLore(formatList(inventory.setPlaceHolders(config.getStringList(path + "lore"))));
@@ -259,6 +261,23 @@ public class InventoryUtils {
         return item;
     }
 
+    public static @NotNull ItemStack itemCreator(String path, Function<List<String>, List<String>> action) {
+        ItemStack item = new ItemStack(Material.valueOf(config.getString(path + "material")));
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return item;
+        }
+        meta.setDisplayName(formatMessage(config.getString(path + "name")));
+        List<String> list = action.apply(config.getStringList(path + "lore"));
+        meta.setLore(formatList(list));
+        meta.setAttributeModifiers(null);
+        meta.setUnbreakable(true);
+        if (config.getBoolean(path + "glow")) meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        item.setItemMeta(meta);
+        return item;
+    }
+
     /**
      * Item creator item stack.
      *
@@ -268,16 +287,46 @@ public class InventoryUtils {
      * @param inventory the inventory
      * @return the item stack
      */
-    public static @NotNull ItemStack itemCreator(Material material, String name, List<String> lore, @NotNull IInventory inventory) {
+    public static @NotNull ItemStack itemCreator(Material material, String name, List<String> lore, boolean glow, IInventory inventory) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return new ItemStack(material);
         }
         meta.setDisplayName(formatMessage(name));
-        meta.setLore(formatList(inventory.setPlaceHolders(lore)));
+        if (inventory != null) {
+            meta.setLore(formatList(inventory.setPlaceHolders(lore)));
+        } else {
+            meta.setLore(formatList(lore));
+        }
         meta.setAttributeModifiers(null);
         meta.setUnbreakable(true);
+        if (glow) meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static @NotNull ItemStack itemCreator(Material material, String name, List<String> lore, boolean glow, HashMap<String, String> pdc, IInventory inventory) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return new ItemStack(material);
+        }
+        meta.setDisplayName(formatMessage(name));
+        if (inventory != null) {
+            meta.setLore(formatList(inventory.setPlaceHolders(lore)));
+        } else {
+            meta.setLore(formatList(lore));
+        }
+        if (pdc != null) {
+            for (String s : pdc.keySet()) {
+                PDCUtils.addNBT(item, new NamespacedKey(APIDatabase.getInstance().getPlugin(), s), pdc.get(s));
+            }
+        }
+        meta.setAttributeModifiers(null);
+        meta.setUnbreakable(true);
+        if (glow) meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         item.setItemMeta(meta);
         return item;

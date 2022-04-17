@@ -8,72 +8,45 @@ package me.opkarol.oppets.inventories;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.cache.InventoriesCache;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.graphic.GraphicInterface;
+import me.opkarol.oppets.graphic.GraphicItem;
+import me.opkarol.oppets.graphic.GraphicItemData;
+import me.opkarol.oppets.interfaces.IGraphicInventoryData;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.inventories.holders.SettingsInventoryHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.InventoryUtils;
-import org.bukkit.Bukkit;
+import me.opkarol.oppets.utils.PetsUtils;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
+import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreatorLamp;
 
-/**
- * The type Settings inventory.
- */
 public class SettingsInventory implements IInventory {
-    /**
-     * The Inventory.
-     */
-    private final Inventory inventory;
-    /**
-     * The Visible to others.
-     */
+    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+    private final Pet pet;
     boolean visibleToOthers;
-    /**
-     * The Giftable.
-     */
     boolean giftable;
-    /**
-     * The Glows.
-     */
     boolean glows;
-    /**
-     * The Follow player.
-     */
     boolean followPlayer;
-    /**
-     * The Teleport to player.
-     */
     boolean teleportToPlayer;
-    /**
-     * The Rideable.
-     */
     boolean rideable;
-    /**
-     * The Other rideable.
-     */
     boolean otherRideable;
-    /**
-     * The Particles enabled.
-     */
     boolean particlesEnabled;
 
-    /**
-     * Instantiates a new Settings inventory.
-     *
-     * @param pet the pet
-     */
     public SettingsInventory(@NotNull Pet pet) {
+        this.pet = pet;
         visibleToOthers = pet.isVisibleToOthers();
         giftable = pet.isGiftable();
         glows = pet.isGlowing();
@@ -82,45 +55,83 @@ public class SettingsInventory implements IInventory {
         rideable = pet.isRideable();
         otherRideable = pet.isOtherRideable();
         particlesEnabled = pet.areParticlesEnabled();
-        inventory = Bukkit.createInventory(new SettingsInventoryHolder(), 27, InventoriesCache.settingsInventoryTitle.replace("%pet_name%", FormatUtils.formatMessage(Objects.requireNonNull(pet.getPetName()))));
-        setupInventory();
     }
 
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    /**
-     * Sets inventory.
-     */
-    private void setupInventory() {
-        String path = "SettingsInventory.items.";
-        inventory.setItem(9, itemCreatorLamp(path + "visibleToOthers.", visibleToOthers, this));
-        inventory.setItem(10, itemCreatorLamp(path + "giftable.", giftable, this));
-        inventory.setItem(11, itemCreatorLamp(path + "glows.", glows, this));
-        inventory.setItem(12, itemCreatorLamp(path + "followPlayer.", followPlayer, this));
-        inventory.setItem(13, itemCreatorLamp(path + "teleportToPlayer.", teleportToPlayer, this));
-        inventory.setItem(14, itemCreatorLamp(path + "rideable.", rideable, this));
-        inventory.setItem(15, itemCreatorLamp(path + "otherRideable.", otherRideable, this));
-        inventory.setItem(16, itemCreatorLamp(path + "particlesEnabled.", particlesEnabled, this));
-        inventory.setItem(17, itemCreator(path + "resetSettings.", this));
-        InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE);
-
-    }
-
-    /**
-     * Sets place holders.
-     *
-     * @param lore the lore
-     * @return the place holders
-     */
     @Override
-    @Contract(pure = true)
+    public Inventory getInventory() {
+        loadButtons();
+        return GraphicInterface.getInventory(this, new IGraphicInventoryData() {
+            @Override
+            public InventoryHolder getHolder() {
+                return new SettingsInventoryHolder();
+            }
+
+            @Override
+            public int getSize() {
+                return 27;
+            }
+
+            @Override
+            public String getTitle() {
+                return InventoriesCache.settingsInventoryTitle;
+            }
+        }, inventory -> InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE));
+    }
+
+    @Override
+    public void loadButtons() {
+        String path = "SettingsInventory.items.";
+        GraphicInterface graphicInterface = GraphicInterface.getInstance();
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreatorLamp(path + "visibleToOthers.", visibleToOthers, this), 9), player -> {
+            pet.setVisibleToOthers(!visibleToOthers);
+            savePetProgress(player);
+        }));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreatorLamp(path + "giftable.", giftable, this), 10), player -> {
+            pet.setGiftable(!giftable);
+            savePetProgress(player);
+        }));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreatorLamp(path + "glows.", glows, this), 11), player -> {
+            pet.setGlow(!glows);
+            savePetProgress(player);
+        }));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreatorLamp(path + "followPlayer.", followPlayer, this), 12), player -> {
+            pet.setFollowPlayer(!followPlayer);
+            savePetProgress(player);
+        }));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreatorLamp(path + "teleportToPlayer.", teleportToPlayer, this), 13), player -> {
+            pet.setTeleportingToPlayer(!teleportToPlayer);
+            savePetProgress(player);
+        }));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreatorLamp(path + "rideable.", rideable, this), 14), player -> {
+            pet.setRideable(!rideable);
+            savePetProgress(player);
+        }));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreatorLamp(path + "otherRideable.", otherRideable, this), 15), player -> {
+            pet.setOtherRideable(!otherRideable);
+            savePetProgress(player);
+        }));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreatorLamp(path + "particlesEnabled.", particlesEnabled, this), 16), player -> {
+            pet.setParticlesEnabled(!particlesEnabled);
+            savePetProgress(player);
+        }));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreator(path + "resetSettings.", this), 17), player -> {
+            pet.resetSettings();
+            savePetProgress(player);
+        }));
+    }
+
+    protected void savePetProgress(Player player) {
+        database.getUtils().respawnPet(pet, player);
+        PetsUtils.savePetProgress(pet, player.getUniqueId());
+        player.openInventory(new SettingsInventory(pet).getInventory());
+    }
+
+    @Override
+    public String getHolderName() {
+        return "SettingsInventory";
+    }
+
+    @Override
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         return lore.stream().map(s -> FormatUtils.formatMessage(s
                 .replace("%state_visibleToOthers%", String.valueOf(visibleToOthers))

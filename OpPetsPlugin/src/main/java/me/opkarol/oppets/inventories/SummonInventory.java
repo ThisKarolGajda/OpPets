@@ -12,83 +12,121 @@ import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.cache.PageCache;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.interfaces.IHolder;
+import me.opkarol.oppets.graphic.GraphicInterface;
+import me.opkarol.oppets.graphic.GraphicItem;
+import me.opkarol.oppets.graphic.GraphicItemData;
+import me.opkarol.oppets.interfaces.IGetter;
+import me.opkarol.oppets.interfaces.IGraphicInventoryData;
+import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.inventories.holders.SummonInventoryHolder;
+import me.opkarol.oppets.misc.StringTransformer;
 import me.opkarol.oppets.pets.Pet;
-import org.bukkit.Bukkit;
+import me.opkarol.oppets.utils.PDCUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-/**
- * The type Summon inventory.
- */
-public class SummonInventory {
-    /**
-     * The Database.
-     */
+import static me.opkarol.oppets.cache.NamespacedKeysCache.summonItemKey;
+import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
+
+public class SummonInventory implements IInventory {
     private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
-    /**
-     * The Pets.
-     */
-    List<Pet> pets;
-    /**
-     * The Inventory.
-     */
-    private final Inventory inventory;
-    /**
-     * The Cache.
-     */
-    public PageCache<Pet> cache;
+    private final List<Pet> pets;
+    private final int page;
+    private final PageCache<Pet> cache;
 
-    /**
-     * Instantiates a new Summon inventory.
-     *
-     * @param uuid the uuid
-     */
     public SummonInventory(UUID uuid) {
-        this.pets = database.getDatabase().getPetList(uuid);
-        if (pets == null) {
-            pets = new ArrayList<>();
-        } else {
-            Collections.reverse(pets);
-        }
-        IHolder holder = new SummonInventoryHolder();
-        String title = InventoriesCache.summonInventoryTitle;
-        inventory = Bukkit.createInventory(holder, 54, title);
-        cache = new PageCache<>(inventory, pets, 28);
+        this.pets = reverseList(database.getDatabase().getPetList(uuid));
+        cache = new PageCache<>(pets, 28);
         cache.setupInventory(0);
+        loadButtons();
+        page = 0;
     }
 
-    /**
-     * Instantiates a new Summon inventory.
-     *
-     * @param uuid the uuid
-     * @param page the page
-     */
     public SummonInventory(UUID uuid, int page) {
-        this.pets = database.getDatabase().getPetList(uuid);
+        this.pets = reverseList(database.getDatabase().getPetList(uuid));
+        cache = new PageCache<>(pets, 28);
+        cache.setupInventory(page);
+        loadButtons();
+        this.page = page;
+    }
+
+    private @NotNull List<Pet> reverseList(List<Pet> pets) {
         if (pets == null) {
             pets = new ArrayList<>();
-        } else {
-            Collections.reverse(pets);
         }
-        IHolder holder = new SummonInventoryHolder();
-        String title = InventoriesCache.summonInventoryTitle;
-        inventory = Bukkit.createInventory(holder, 54, title);
-        cache = new PageCache<>(inventory, pets, 28);
-        cache.setupInventory(page);
+        Collections.reverse(pets);
+        return pets;
     }
 
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
+    @Override
+    public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
+        return lore;
+    }
+
+    @Override
     public Inventory getInventory() {
-        return inventory;
+        return GraphicInterface.getInventory(this, new IGraphicInventoryData() {
+            @Override
+            public InventoryHolder getHolder() {
+                return new SummonInventoryHolder();
+            }
+
+            @Override
+            public int getSize() {
+                return 54;
+            }
+
+            @Override
+            public String getTitle() {
+                return InventoriesCache.summonInventoryTitle;
+            }
+        }, null);
+    }
+
+    @Override
+    public void loadButtons() {
+        GraphicInterface graphicInterface = GraphicInterface.getInstance();
+        HashMap<Integer, IGetter> map = cache.getPagedInventory(page);
+        for (int i : map.keySet()) {
+            IGetter object = map.get(i);
+            switch (object.getGetterType()) {
+                case PET -> {
+                    Pet pet = (Pet) object.getObject();
+                    graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreator(PetsUtils.getMaterialByPetType(pet.getPetType()), pet.getPetName(), new ArrayList<>(), false, this), i), (player, item) -> {
+                        if (item != null) {
+                            UUID uuid = player.getUniqueId();
+                            if (PDCUtils.hasNBT(item, summonItemKey)) {
+                                String nbtString = PDCUtils.getNBT(item, summonItemKey);
+                                if (nbtString != null) {
+                                    int page = new StringTransformer().getIntFromString(nbtString);
+                                    player.openInventory(new SummonInventory(uuid, page).getInventory());
+                                }
+                            } else {
+                                ItemMeta meta = item.getItemMeta();
+                                if (meta != null) {
+                                    String name = meta.getDisplayName();
+                                    if (PetsUtils.summonPet(name, uuid, player)) {
+                                        player.closeInventory();
+                                    }
+                                }
+                            }
+                        }
+                    }));
+                }
+                case ITEM_STACK -> graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(((ItemStack) object.getObject()), i)));
+                default -> throw new IllegalStateException("Unexpected value: " + map.get(i).getGetterType());
+            }
+        }
+    }
+
+    @Override
+    public String getHolderName() {
+        return "SummonInventory";
     }
 }

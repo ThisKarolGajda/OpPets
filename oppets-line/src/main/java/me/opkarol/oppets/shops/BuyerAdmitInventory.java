@@ -1,4 +1,4 @@
-package me.opkarol.oppets.inventories;
+package me.opkarol.oppets.shops;
 
 /*
  = Copyright (c) 2021-2022.
@@ -9,16 +9,20 @@ package me.opkarol.oppets.inventories;
  */
 
 import me.opkarol.oppets.cache.InventoriesCache;
+import me.opkarol.oppets.graphic.GraphicInterface;
+import me.opkarol.oppets.graphic.GraphicItem;
+import me.opkarol.oppets.graphic.GraphicItemData;
+import me.opkarol.oppets.interfaces.IGraphicInventoryData;
 import me.opkarol.oppets.interfaces.IInventory;
-import me.opkarol.oppets.inventories.holders.BuyerAdmitInventoryHolder;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.InventoryUtils;
+import me.opkarol.oppets.utils.OpUtils;
 import me.opkarol.oppets.utils.PDCUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -29,63 +33,55 @@ import static me.opkarol.oppets.cache.NamespacedKeysCache.typeKey;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreatorShop;
 
-/**
- * The type Buyer admit inventory.
- */
 public class BuyerAdmitInventory implements IInventory {
-    /**
-     * The Inventory.
-     */
-    private final Inventory inventory;
-    /**
-     * The Price.
-     */
     private final String price;
-    /**
-     * The Type.
-     */
     private final String type;
 
-    /**
-     * Instantiates a new Buyer admit inventory.
-     *
-     * @param item the item
-     */
     public BuyerAdmitInventory(@NotNull ItemStack item) {
         price = PDCUtils.getNBT(item, priceKey);
         type = PDCUtils.getNBT(item, typeKey);
-        inventory = Bukkit.createInventory(new BuyerAdmitInventoryHolder(), 27, InventoriesCache.buyerAdmitInventoryTitle);
-        setupInventory();
     }
 
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    /**
-     * Sets inventory.
-     */
-    private void setupInventory() {
-        String path = "BuyerAdmitInventory.items.";
-        inventory.setItem(10, itemCreator(path + "decline.", this));
-        inventory.setItem(13, itemCreator(path + "informationBook.", this));
-        inventory.setItem(16, itemCreatorShop(type, Integer.parseInt(price), path + "confirm.", this));
-        InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE);
-    }
-
-    /**
-     * Sets place holders.
-     *
-     * @param lore the lore
-     * @return the place holders
-     */
     @Override
-    @Contract(pure = true)
+    public Inventory getInventory() {
+        loadButtons();
+        return GraphicInterface.getInventory(this, new IGraphicInventoryData() {
+            @Override
+            public InventoryHolder getHolder() {
+                return new BuyerAdmitInventoryHolder();
+            }
+
+            @Override
+            public int getSize() {
+                return 27;
+            }
+
+            @Override
+            public String getTitle() {
+                return InventoriesCache.buyerAdmitInventoryTitle;
+            }
+        }, inventory -> InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE));
+    }
+
+    @Override
+    public void loadButtons() {
+        String path = "BuyerAdmitInventory.items.";
+        GraphicInterface graphicInterface = GraphicInterface.getInstance();
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreator(path + "decline.", this), 10), HumanEntity::closeInventory));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreator(path + "informationBook.", this), 13)));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreatorShop(type, Integer.parseInt(price), path + "confirm.", this), 16), player -> {
+            Inventory inventory = player.getOpenInventory().getInventory(16);
+            OpUtils.tryToBuyItemFromInventory(player, inventory, 16);
+        }));
+
+    }
+
+    @Override
+    public String getHolderName() {
+        return "BuyerAdmitInventory";
+    }
+
+    @Override
     public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         return lore.stream().map(s -> FormatUtils.formatMessage(s
                 .replace("%type%", type)

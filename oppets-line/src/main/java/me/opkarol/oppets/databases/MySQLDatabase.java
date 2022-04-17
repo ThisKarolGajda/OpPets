@@ -13,7 +13,6 @@ import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -71,13 +70,7 @@ public class MySQLDatabase implements IDatabase {
      */
     @Override
     public List<Pet> getPetList(UUID uuid) {
-        List<Pet> petList = petsMap.get(uuid);
-        if (petList == null) {
-            petList = new ArrayList<>();
-        } else {
-            petList = new ArrayList<>(petList);
-        }
-        return petList;
+        return petsMap.getOrDefault(uuid, new ArrayList<>());
     }
 
     /**
@@ -179,7 +172,7 @@ public class MySQLDatabase implements IDatabase {
      */
     @Override
     public Pet getCurrentPet(UUID uuid) {
-        return activePetMap.get(uuid);
+        return activePetMap.getOrDefault(uuid, null);
     }
 
     /**
@@ -215,12 +208,7 @@ public class MySQLDatabase implements IDatabase {
         if (activePetMap.get(uuid).getPetUUID().getStringID().equals(pet.getPetUUID().getStringID())) {
             removeCurrentPet(uuid);
         }
-        try {
-            database.getMySQL().deletePet(pet);
-        } catch (SQLException e) {
-            logger.warning("Error while trying to delete Pet from UUID: " + uuid.toString());
-            e.printStackTrace();
-        }
+        database.getMySQL().deletePet(pet);
         List<Pet> list = petsMap.get(uuid);
         list.removeIf(petI -> Objects.equals(FormatUtils.getNameString(petI.getPetName()), FormatUtils.getNameString(pet.getPetName())));
         setPets(uuid, list);
@@ -286,11 +274,7 @@ public class MySQLDatabase implements IDatabase {
             if (async) {
                 database.getMySQL().asyncInsertPet(pet);
             } else {
-                try {
-                    database.getMySQL().insertPet(pet);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                database.getMySQL().insertPet(pet);
             }
         }
         petsMap.replace(playerUUID, list);

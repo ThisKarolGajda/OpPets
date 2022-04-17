@@ -64,20 +64,11 @@ public class PetAbilities implements Listener {
     public void playerInteract(@NotNull PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        if (database.getOpPets().getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid)) {
-            return;
-        }
-        if (!player.isSneaking()) {
+        if (database.getOpPets().getAbilitiesDatabase().cooldownMap.hasActiveCooldown(uuid) || !player.isSneaking()) {
             return;
         }
         Pet pet = database.getDatabase().getCurrentPet(uuid);
-        if (pet == null) {
-            return;
-        }
-        if (pet.getOwnUUID() != event.getRightClicked().getUniqueId()) {
-            return;
-        }
-        if (abilitiesDatabase.cooldownMap.hasActiveCooldown(uuid)) {
+        if (pet == null || pet.getOwnUUID() != event.getRightClicked().getUniqueId() || abilitiesDatabase.cooldownMap.hasActiveCooldown(uuid)) {
             return;
         }
         boolean activated = false;

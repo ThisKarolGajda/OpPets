@@ -1,10 +1,21 @@
 package me.opkarol.oppets.addons;
 
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import me.opkarol.oppets.cache.InventoryCache;
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.exceptions.Exception;
+import me.opkarol.oppets.exceptions.ExceptionLogger;
 import me.opkarol.oppets.exceptions.InvalidAddonException;
 import me.opkarol.oppets.interfaces.IAddon;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,19 +45,27 @@ public class AddonManager {
      *
      * @param addon the addon
      * @return the database
-     * @throws InvalidAddonException the invalid addon exception
      */
-    public static Database addAddon(@NotNull IAddon addon) throws InvalidAddonException {
+    public static @Nullable Database addAddon(@NotNull IAddon addon) {
         if (addon.canBeLaunched()) {
             if (addon.getPlugin().getName().equals(addon.getName())) {
                 addons.add(addon);
                 return database;
             } else {
-                throw new InvalidAddonException("Provided addon contains invalid name: " + addon.getName() + ", plugin name should be equal to " + addon.getPlugin().getName() + ".");
+                try {
+                    throw new InvalidAddonException("Provided addon contains invalid name: " + addon.getName() + ", plugin name should be equal to " + addon.getPlugin().getName() + ".");
+                } catch (InvalidAddonException exception) {
+                    ExceptionLogger.getInstance().addException(new Exception(exception.getCause().toString(), AddonManager.class.toString(), exception.fillInStackTrace()));
+                }
             }
         } else {
-            throw new InvalidAddonException("Provided addon " + addon.getName() + " can't be launched, contains invalid specification.");
+            try {
+                throw new InvalidAddonException("Provided addon " + addon.getName() + " can't be launched, contains invalid specification.");
+            } catch (InvalidAddonException exception) {
+                ExceptionLogger.getInstance().addException(new Exception(exception.getCause().toString(), AddonManager.class.toString(), exception.fillInStackTrace()));
+            }
         }
+        return null;
     }
 
     /**

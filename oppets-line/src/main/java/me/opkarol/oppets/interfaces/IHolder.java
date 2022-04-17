@@ -14,4 +14,6 @@ import org.bukkit.inventory.InventoryHolder;
  * The interface Holder.
  */
 public interface IHolder extends InventoryHolder {
+
+    String getName();
 }

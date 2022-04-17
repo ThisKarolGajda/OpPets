@@ -130,6 +130,6 @@ public interface IDatabase {
      * @param async      the async
      */
     default void databaseUUIDSaver(UUID playerUUID, boolean async) {
-
+        setPets(playerUUID, getPetList(playerUUID));
     }
 }

@@ -22,21 +22,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * The type Prestige confirm anvil inventory.
- */
 public class PrestigeConfirmAnvilInventory {
-    /**
-     * The Database.
-     */
     private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
-    /**
-     * Instantiates a new Prestige confirm anvil inventory.
-     *
-     * @param pet          the pet
-     * @param playerOpened the player opened
-     */
     public PrestigeConfirmAnvilInventory(@NotNull Pet pet, Player playerOpened) {
         String title = database.getOpPets().getMessages().getMessagesAccess().stringMessage("titlePrestige");
         String petName = FormatUtils.getNameString(Objects.requireNonNull(pet.getPetName()));

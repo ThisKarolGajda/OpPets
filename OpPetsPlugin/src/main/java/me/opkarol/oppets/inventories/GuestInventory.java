@@ -11,15 +11,19 @@ package me.opkarol.oppets.inventories;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.cache.InventoriesCache;
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.graphic.GraphicInterface;
+import me.opkarol.oppets.graphic.GraphicItem;
+import me.opkarol.oppets.graphic.GraphicItemData;
+import me.opkarol.oppets.interfaces.IGraphicInventoryData;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.inventories.holders.GuestInventoryHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.InventoryUtils;
 import me.opkarol.oppets.utils.OpUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,62 +31,51 @@ import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
 
-/**
- * The type Guest inventory.
- */
 public class GuestInventory implements IInventory {
-    /**
-     * The Pet.
-     */
     private final Pet pet;
-    /**
-     * The Inventory.
-     */
-    private final Inventory inventory;
-    /**
-     * The Database.
-     */
     private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
-    /**
-     * Instantiates a new Guest inventory.
-     *
-     * @param pet the pet
-     */
     public GuestInventory(@NotNull Pet pet) {
         this.pet = pet;
-        inventory = Bukkit.createInventory(new GuestInventoryHolder(), 27, InventoriesCache.guestInventoryTitle.replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
-        setupInventory();
     }
 
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    /**
-     * Sets inventory.
-     */
-    private void setupInventory() {
-        String path = "GuestInventory.items.";
-        inventory.setItem(11, itemCreator(path + "informationBook.", this));
-        inventory.setItem(15, itemCreator(path + "level.", this));
-        InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE);
-    }
-
-    /**
-     * Sets place holders.
-     *
-     * @param lore the lore
-     * @return the place holders
-     */
     @Override
-    @NotNull
-    public List<String> setPlaceHolders(@NotNull List<String> lore) {
+    public Inventory getInventory() {
+        loadButtons();
+        return GraphicInterface.getInventory(this, new IGraphicInventoryData() {
+            @Override
+            public InventoryHolder getHolder() {
+                return new GuestInventoryHolder();
+            }
+
+            @Override
+            public int getSize() {
+                return 27;
+            }
+
+            @Override
+            public String getTitle() {
+                return InventoriesCache.guestInventoryTitle.replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName()));
+            }
+        }, inventory -> InventoryUtils.fillInventory(inventory, Material.BLACK_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE));
+    }
+
+    @Override
+    public void loadButtons() {
+        String path = "GuestInventory.items.";
+        GraphicInterface graphicInterface = GraphicInterface.getInstance();
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreator(path + "informationBook.", this), 11)));
+        graphicInterface.setButton(this, new GraphicItem(new GraphicItemData(itemCreator(path + "level.", this), 15)));
+
+    }
+
+    @Override
+    public String getHolderName() {
+        return "GuestInventory";
+    }
+
+    @Override
+    public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
         String owner = FormatUtils.formatMessage(OpUtils.getNameFromUUID(pet.getOwnerUUID()));
         String petName = FormatUtils.formatMessage(pet.getPetName());
         String petType = pet.getPetType().name();

@@ -8,34 +8,28 @@ package me.opkarol.oppets.cache;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.addons.AddonConfig;
+import me.opkarol.oppets.graphic.GraphicItemStack;
 import me.opkarol.oppets.interfaces.IGetter;
-import me.opkarol.oppets.interfaces.IInventory;
-import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.shops.Shop;
 import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.InventoryUtils;
 import me.opkarol.oppets.utils.PDCUtils;
-import me.opkarol.oppets.utils.PetsUtils;
 import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.InventoryUtils.fillStyledInventory;
-import static me.opkarol.oppets.utils.InventoryUtils.itemCreator;
+import static me.opkarol.oppets.utils.InventoryUtils.*;
 
 /**
  * The type Page cache.
  *
  * @param <K> the type parameter
  */
-public class PageCache<K extends IGetter> implements IInventory {
+public class PageCache<K extends IGetter> {
     /**
      * The List.
      */
@@ -44,10 +38,6 @@ public class PageCache<K extends IGetter> implements IInventory {
      * The Values.
      */
     private final List<K> values;
-    /**
-     * The Inventory.
-     */
-    private final Inventory inventory;
     /**
      * The Max table size.
      */
@@ -60,12 +50,10 @@ public class PageCache<K extends IGetter> implements IInventory {
     /**
      * Instantiates a new Page cache.
      *
-     * @param inventory    the inventory
      * @param values       the values
      * @param maxTableSize the max table size
      */
-    public PageCache(Inventory inventory, List<K> values, int maxTableSize) {
-        this.inventory = inventory;
+    public PageCache(List<K> values, int maxTableSize) {
         this.values = values;
         this.maxTableSize = maxTableSize;
     }
@@ -77,7 +65,10 @@ public class PageCache<K extends IGetter> implements IInventory {
      * @return the getter [ ]
      */
     public IGetter[] getPage(int i) {
-        return list.get(i);
+        if (list.size() >= i) {
+            return list.get(i);
+        }
+        return null;
     }
 
     /**
@@ -107,60 +98,44 @@ public class PageCache<K extends IGetter> implements IInventory {
             page = 0;
         }
         this.currentPage = page;
-        createPageInInventory(page);
     }
 
-    /**
-     * Create page in inventory.
-     *
-     * @param page the page
-     */
-    public void createPageInInventory(int page) {
+
+    public HashMap<Integer, IGetter> getPagedInventory(int page) {
         IGetter[] objects = getPage(page);
-        if (objects == null) {
-            objects = getPage(0);
+        HashMap<Integer, IGetter> map = new HashMap<>();
+        GraphicItemStack default_item = new GraphicItemStack(getEmptyItemStack(Material.BLACK_STAINED_GLASS_PANE));
+        GraphicItemStack corner_item = new GraphicItemStack(getEmptyItemStack(Material.YELLOW_STAINED_GLASS_PANE));
+        FillStyles styles = new FillStyles();
+        for (int i : styles.getMap().get(54)) {
+            map.put(i, default_item);
         }
-        fillStyledInventory(inventory, InventoryUtils.FillStyles.INVENTORY_STYLE.SQUARE);
+        for (int i : styles.getCorners().get(54)) {
+            map.put(i, corner_item);
+        }
         List<ItemStack> items = getMovingPagesItemStacks();
+        map.replace(45, new GraphicItemStack(items.get(0)));
+        map.replace(53, new GraphicItemStack(items.get(1)));
         for (int i = 0; i < Arrays.stream(objects).count(); i++) {
-            if (i > 27) {
+            if (i > getMaxTableSize() - 1) {
                 break;
             }
             IGetter object = objects[i];
             if (object == null) {
-                break;
+                continue;
             }
-            ItemStack item = inventory.getItem(i);
             int set = i;
-            if (item != null) {
-                while (item != null && (item.getType().equals(Material.BARRIER) || item.getType().name().contains("STAINED_GLASS_PANE") || !item.getType().equals(Material.AIR))) {
-                    set++;
-                    if (set > 53) {
-                        break;
-                    }
-                    item = inventory.getItem(set);
+            while (map.get(set) != null) {
+                set++;
+                if (set > 53) {
+                    break;
                 }
             }
-            switch (object.getType()) {
-                case ADDON:
-                    AddonConfig config = (AddonConfig) object;
-                    inventory.setItem(set, itemCreator(Material.BOOK, config.getName(), config.getDescription(), this));
-                    break;
-                case PET:
-                    Pet pet = (Pet) object;
-                    inventory.setItem(set, itemCreator(PetsUtils.getMaterialByPetType(pet.getPetType()), pet.getPetName(), new ArrayList<>(), this));
-                    break;
-                case SHOP:
-                    Shop shop = (Shop) object;
-                    inventory.setItem(set, shop.getItem());
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + object.getType());
-            }
+            map.put(set, object);
         }
-        inventory.setItem(45, items.get(0));
-        inventory.setItem(53, items.get(1));
+        return map;
     }
+
 
     /**
      * Sets pages.
@@ -189,26 +164,16 @@ public class PageCache<K extends IGetter> implements IInventory {
      */
     public List<ItemStack> getMovingPagesItemStacks() {
         String path = "PagesCache.items.";
-        ItemStack itemStack1 = itemCreator(path + "previousPage.", this);
-        ItemStack itemStack2 = itemCreator(path + "nextPage.", this);
+        Function<List<String>, List<String>> function = strings -> strings.stream().map(s -> FormatUtils.formatMessage(s
+                                .replace("%current_page%", String.valueOf(currentPage)))
+                                .replace("%next_page%", String.valueOf(currentPage + 1))
+                                .replace("%previous_page%", String.valueOf(Math.max(currentPage - 1, 0))))
+                                .collect(Collectors.toList());
+        ItemStack itemStack1 = itemCreator(path + "previousPage.", function);
+        ItemStack itemStack2 = itemCreator(path + "nextPage.", function);
         PDCUtils.addNBT(itemStack1, NamespacedKeysCache.summonItemKey, String.valueOf(currentPage - 1));
         PDCUtils.addNBT(itemStack2, NamespacedKeysCache.summonItemKey, String.valueOf(currentPage + 1));
         return Arrays.asList(itemStack1, itemStack2);
-    }
-
-    /**
-     * Sets place holders.
-     *
-     * @param lore the lore
-     * @return the place holders
-     */
-    @Override
-    public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
-        return lore.stream().map(s -> FormatUtils.formatMessage(s
-                        .replace("%current_page%", String.valueOf(currentPage)))
-                        .replace("%next_page%", String.valueOf(currentPage + 1))
-                        .replace("%previous_page%", String.valueOf(Math.max(currentPage - 1, 0))))
-                        .collect(Collectors.toList());
     }
 
     /**

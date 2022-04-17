@@ -11,7 +11,7 @@ package me.opkarol.oppets.commands;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.ICommand;
-import me.opkarol.oppets.utils.OpUtils;
+import me.opkarol.oppets.inventories.PetMainInventory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -38,12 +38,10 @@ public class HelpCommand implements ICommand {
         if (!(sender instanceof Player player)) {
             return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("noConsole"));
         }
-
         if (database.getDatabase().getCurrentPet(player.getUniqueId()) == null) {
             return returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("invalidPet"));
         }
-
-        OpUtils.openMainInventory(player);
+        player.openInventory(new PetMainInventory().getInventory());
         return true;
     }
 

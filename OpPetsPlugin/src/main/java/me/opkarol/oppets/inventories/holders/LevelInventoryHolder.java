@@ -12,18 +12,15 @@ import me.opkarol.oppets.interfaces.IHolder;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The type Level inventory holder.
- */
 public class LevelInventoryHolder implements IHolder {
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
     @NotNull
     @Override
     public Inventory getInventory() {
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return "LevelInventory";
     }
 }

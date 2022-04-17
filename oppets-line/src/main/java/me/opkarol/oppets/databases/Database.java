@@ -84,6 +84,7 @@ public class Database {
      */
     public void setupDatabase() {
         mySQLAccess = instance.getConfig().getBoolean("mysql.enabled");
+        apiDatabase = new APIDatabase(this);
         if (mySQLAccess) {
             cache = new LastIDCache(this);
             mySQL = new MySQL().setupMySQL();
@@ -93,7 +94,6 @@ public class Database {
         }
         iDatabase.startLogic();
         petsDatabase = new PetsDatabase();
-        apiDatabase = new APIDatabase(this);
     }
 
     /**

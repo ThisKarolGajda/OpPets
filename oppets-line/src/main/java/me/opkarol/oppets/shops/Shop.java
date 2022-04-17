@@ -12,6 +12,7 @@ import me.opkarol.oppets.interfaces.IGetter;
 import me.opkarol.oppets.interfaces.IInventory;
 import me.opkarol.oppets.utils.FormatUtils;
 import me.opkarol.oppets.utils.InventoryUtils;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,7 +87,7 @@ public class Shop implements IGetter, IInventory {
      * @return the type
      */
     @Override
-    public GETTER_TYPE getType() {
+    public GETTER_TYPE getGetterType() {
         return GETTER_TYPE.SHOP;
     }
 
@@ -112,6 +113,21 @@ public class Shop implements IGetter, IInventory {
                         .replace("%type%", type)
                         .replace("%price%", String.valueOf(price))))
                 .collect(Collectors.toList());    }
+
+    @Override
+    public Inventory getInventory() {
+        return null;
+    }
+
+    @Override
+    public void loadButtons() {
+
+    }
+
+    @Override
+    public String getHolderName() {
+        return null;
+    }
 
     /**
      * Gets item.

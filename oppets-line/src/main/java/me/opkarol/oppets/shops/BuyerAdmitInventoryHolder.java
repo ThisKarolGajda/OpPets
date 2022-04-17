@@ -1,4 +1,4 @@
-package me.opkarol.oppets.inventories.holders;
+package me.opkarol.oppets.shops;
 
 /*
  = Copyright (c) 2021-2022.
@@ -12,18 +12,15 @@ import me.opkarol.oppets.interfaces.IHolder;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The type Buyer admit inventory holder.
- */
 public class BuyerAdmitInventoryHolder implements IHolder {
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
     @NotNull
     @Override
     public Inventory getInventory() {
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return "BuyerAdmitInventory";
     }
 }

@@ -12,6 +12,8 @@ import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.events.PrestigeChangeEvent;
+import me.opkarol.oppets.inventories.GuestInventory;
+import me.opkarol.oppets.inventories.PetMainInventory;
 import me.opkarol.oppets.particles.ParticlesManager;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.prestiges.PrestigeManager;
@@ -24,13 +26,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -121,6 +126,40 @@ public class PetListeners implements Listener {
         if (pet.areParticlesEnabled()) {
             particlesManager.prestigeChangeEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
         }
+    }
+
+    /**
+     * Player interact.
+     *
+     * @param event the event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void playerInteract(@NotNull PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        if (player.isSneaking()) {
+            return;
+        }
+        if (database.getDatabase().getCurrentPet(player.getUniqueId()) != null) {
+            if (database.getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
+                event.setCancelled(true);
+                player.openInventory(new PetMainInventory().getInventory());
+                event.getPlayer().updateInventory();
+                return;
+            }
+        }
+        for (UUID uuid : database.getDatabase().getActivePetMap().keySet()) {
+            Pet pet = database.getDatabase().getCurrentPet(uuid);
+            if (pet == null || pet.getOwnUUID() == null) {
+                return;
+            }
+            if (!pet.getOwnUUID().equals(event.getRightClicked().getUniqueId())) {
+                return;
+            }
+            event.setCancelled(true);
+            Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).openInventory(new GuestInventory(pet).getInventory());
+            event.getPlayer().updateInventory();
+        }
+
     }
 
     /**

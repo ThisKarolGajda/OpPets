@@ -12,18 +12,15 @@ import me.opkarol.oppets.interfaces.IHolder;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The type Guest inventory holder.
- */
 public class GuestInventoryHolder implements IHolder {
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
     @NotNull
     @Override
     public Inventory getInventory() {
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return "GuestInventory";
     }
 }

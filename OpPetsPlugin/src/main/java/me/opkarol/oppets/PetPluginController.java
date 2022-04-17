@@ -12,6 +12,7 @@ import me.opkarol.oppets.cache.NamespacedKeysCache;
 import me.opkarol.oppets.commands.OpPetsCommand;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.files.FileManager;
+import me.opkarol.oppets.graphic.GraphicInterface;
 import me.opkarol.oppets.interfaces.IBabyEntityCreator;
 import me.opkarol.oppets.interfaces.IEntityManager;
 import me.opkarol.oppets.interfaces.IPacketPlayInSteerVehicleEvent;
@@ -152,11 +153,11 @@ public class PetPluginController {
         PluginManager manager = instance.getServer().getPluginManager();
         manager.registerEvents(new PlayerJoin(), instance);
         manager.registerEvents(new PlayerLeaves(), instance);
-        manager.registerEvents(new PlayerInteract(), instance);
         manager.registerEvents(new SkillsListeners(), instance);
         manager.registerEvents(new PetListeners(), instance);
         manager.registerEvents(new ChatReceiver(), instance);
         manager.registerEvents(new PetAbilities(), instance);
+        manager.registerEvents(new GraphicInterface(), instance);
     }
 
     /**

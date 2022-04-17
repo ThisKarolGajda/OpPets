@@ -22,21 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * The type Rename anvil inventory.
- */
 public class RenameAnvilInventory {
-    /**
-     * The Database.
-     */
     private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
-    /**
-     * Instantiates a new Rename anvil inventory.
-     *
-     * @param pet          the pet
-     * @param playerOpened the player opened
-     */
     public RenameAnvilInventory(@NotNull Pet pet, @NotNull Player playerOpened) {
         String title = database.getOpPets().getMessages().getMessagesAccess().stringMessage("titleRename");
         assert pet.getPetName() != null;

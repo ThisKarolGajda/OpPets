@@ -1,4 +1,4 @@
-package me.opkarol.oppets.pets;
+package me.opkarol.oppets.inventories.holders;
 
 /*
  = Copyright (c) 2021-2022.
@@ -26,5 +26,10 @@ public class PetMainInventoryHolder implements IHolder {
     @Override
     public Inventory getInventory() {
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return "PetMainInventory";
     }
 }

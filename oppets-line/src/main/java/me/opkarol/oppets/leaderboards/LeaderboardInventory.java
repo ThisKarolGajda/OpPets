@@ -58,6 +58,16 @@ public class LeaderboardInventory implements IInventory {
         return inventory;
     }
 
+    @Override
+    public void loadButtons() {
+
+    }
+
+    @Override
+    public String getHolderName() {
+        return null;
+    }
+
     /**
      * Sets inventory.
      */

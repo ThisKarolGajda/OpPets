@@ -21,21 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * The type Delete anvil inventory.
- */
 public class DeleteAnvilInventory {
-    /**
-     * The Database.
-     */
     private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
 
-    /**
-     * Instantiates a new Delete anvil inventory.
-     *
-     * @param pet          the pet
-     * @param playerOpened the player opened
-     */
     public DeleteAnvilInventory(@NotNull Pet pet, @NotNull Player playerOpened) {
         String title = database.getOpPets().getMessages().getMessagesAccess().stringMessage("titleDelete");
         String petName = FormatUtils.getNameString(Objects.requireNonNull(pet.getPetName()));

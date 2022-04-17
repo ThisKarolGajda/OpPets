@@ -17,7 +17,7 @@ public interface IGetter {
      *
      * @return the type
      */
-    GETTER_TYPE getType();
+    GETTER_TYPE getGetterType();
 
     /**
      * Gets object.
@@ -41,6 +41,7 @@ public interface IGetter {
         /**
          * Shop getter type.
          */
-        SHOP
+        SHOP,
+        ITEM_STACK
     }
 }

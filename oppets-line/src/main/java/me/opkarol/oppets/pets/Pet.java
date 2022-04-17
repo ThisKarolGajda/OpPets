@@ -163,7 +163,7 @@ public class Pet implements Serializable, IGetter {
      * @return the type
      */
     @Override
-    public GETTER_TYPE getType() {
+    public GETTER_TYPE getGetterType() {
         return GETTER_TYPE.PET;
     }
 
