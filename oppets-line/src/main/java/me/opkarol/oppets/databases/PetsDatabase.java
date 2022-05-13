@@ -8,30 +8,21 @@ package me.opkarol.oppets.databases;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.collections.OpMap;
 import me.opkarol.oppets.misc.PetDatabaseObject;
-import me.opkarol.oppets.pets.OpPetsEntityTypes;
+import me.opkarol.oppets.pets.TypeOfEntity;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.HashMap;
 import java.util.List;
 
-/**
- * The type Pets database.
- */
 public class PetsDatabase {
-    /**
-     * The Map.
-     */
-    private final HashMap<OpPetsEntityTypes.TypeOfEntity, PetDatabaseObject> map = new HashMap<>();
+    private final OpMap<TypeOfEntity, PetDatabaseObject> map = new OpMap<>();
 
-    /**
-     * Instantiates a new Pets database.
-     */
     public PetsDatabase() {
         String iPath;
         Database database = Database.getInstance();
         FileConfiguration config = database.getPlugin().getConfig();
-        for (OpPetsEntityTypes.TypeOfEntity type : OpPetsEntityTypes.TypeOfEntity.values()) {
+        for (TypeOfEntity type : TypeOfEntity.values()) {
             iPath = "Pets." + type.toString() + ".";
             List<String> abilityEnabled = config.getStringList(iPath + "special_ability");
             float entitySpeed = (float) config.getDouble(iPath + "speed");
@@ -40,22 +31,11 @@ public class PetsDatabase {
         }
     }
 
-    /**
-     * Gets object from database.
-     *
-     * @param entityType the entity type
-     * @return the object from database
-     */
-    public PetDatabaseObject getObjectFromDatabase(OpPetsEntityTypes.TypeOfEntity entityType) {
-        return map.get(entityType);
+    public PetDatabaseObject getObjectFromDatabase(TypeOfEntity entityType) {
+        return map.getOrDefault(entityType, null);
     }
 
-    /**
-     * Gets map.
-     *
-     * @return the map
-     */
-    public HashMap<OpPetsEntityTypes.TypeOfEntity, PetDatabaseObject> getMap() {
+    public OpMap<TypeOfEntity, PetDatabaseObject> getMap() {
         return map;
     }
 }

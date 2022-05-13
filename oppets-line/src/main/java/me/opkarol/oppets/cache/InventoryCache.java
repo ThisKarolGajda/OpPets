@@ -10,29 +10,13 @@ package me.opkarol.oppets.cache;
 
 import org.bukkit.inventory.Inventory;
 
-/**
- * The type Inventory cache.
- */
 public class InventoryCache {
-    /**
-     * The Inventory.
-     */
     private Inventory inventory;
 
-    /**
-     * Gets inventory.
-     *
-     * @return the inventory
-     */
     public Inventory getInventory() {
         return inventory;
     }
 
-    /**
-     * Sets inventory.
-     *
-     * @param inventory the inventory
-     */
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
     }

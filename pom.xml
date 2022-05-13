@@ -18,6 +18,7 @@
     <modules>
         <module>oppets-line</module>
         <module>OpPetsPlugin</module>
+        <module>1_18_2</module>
         <module>1_18</module>
         <module>1_17_1</module>
         <module>1_17</module>

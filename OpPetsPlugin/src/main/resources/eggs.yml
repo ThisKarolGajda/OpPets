@@ -1,0 +1,32 @@
+Eggs:
+  # You can add all pet types
+  enabled: true
+  default_item:
+    material: "STONE"
+    name: "&a%egg_type%"
+    lore:
+      - "&7You can get cost needed to unlock this pet by entering '/oppets egg info' command"
+    glow: true
+  types:
+    CAT:
+      cost:
+        - "STONE:64"
+      # Available options: [CUSTOM (needs material, name, lore and glow values), DEFAULT]
+      item:
+        material: "STONE"
+        name: "&aName"
+        lore:
+          - "&7Your lore"
+        glow: true
+      recipes:
+        recipe1:
+          TOP: "STONE;STONE;STONE"
+          MIDDLE: "STONE;AIR;STONE"
+          DOWN: "STONE;STONE;STONE"
+    PANDA:
+      cost:
+        - "STONE:64"
+      # Available options: [CUSTOM (needs material, name, lore and glow values), DEFAULT (imports values from default_item)]
+      item: "DEFAULT"
+      # Available options: [CUSTOM LAYOUT, NULL]
+      recipes: "NULL"

@@ -9,159 +9,86 @@ package me.opkarol.oppets.utils;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.pets.OpPetsEntityTypes;
+import me.opkarol.oppets.entities.IEntityPet;
+import me.opkarol.oppets.files.MessagesHolder;
 import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.pets.TypeOfEntity;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import static me.opkarol.oppets.utils.FormatUtils.getNameString;
 import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
 
-/**
- * The type Pets utils.
- */
-public class PetsUtils {
-    /**
-     * The constant database.
-     */
+public final class PetsUtils {
     private static Database database;
+    private static final MessagesHolder messages = MessagesHolder.getInstance();
+    private static final PrestigeManager prestigeManager = new PrestigeManager();
 
-    /**
-     * Gets binary from string and char.
-     *
-     * @param text   the text
-     * @param number the number
-     * @return the binary from string and char
-     */
-    @Contract(pure = true)
-    public static boolean getBinaryFromStringAndChar(@NotNull String text, int number) {
-        return String.valueOf(text.charAt(number)).equals(String.valueOf(1));
-    }
-
-    /**
-     * Gets binary from string to char.
-     *
-     * @param text   the text
-     * @param number the number
-     * @param value  the value
-     * @return the binary from string to char
-     */
-    @Contract(pure = true)
-    public static @NotNull String getBinaryFromStringToChar(@NotNull String text, int number, boolean value) {
-        StringBuilder builder = new StringBuilder();
-        int i = 0;
-        for (char c : text.toCharArray()) {
-            if (i == number) {
-                builder.append(value ? 1 : 0);
-            } else {
-                builder.append(c);
-            }
-            i++;
-        }
-        return builder.toString();
-    }
-
-    /**
-     * Save pet progress.
-     *
-     * @param pet        the pet
-     * @param playerUUID the player uuid
-     */
     public static void savePetProgress(Pet pet, UUID playerUUID) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                List<Pet> list = database.getDatabase().getPetList(playerUUID);
-                list.removeIf(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName()));
-                list.add(pet);
-                database.getDatabase().setPets(playerUUID, list);
-            }
-        }.runTaskAsynchronously(database.getPlugin());
+        database.getDatabase().updatePet(playerUUID, pet);
     }
 
-    /**
-     * Gets pet formatted name.
-     *
-     * @param pet the pet
-     * @return the pet formatted name
-     */
-    public static @Nullable String getPetFormattedName(@NotNull Pet pet) {
-        if (pet.getPetName() != null) {
-            return FormatUtils.formatMessage(pet.getPetName().replace("%p%", new PrestigeManager().getFilledPrestige(pet.getPrestige())));
-        }
-        return null;
+    public static @NotNull String getPetFormattedName(@NotNull Pet pet) {
+        return FormatUtils.formatMessage(getPetPrestigeName(pet));
     }
 
-    /**
-     * Gets material by pet type.
-     *
-     * @param pet the pet
-     * @return the material by pet type
-     */
-    @Deprecated
-    public static Material getMaterialByPetType(@NotNull Pet pet) {
-        if (pet.getPetType().equals(OpPetsEntityTypes.TypeOfEntity.MUSHROOM_COW)) {
-            return Material.MOOSHROOM_SPAWN_EGG;
-        }
-        return Material.valueOf(pet.getPetType().name() + "_SPAWN_EGG");
+    public static @NotNull String getPetPrestigeName(@NotNull Pet pet) {
+        return pet.getPetName().replace("%p%", getPrestige(pet));
     }
 
-    /**
-     * Gets material by pet type.
-     *
-     * @param type the type
-     * @return the material by pet type
-     */
-    public static Material getMaterialByPetType(@NotNull OpPetsEntityTypes.TypeOfEntity type) {
-        if (type.equals(OpPetsEntityTypes.TypeOfEntity.MUSHROOM_COW)) {
+    public static String getPrestige(Pet pet) {
+        return prestigeManager.getFilledPrestige(pet.getPrestige());
+    }
+
+    // USE ONLY WHEN COMPARING STRING AS A NAME FROM LIVING ENTITY - PET
+    public static boolean equalsFormatNames(Pet pet, String formatted) {
+        return getNameString(getPetFormattedName(pet)).equals(getNameString(formatted));
+    }
+
+    public static String getEmptyPetName(@NotNull Pet pet) {
+        return getNameString(pet.getPetName());
+    }
+
+    public static boolean equalsNames(Pet pet, String name) {
+        return getEmptyPetName(pet).equals(getNameString(name));
+    }
+
+    public static Material getMaterialByPetType(@NotNull TypeOfEntity type) {
+        if (type.equals(TypeOfEntity.MUSHROOM_COW)) {
             return Material.MOOSHROOM_SPAWN_EGG;
         }
         return Material.valueOf(type.name() + "_SPAWN_EGG");
     }
 
-    /**
-     * Summon pet boolean.
-     *
-     * @param name   the name
-     * @param uuid   the uuid
-     * @param sender the sender
-     * @return the boolean
-     */
-    public static boolean summonPet(String name, UUID uuid, Player sender) {
-        Pet activePet = database.getDatabase().getCurrentPet(uuid);
-        Optional<Pet> pets = database.getDatabase().getPetList(uuid).stream()
-                .filter(pet -> FormatUtils.getNameString(pet.getPetName()).equals(FormatUtils.getNameString(name)))
+    public static boolean summonPet(String name, @NotNull Player sender) {
+        Optional<Pet> optional = database.getDatabase().getPetList(sender.getUniqueId()).stream()
+                .filter(pet -> equalsNames(pet, name))
                 .findAny();
-        if (pets.isPresent()) {
-            Pet pet = pets.get();
-            if (activePet == pet) {
-                returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("samePet"));
-            } else {
-                if (activePet != null) {
-                    database.getOpPets().getUtils().killPetFromPlayerUUID(uuid);
-                }
-                database.getOpPets().getCreator().spawnMiniPet(pet, sender);
-                returnMessage(sender, database.getOpPets().getMessages().getMessagesAccess().stringMessage("summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
-            }
-            return true;
+        return optional.filter(pet -> summonPet(pet, sender, false)).isPresent();
+    }
+
+    public static boolean summonPet(Pet pet, Player player, boolean bypassPetLimit) {
+        if (pet == null) {
+            return false;
+        }
+        UUID uuid = player.getUniqueId();
+        Pet activePet = database.getDatabase().getCurrentPet(uuid);
+        if (activePet == pet && !bypassPetLimit) {
+            return returnMessage(player, messages.getString("Commands.samePet"));
+        }
+        OpUtils.killPetFromPlayerUUID(uuid);
+        Optional<IEntityPet> optional = database.getOpPets().getEntityManager().spawnEntity(player, pet);
+        if (optional.isPresent()) {
+            return returnMessage(player, messages.getString("Commands.summonedPet").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())));
         }
         return false;
     }
 
-    /**
-     * Sets database.
-     *
-     * @param database the database
-     */
     public static void setDatabase(Database database) {
         PetsUtils.database = database;
     }

@@ -8,54 +8,22 @@ package me.opkarol.oppets.cache;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import static me.opkarol.oppets.utils.ConfigUtils.getMessage;
+import me.opkarol.oppets.files.MessagesHolder;
 
-/**
- * The type Inventories cache.
- */
 public class InventoriesCache {
-    /**
-     * The constant buyerAdmitInventoryTitle.
-     */
-    public static String buyerAdmitInventoryTitle = getMessage("BuyerAdmitInventory.title");
-    /**
-     * The constant levelInventoryTitle.
-     */
-    public static String levelInventoryTitle = getMessage("LevelInventory.title");
-    /**
-     * The constant mainInventoryTitle.
-     */
-    public static String mainInventoryTitle = getMessage("PetMainInventory.title");
-    /**
-     * The constant prestigeInventoryTitle.
-     */
-    public static String prestigeInventoryTitle = getMessage("PrestigeInventory.title");
-    /**
-     * The constant settingsInventoryTitle.
-     */
-    public static String settingsInventoryTitle = getMessage("SettingsInventory.title");
-    /**
-     * The constant leaderboardInventoryTitle.
-     */
-    public static String leaderboardInventoryTitle = getMessage("LeaderboardInventory.title");
-    /**
-     * The constant guestInventoryTitle.
-     */
-    public static String guestInventoryTitle = getMessage("GuestInventory.title");
-    /**
-     * The constant shopInventoryTitle.
-     */
-    public static String shopInventoryTitle = getMessage("ShopInventory.title");
-    /**
-     * The constant addonsInventoryTitle.
-     */
-    public static String addonsInventoryTitle = getMessage("AddonsInventory.title");
-    /**
-     * The constant addonsInventoryMessage.
-     */
-    public static String addonsInventoryMessage = getMessage("AddonsInventory.stringMessage");
-    /**
-     * The constant summonInventoryTitle.
-     */
-    public static String summonInventoryTitle = getMessage("SummonInventory.title");
+    private static final MessagesHolder holder = MessagesHolder.getInstance();
+    public static String buyerAdmitInventoryTitle = holder.getString("BuyerAdmitInventory.title");
+    public static String levelInventoryTitle = holder.getString("LevelInventory.title");
+    public static String mainInventoryTitle = holder.getString("PetMainInventory.title");
+    public static String prestigeInventoryTitle = holder.getString("PrestigeInventory.title");
+    public static String settingsInventoryTitle = holder.getString("SettingsInventory.title");
+    public static String leaderboardInventoryTitle = holder.getString("LeaderboardInventory.title");
+    public static String guestInventoryTitle = holder.getString("GuestInventory.title");
+    public static String shopInventoryTitle = holder.getString("ShopInventory.title");
+    public static String addonsInventoryTitle = holder.getString("AddonsInventory.title");
+    public static String addonsInventoryMessage = holder.getString("AddonsInventory.stringMessage");
+    public static String summonInventoryTitle = holder.getString("SummonInventory.title");
+    public static String eggRecipeInventoryTitle = holder.getString("EggRecipeInventory.title");
+    public static String eggRecipesInventoryTitle = holder.getString("EggRecipesInventory.title");
+    public static String preferencesInventoryTitle = holder.getString("PreferencesInventory.title");
 }

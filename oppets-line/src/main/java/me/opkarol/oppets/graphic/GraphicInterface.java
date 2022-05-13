@@ -9,9 +9,10 @@ package me.opkarol.oppets.graphic;
  */
 
 import me.opkarol.oppets.cache.GraphicCache;
-import me.opkarol.oppets.interfaces.IGraphicInventoryData;
+import me.opkarol.oppets.collections.OpMap;
 import me.opkarol.oppets.interfaces.IHolder;
 import me.opkarol.oppets.interfaces.IInventory;
+import me.opkarol.oppets.items.OpItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,14 +23,13 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class GraphicInterface implements Listener {
     private static GraphicInterface graphicInterface;
-    protected final HashMap<String, GraphicItem[]> map = new HashMap<>();
+    protected final OpMap<String, GraphicItem[]> map = new OpMap<>();
 
     public GraphicInterface() {
         graphicInterface = this;
@@ -37,12 +37,20 @@ public class GraphicInterface implements Listener {
     }
 
     public static Inventory getInventory(@NotNull IInventory inventory, IGraphicInventoryData holder, Consumer<Inventory> consumer) {
-        Optional<GraphicItem[]> list = Optional.ofNullable(getInstance().map.get(inventory.getHolderName()));
+        Optional<GraphicItem[]> list = Optional.ofNullable(getInstance().map.getOrDefault(inventory.getHolderName(), null));
         if (!list.isPresent()) {
             return Bukkit.createInventory(holder.getHolder(), holder.getSize(), holder.getTitle());
         }
         GraphicItem[] itemList = list.get();
         return new GraphicInventoryCreator(itemList, holder, consumer).getInventory();
+    }
+
+    public static Inventory getInventory(IGraphicInventoryData holder, Consumer<Inventory> consumer) {
+        GraphicItem[] list = getInstance().getList(holder.getHolder().getName());
+        if (list == null) {
+            return Bukkit.createInventory(holder.getHolder(), holder.getSize(), holder.getTitle());
+        }
+        return new GraphicInventoryCreator(list, holder, consumer).getInventory();
     }
 
     @EventHandler
@@ -84,26 +92,26 @@ public class GraphicInterface implements Listener {
         });
     }
 
-    public void addGraphicItem(String string, GraphicItem ... graphicItem) {
+    private void addGraphicItem(String string, GraphicItem ... graphicItem) {
         if (graphicItem == null || graphicItem.length == 0) {
             return;
         }
         if (map.containsKey(string)) {
             GraphicItem[] list = getList(string);
             for (GraphicItem item : graphicItem) {
-                int slot = item.getButtonItem().getSlot();
+                int slot = item.getSlot();
                 if (slot >= 54) {
                     continue;
                 }
                 list[slot] = item;
             }
-            map.replace(string, list);
+            map.set(string, list);
         } else {
             GraphicItem[] list = new GraphicItem[54];
             for (GraphicItem item : graphicItem) {
-                list[item.getButtonItem().getSlot()] = item;
+                list[item.getSlot()] = item;
             }
-            map.put(string, list);
+            map.set(string, list);
         }
     }
 
@@ -111,12 +119,40 @@ public class GraphicInterface implements Listener {
         return map.getOrDefault(string, null);
     }
 
-    public void setButton(@NotNull IInventory inventory, GraphicItem button) {
+    public GraphicInterface setButton(@NotNull IInventory inventory, GraphicItem button) {
         addGraphicItem(inventory.getHolderName(), button);
+        return this;
+    }
+
+    public GraphicInterface setButton(String inventoryName, OpItemBuilder builder, int slot) {
+        addGraphicItem(inventoryName, new GraphicItem(builder, slot));
+        return this;
+    }
+
+    public GraphicInterface setButton(String inventoryName, OpItemBuilder builder, int slot, Consumer<Player> action) {
+        addGraphicItem(inventoryName, new GraphicItem(builder, slot, action));
+        return this;
+    }
+
+    public GraphicInterface setButton(String inventoryName, OpItemBuilder builder, int slot, BiConsumer<Player, ItemStack> action) {
+        addGraphicItem(inventoryName, new GraphicItem(builder, slot, action));
+        return this;
     }
 
     protected boolean isProvided(InventoryHolder holder) {
         return holder instanceof IHolder;
+    }
+
+    public boolean isPlaceOccupied(String string, int place) {
+        if (getList(string) == null) {
+            return false;
+        }
+        return getList(string)[place] != null;
+    }
+
+    public GraphicInterface clearMapString(String s) {
+        map.remove(s);
+        return this;
     }
 
     public static GraphicInterface getInstance() {

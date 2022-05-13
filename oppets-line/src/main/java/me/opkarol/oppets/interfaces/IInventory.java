@@ -9,24 +9,8 @@ package me.opkarol.oppets.interfaces;
  */
 
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-/**
- * The interface Inventory.
- */
 public interface IInventory {
-
-    /**
-     * Sets place holders.
-     *
-     * @param lore the lore
-     * @return the place holders
-     */
-    @NotNull
-    List<String> setPlaceHolders(@NotNull List<String> lore);
-
     Inventory getInventory();
 
     void loadButtons();

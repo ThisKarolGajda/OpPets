@@ -12,54 +12,35 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 
-/**
- * The type File manager.
- *
- * @param <K> the type parameter
- */
-public class FileManager<K> {
+public class FileManager<K> extends IConfigFile<K> {
 
-    /**
-     * Load object k.
-     *
-     * @param path the path
-     * @return the k
-     */
+    public FileManager(String name) {
+        super(name, true);
+        createConfig();
+    }
+
     @Nullable
-    public K loadObject(String path) {
-        File file = new File(path);
+    public K loadObject() {
+        File file = getYmlConfiguration().getYamlConfig();
         if (!file.isFile() || !file.exists()) {
             return null;
         }
         try {
-            return readFile(path);
+            return readFile(getPath());
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    /**
-     * Save object.
-     *
-     * @param path         the path
-     * @param objectToSave the object to save
-     */
-    public void saveObject(String path, K objectToSave) {
+    public void saveObject(K objectToSave) {
         try {
-            saveFile(objectToSave, path);
+            saveFile(objectToSave, getPath());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Save file.
-     *
-     * @param object the object
-     * @param path   the path
-     * @throws IOException the io exception
-     */
     private void saveFile(K object, String path)
             throws IOException {
         try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(path))) {
@@ -67,18 +48,13 @@ public class FileManager<K> {
         }
     }
 
-    /**
-     * Read file k.
-     *
-     * @param path the path
-     * @return the k
-     * @throws ClassNotFoundException the class not found exception
-     * @throws IOException            the io exception
-     */
-    private K readFile(String path)
+    private @Nullable K readFile(String path)
             throws ClassNotFoundException, IOException {
         try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(path))) {
             return (K) is.readObject();
+        } catch (StreamCorruptedException ignore) {
+
         }
+        return null;
     }
 }

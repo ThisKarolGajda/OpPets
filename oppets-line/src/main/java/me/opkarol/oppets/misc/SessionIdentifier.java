@@ -11,37 +11,17 @@ package me.opkarol.oppets.misc;
 import me.opkarol.oppets.prestiges.RandomString;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The type Session identifier.
- */
 public class SessionIdentifier {
-    /**
-     * The Session.
-     */
     private final String session;
 
-    /**
-     * Instantiates a new Session identifier.
-     */
     public SessionIdentifier() {
         session = new RandomString().getString(16, RandomString.Mode.ALPHANUMERIC);
     }
 
-    /**
-     * Gets session.
-     *
-     * @return the session
-     */
     public String getSession() {
         return session;
     }
 
-    /**
-     * Equals boolean.
-     *
-     * @param o the o
-     * @return the boolean
-     */
     public boolean equals(@NotNull SessionIdentifier o) {
         return session.equals(o.getSession());
     }

@@ -12,78 +12,33 @@ import me.opkarol.oppets.pets.Pet;
 
 import java.util.List;
 
-/**
- * The type Leaderboard.
- */
 public class Leaderboard {
-    /**
-     * The Name.
-     */
     private final String name;
-    /**
-     * The Type.
-     */
     private final LEADERBOARD_TYPE type;
-    /**
-     * The Places.
-     */
     private List<Pet> places;
 
-    /**
-     * Instantiates a new Leaderboard.
-     *
-     * @param name   the name
-     * @param places the places
-     * @param type   the type
-     */
     public Leaderboard(String name, List<Pet> places, LEADERBOARD_TYPE type) {
         this.name = name;
         this.places = places;
         this.type = type;
     }
 
-    /**
-     * Gets places.
-     *
-     * @return the places
-     */
     public List<Pet> getPlaces() {
         return places;
     }
 
-    /**
-     * Sets places.
-     *
-     * @param places the places
-     */
     public void setPlaces(List<Pet> places) {
         this.places = places;
     }
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Gets type.
-     *
-     * @return the type
-     */
     public LEADERBOARD_TYPE getType() {
         return type;
     }
 
-    /**
-     * Gets place from pet.
-     *
-     * @param pet the pet
-     * @return the place from pet
-     */
     public int getPlaceFromPet(Pet pet) {
         int i = 1;
         for (Pet pet1 : places) {
@@ -98,21 +53,9 @@ public class Leaderboard {
         return i;
     }
 
-    /**
-     * The enum Leaderboard type.
-     */
     public enum LEADERBOARD_TYPE {
-        /**
-         * Top level leaderboard type.
-         */
         TOP_LEVEL,
-        /**
-         * Top prestige leaderboard type.
-         */
         TOP_PRESTIGE,
-        /**
-         * Top experience leaderboard type.
-         */
         TOP_EXPERIENCE
     }
 }

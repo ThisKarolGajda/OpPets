@@ -1,5 +1,6 @@
 package me.opkarol.oppets.utils;
 
+import me.opkarol.oppets.collections.OpMap;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
@@ -10,21 +11,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+public final class PDCUtils {
 
-/**
- * The type Pdc utils.
- */
-@SuppressWarnings("unused")
-public class PDCUtils {
-
-    /**
-     * Gets nbt.
-     *
-     * @param item the item
-     * @param key  the key
-     * @return the nbt
-     */
     public static @Nullable String getNBT(@NotNull ItemStack item, NamespacedKey key) {
         if (!item.hasItemMeta()) {
             return null;
@@ -40,13 +28,6 @@ public class PDCUtils {
         return null;
     }
 
-    /**
-     * Gets nbt.
-     *
-     * @param entity the entity
-     * @param key    the key
-     * @return the nbt
-     */
     public static @Nullable String getNBT(@NotNull Entity entity, NamespacedKey key) {
         PersistentDataContainer pdc = entity.getPersistentDataContainer();
         if (pdc.has(key, PersistentDataType.STRING)) {
@@ -55,13 +36,6 @@ public class PDCUtils {
         return null;
     }
 
-    /**
-     * Add nbt.
-     *
-     * @param item  the item
-     * @param key   the key
-     * @param value the value
-     */
     public static void addNBT(@NotNull ItemStack item, NamespacedKey key, String value) {
         ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : Bukkit.getItemFactory().getItemMeta(item.getType());
         if (meta == null) {
@@ -72,25 +46,11 @@ public class PDCUtils {
         item.setItemMeta(meta);
     }
 
-    /**
-     * Add nbt.
-     *
-     * @param entity the entity
-     * @param key    the key
-     * @param value  the value
-     */
     public static void addNBT(@NotNull Entity entity, NamespacedKey key, String value) {
         PersistentDataContainer pdc = entity.getPersistentDataContainer();
         pdc.set(key, PersistentDataType.STRING, value);
     }
 
-    /**
-     * Has nbt boolean.
-     *
-     * @param item the item
-     * @param key  the key
-     * @return the boolean
-     */
     public static boolean hasNBT(@NotNull ItemStack item, NamespacedKey key) {
         if (!item.hasItemMeta()) {
             return false;
@@ -103,24 +63,11 @@ public class PDCUtils {
         return pdc.has(key, PersistentDataType.STRING);
     }
 
-    /**
-     * Has nbt boolean.
-     *
-     * @param entity the entity
-     * @param key    the key
-     * @return the boolean
-     */
     public static boolean hasNBT(@NotNull Entity entity, NamespacedKey key) {
         PersistentDataContainer pdc = entity.getPersistentDataContainer();
         return pdc.has(key, PersistentDataType.STRING);
     }
 
-    /**
-     * Remove nbt.
-     *
-     * @param item the item
-     * @param key  the key
-     */
     public static void removeNBT(@NotNull ItemStack item, NamespacedKey key) {
         if (!item.hasItemMeta()) {
             return;
@@ -134,25 +81,13 @@ public class PDCUtils {
         item.setItemMeta(meta);
     }
 
-    /**
-     * Remove nbt.
-     *
-     * @param entity the entity
-     * @param key    the key
-     */
     public static void removeNBT(@NotNull Entity entity, NamespacedKey key) {
         PersistentDataContainer pdc = entity.getPersistentDataContainer();
         pdc.remove(key);
     }
 
-    /**
-     * Gets all values.
-     *
-     * @param item the item
-     * @return the all values
-     */
-    public static @NotNull HashMap<String, String> getAllValues(@NotNull ItemStack item) {
-        HashMap<String, String> map = new HashMap<>();
+    public static @NotNull OpMap<String, String> getAllValues(@NotNull ItemStack item) {
+        OpMap<String, String> map = new OpMap<>();
         if (!item.hasItemMeta()) {
             return map;
         }

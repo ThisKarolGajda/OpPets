@@ -24,7 +24,6 @@
                     <source>1.8</source>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -94,6 +93,7 @@
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>oppets-line</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

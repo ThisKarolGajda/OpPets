@@ -98,420 +98,125 @@ Skills:
           progressiveLevel: 32;true;up;10;true
 
 # ------------------------- #
-# Inventories section:      #
-# ------------------------- #
-
-PetMainInventory:
-  #GUI TITLE: that is being shown when the inventory is open
-  title: "&e&lYour pet!"
-  items:
-    level:
-      material: "EXPERIENCE_BOTTLE"
-      name: "&aLevel and Experience"
-      lore:
-        - "&7By clicking here you can check"
-        - "&7your pet current level and "
-        - "&7what you get from it"
-      glow: true
-    name:
-      material: "ANVIL"
-      name: "&aChange name"
-      lore:
-        - "&7This button allows you to"
-        - "&7change name of your pet"
-      glow: true
-    settings:
-      material: "NOTE_BLOCK"
-      name: "&aSet-up settings"
-      lore:
-        - "&7Customize settings for"
-        - "&7your needs, world is open"
-      glow: true
-    respawn:
-      material: "TARGET"
-      name: "&aRespawn your pet!"
-      lore:
-        - "&7Pet got stuck, or died?"
-        - "&7Respawn it now!"
-      glow: true
-LevelInventory:
-  title: "&e&lCurrent Level of %pet_name%&e&l!"
-  items:
-    level:
-      material: "EXPERIENCE_BOTTLE"
-      name: "&aCurrent Level!"
-      lore:
-        - ""
-        - "&7Your current level: &f&l%pet_level%&7/&f&l%max_pet_level%&7, &f&l%percentage_of_next_experience%."
-        - "&7Your pet needs &f&l%pet_experience_next% &7XP for next level!"
-        - ""
-      glow: true
-    informationBook:
-      material: "KNOWLEDGE_BOOK"
-      name: "&aWhat is this?!"
-      lore:
-        - "&7Every pet can level up when doing their job."
-        - "&7pets can benefit you super-abilities, money"
-        - "&7effects and more."
-        - "&7By hovering mouse on Bottle O` Enchanting"
-        - "&7you can get your pet`s current level,"
-        - "&7and XP for next level."
-        - "&7By hovering mouse on Lapis Lazuli, you"
-        - "&7can see abilities and perks that are"
-        - "&7unlocking with every level of your pet!"
-      glow: true
-    abilities:
-      material: "LAPIS_LAZULI"
-      name: "&aThat's what you get!"
-      lore:
-        - "TO DO"
-      glow: true
-SettingsInventory:
-  title: "&e&l%pet_name% &e&lbuilt-in settings."
-  items:
-    visibleToOthers:
-      material: "CUSTOM"
-      name: "&aPet visible to others"
-      lore:
-        - "&8By pressing this button you"
-        - "&8can switch on/off setting value"
-        - "&8from the name &7(visibleToOthers)"
-        - "&7Current state: &f&l%state_visibleToOthers%"
-      glow: false
-    giftable:
-      material: "CUSTOM"
-      name: "&aPet giftable"
-      lore:
-        - "&8By pressing this button you"
-        - "&8can switch on/off setting value"
-        - "&8from the name &7(giftable)"
-        - "&7Current state: &f&l%state_giftable%"
-      glow: false
-    glows:
-      material: "CUSTOM"
-      name: "&aPet glows"
-      lore:
-        - "&8By pressing this button you"
-        - "&8can switch on/off setting value"
-        - "&8from the name &7(glows)"
-        - "&7Current state: &f&l%state_glows%"
-      glow: false
-    followPlayer:
-      material: "CUSTOM"
-      name: "&aFollow player"
-      lore:
-        - "&8By pressing this button you"
-        - "&8can switch on/off setting value"
-        - "&8from the name &7(followPlayer)"
-        - "&7Current state: &f&l%state_followPlayer%"
-      glow: false
-    teleportToPlayer:
-      material: "CUSTOM"
-      name: "&aTeleport to player"
-      lore:
-        - "&8By pressing this button you"
-        - "&8can switch on/off setting value"
-        - "&8from the name &7(teleportToPlayer)"
-        - "&7Current state: &f&l%state_teleportToPlayer%"
-      glow: false
-    rideable:
-      material: "CUSTOM"
-      name: "&aRideable"
-      lore:
-        - "&8By pressing this button you"
-        - "&8can switch on/off setting value"
-        - "&8from the name &7(rideable)"
-        - "&7Current state: &f&l%state_rideable%"
-      glow: false
-    otherRideable:
-      material: "CUSTOM"
-      name: "&aOther rideable"
-      lore:
-        - "&8By pressing this button you"
-        - "&8can switch on/off setting value"
-        - "&8from the name &7(otherRideable)"
-        - "&7Current state: &f&l%state_otherRideable%"
-      glow: false
-    particlesEnabled:
-      material: "CUSTOM"
-      name: "&aParticles enabled"
-      lore:
-        - "&8By pressing this button you"
-        - "&8can switch on/off setting value"
-        - "&8from the name &7(particlesEnabled)"
-        - "&7Current state: &f&l%state_particlesEnabled%"
-      glow: false
-    resetSettings:
-      material: "BARRIER"
-      name: "&cReset settings"
-      lore:
-        - "&8By pressing this button you"
-        - "&8can reset settings of this pet"
-        - "&8/ return to default settings."
-      glow: true
-GuestInventory:
-  title: "&7%pet_name%&7`s profile!"
-  items:
-    level:
-      material: "EXPERIENCE_BOTTLE"
-      name: "&aLevel and Experience"
-      lore:
-        - ""
-        - "&7Pet current level: &f&l%pet_level%&7/&f&l%max_pet_level%&7, &f&l%percentage_of_next_experience%&7."
-        - "&7Pet needs &f&l%pet_experience_next%&7 XP for next level!"
-        - ""
-      glow: true
-    informationBook:
-      material: "KNOWLEDGE_BOOK"
-      name: "&aPet's information!"
-      lore:
-        - "&7Owner: &f&l%pet_owner%"
-        - "&7Name: &f&l%pet_name%"
-        - "&7Experience: &f&l%pet_experience%"
-        - "&7Level: &f&l%pet_level%"
-        - "&7Type: &f&l%pet_type%"
-        - "&7Skill: &f&l%pet_skill%"
-        - "&7Prestige: &f&l%current_prestige%"
-      glow: true
-ShopInventory:
-  title: "&e&lShop"
-  items:
-    cow:
-      material: "COW_SPAWN_EGG"
-      name: "&aCow"
-      lore:
-        - "&7Type: &f&l%type%"
-        - "&7Price: &f&l%price%"
-      glow: true
-      options:
-        # Price requires economy plugin - Vault based on
-        price: 500
-        type: "COW"
-BuyerAdmitInventory:
-  title: "&e&lConfirm purchase!"
-  items:
-    confirm:
-      material: "GREEN_WOOL"
-      name: "&aConfirm"
-      lore:
-        - "&7Press this button to confirm"
-        - "&7purchasing this pet"
-      glow: true
-    decline:
-      material: "RED_WOOL"
-      name: "&cDecline"
-      lore:
-        - "&7Press this button to decline"
-        - "&7purchasing this pet"
-      glow: true
-    informationBook:
-      material: "KNOWLEDGE_BOOK"
-      name: "&7Purchase information!"
-      lore:
-        - "&7Price: &f&l%price%"
-        - "&7Type: &f&l%type%"
-      glow: true
-PrestigeInventory:
-  title: "&e&lPrestige inventory!"
-  items:
-    informationBook:
-      material: "KNOWLEDGE_BOOK"
-      name: "&aInformation"
-      lore:
-        - "&7Prestige resets every statistic based on level"
-        - "&7to a default value, that means every level and skill"
-        - "&7will be removed and you will have a chance to"
-        - "&7get it again."
-        - "&7If you wish to prestige your pet, which will"
-        - "&7receive new random star color with new value"
-        - "&7press the green wool."
-        - "&7You cannot undo a prestige action."
-      glow: true
-    prestige:
-      material: "GREEN_WOOL"
-      name: "&aConfirm prestige"
-      lore:
-        - "&7Press this button to allow"
-        - "&7your pet to prestige"
-      glow: true
-LeaderboardInventory:
-  title: "&e&lLeaderboards!"
-  items:
-    top_level:
-      material: "GREEN_WOOL"
-      name: "&a&lTop level"
-      leaderboardName: "top_level"
-      lore:
-        - "&f1st place &7-&f&l %1_player_name% &7-&f&l %1_player_object% level"
-        - "&f2nd place &7-&f&l %2_player_name% &7-&f&l %2_player_object% level"
-      glow: true
-      slot: 10
-    top_experience:
-      material: "GREEN_WOOL"
-      name: "&a&lTop Experience"
-      leaderboardName: "top_experience"
-      lore:
-        - "&f1st place &7-&f&l %1_player_name% &7-&f&l %1_player_object% experience"
-        - "&f2nd place &7-&f&l %2_player_name% &7-&f&l %2_player_object% experience"
-      glow: true
-      slot: 13
-    top_prestige:
-      material: "GREEN_WOOL"
-      name: "&a&lTop Prestige"
-      leaderboardName: "top_prestige"
-      lore:
-        - "&f1st place &7-&f&l %1_player_name% &7-&f&l %1_player_object%"
-        - "&f2nd place &7-&f&l %2_player_name% &7-&f&l %2_player_object%"
-      glow: true
-      slot: 16
-AddonsInventory:
-  title: "&e&lAddons!"
-  stringMessage: "&f&l%name% &7- &f&l%version% &7- &f&l%description%"
-SummonInventory:
-  title: "&e&lPets to summon!"
-PagesCache:
-  items:
-    previousPage:
-      material: "BARRIER"
-      name: "&a&lReturn to previous page!"
-      lore:
-        - "&7Go to previous page: &f&l%previous_page%"
-        - "&7Current: &f&l%current_page%"
-      glow: true
-    nextPage:
-      material: "BARRIER"
-      name: "&a&lGo to next page!"
-      lore:
-        - "&7Go to next page: &f&l%next_page%"
-        - "&7Current: &f&l%current_page%"
-      glow: true
-
-
-
-# ------------------------- #
 # Others section:           #
 # ------------------------- #
 
-Formats:
-  broadcastFormat: "&f&l%prefix% &7[&c&l%type%&7]: &f%message%"
-  boosterEnabledMessage: "&7Booster %name% has been activated for %time% seconds!"
 Pets:
   # AXOLOTL (1.17+)
   AXOLOTL:
     special_ability:
       - STOP_ATTACK
     speed: 1.9
-    # Distance is a float value after which a^2 from player distance, entity will be teleported.
-    # Example: entityDistance = 15, a^2 = 225, entity will be teleported after gap of 225 blocks distance between player and itself.
-    distance: 15
+    # Distance is a float value after which a from player distance, entity will be teleported.
+    distance: 30
   CAT:
     special_ability:
       - ACTIONBAR:&7Your pet likes fish!
       - ADD_FOOD:10
     speed: 1.9
-    distance: 15
+    distance: 30
   CHICKEN:
     special_ability:
       - STOP_FALL_DAMAGE
     speed: 1.9
-    distance: 15
+    distance: 30
   COW:
     special_ability:
       - CURE
       - ACTIONBAR:&7Your pet cured you!
     speed: 1.9
-    distance: 15
+    distance: 30
   DONKEY:
     special_ability:
       - STOP_KNOCKBACK
     speed: 1.9
-    distance: 15
+    distance: 30
   FOX:
     special_ability:
       - INVINCIBLE:100
       - ACTIONBAR:&7Your pet gives you invincibility!
     speed: 1.9
-    distance: 15
+    distance: 30
   # GOAT (1.17+)
   GOAT:
     special_ability:
       - EXP:100
     speed: 1.9
-    distance: 15
+    distance: 30
   HORSE:
     special_ability:
       - ADD_HEALTH:5
       - ACTIONBAR:&7Your pet supported your health!
     speed: 1.9
-    distance: 15
+    distance: 30
   LLAMA:
     special_ability:
       - STOP_ATTACK
       - ACTIONBAR_AFTER:&7You survived it!
     speed: 1.9
-    distance: 15
+    distance: 30
   MULE:
     special_ability:
       - FLAME:100
       - ACTIONBAR_AFTER:&7Die in flames!
     speed: 1.9
-    distance: 15
+    distance: 30
   MUSHROOM_COW:
     special_ability:
       - ADD_FOOD:10
       - ACTIONBAR:&7Your pet cooked some food for you!
     speed: 1.9
-    distance: 15
+    distance: 30
   OCELOT:
     special_ability:
       - FIREBALL
       - ACTIONBAR:&7Your pet exploded!
     speed: 1.9
-    distance: 15
+    distance: 30
   PANDA:
     special_ability:
       - EXP:100
     speed: 1.9
-    distance: 15
+    distance: 30
   PARROT:
     special_ability:
       - LIGHTING
       - ACTIONBAR_AFTER:&7Electrons!
     speed: 1.9
-    distance: 15
+    distance: 30
   PIG:
     special_ability:
       - ADD_HEALTH:10
       - ACTIONBAR:&7Your pet gave you a lot of health!
     speed: 1.9
-    distance: 15
+    distance: 30
   POLAR_BEAR:
     special_ability:
       - STEAL_HEALTH:3
       - ACTIONBAR_AFTER:&7You stole a lot of health!
     speed: 1.9
-    distance: 15
+    distance: 30
   RABBIT:
     special_ability:
       - STOP_FALL_DAMAGE
       - ACTIONBAR_AFTER:&7What a cat!
     speed: 1.9
-    distance: 15
+    distance: 30
   SHEEP:
     special_ability:
       - ADD_FOOD:10
       - ACTIONBAR:&7Your pet gave you fish!
     speed: 1.9
-    distance: 15
+    distance: 30
   TURTLE:
     special_ability:
       - STOP_ATTACK
       - ACTIONBAR_AFTER:&7Ninja's reflex!
     speed: 1.9
-    distance: 15
+    distance: 30
   WOLF:
     special_ability:
       - STEAL_HEALTH:3
       - ACTIONBAR_AFTER:&7You stole a lot of health!
     speed: 1.9
-    distance: 15
+    distance: 30

@@ -30,7 +30,7 @@ public class ExceptionLogger {
     }
 
     public void broadcastException(@NotNull Exception exception) {
-        String message = String.format("[ERROR]\nClass: %s\nCause: %s\nMessage: %s", exception.getClazz(), exception.getCause().toString(), exception.getMessage() == null ? exception.getException().getMessage() : exception.getMessage());
+        String message = String.format("[OPPETS-ERROR]\nClass: %s\nCause: %s\nMessage: %s", exception.getClazz(), exception.getCause() == null ? "NULL" : exception.getCause(), exception.getMessage() == null ? "NULL" : exception.getMessage());
         logger.warning(message);
     }
 
@@ -43,5 +43,13 @@ public class ExceptionLogger {
             new ExceptionLogger();
         }
         return exceptionLogger;
+    }
+
+    public void throwException(String message) {
+        try {
+            throw new InvalidDefaultException(message);
+        } catch (InvalidDatabaseException e) {
+            ExceptionLogger.getInstance().addException(new Exception(message, this.getClass().toString(), e.fillInStackTrace()));
+        }
     }
 }

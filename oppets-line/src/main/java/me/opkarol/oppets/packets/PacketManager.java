@@ -17,34 +17,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The type Packet manager.
- */
 public class PacketManager implements Listener {
-    /**
-     * The constant utils.
-     */
     private static IUtils utils;
-    /**
-     * The constant event.
-     */
     private static Object event;
 
-    /**
-     * Remove player.
-     *
-     * @param player the player
-     */
     public static void removePlayer(Player player) {
         Channel channel = (Channel) utils.getPlayerChannel(player);
         channel.pipeline().remove(player.getName());
     }
 
-    /**
-     * Inject player.
-     *
-     * @param player the player
-     */
     public static void injectPlayer(@NotNull Player player) {
         ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
             @Override
@@ -52,34 +33,20 @@ public class PacketManager implements Listener {
                 utils.rideEventRegister(getEvent(), packet, player);
             }
         };
+
         ChannelPipeline pipeline = (ChannelPipeline) utils.getPlayerPipeline(player);
         pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
 
     }
 
-    /**
-     * Gets event.
-     *
-     * @return the event
-     */
     public static Object getEvent() {
         return event;
     }
 
-    /**
-     * Sets event.
-     *
-     * @param event the event
-     */
     public static void setEvent(Object event) {
         PacketManager.event = event;
     }
 
-    /**
-     * Sets utils.
-     *
-     * @param utils the utils
-     */
     public static void setUtils(IUtils utils) {
         PacketManager.utils = utils;
     }

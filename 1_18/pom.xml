@@ -14,9 +14,10 @@
 
     <artifactId>1_18</artifactId>
 
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <JITPACK>false</JITPACK>
+        <spigot.version>1.18-R0.1-SNAPSHOT</spigot.version>
     </properties>
 
     <build>

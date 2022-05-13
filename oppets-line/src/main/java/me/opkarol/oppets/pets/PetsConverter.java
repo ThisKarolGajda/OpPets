@@ -8,144 +8,100 @@ package me.opkarol.oppets.pets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.collections.OpMap;
+import me.opkarol.oppets.misc.StringTransformer;
+import me.opkarol.oppets.storage.OpObjectCreator;
+import me.opkarol.oppets.storage.OpObjectTypes;
+import me.opkarol.oppets.storage.OpObjects;
 import me.opkarol.oppets.uuid.PetUUID;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.UUID;
 
-/**
- * The type Pets converter.
- */
-public class PetsConverter {
-
-    /**
-     * Convert json to pet pet.
-     *
-     * @param object the object
-     * @return the pet
-     */
-    public Pet convertJSONToPet(@NotNull JSONObject object) {
-        String name, settings, skill, prestige;
-        double experience;
-        int level;
-        OpPetsEntityTypes.TypeOfEntity type;
-        boolean active;
-        UUID ownerUUID;
-        PetUUID petUUID;
-        name = (String) object.get("name");
-        settings = (String) object.get("settings");
-        skill = (String) object.get("skill");
-        experience = (double) object.get("experience");
-        level = Integer.parseInt(String.valueOf(object.get("level")));
-        type = OpPetsEntityTypes.TypeOfEntity.valueOf((String) object.get("type"));
-        active = (boolean) object.get("active");
-        ownerUUID = UUID.fromString(String.valueOf(object.get("ownerUUID")));
-        prestige = String.valueOf(object.get("prestige"));
-        petUUID = new PetUUID(Integer.parseInt(String.valueOf(object.get("petID"))));
-        return new Pet(name, experience, level, type, active, null, ownerUUID, settings, skill, prestige, petUUID);
+public class PetsConverter implements IPetsConverter, Serializable {
+    public OpObjects getObjectFromPet(@NotNull Pet pet) {
+        return new OpObjects().addObject(new OpObjectCreator("name", OpObjectTypes.STRING, pet.getPetName()).getObject())
+                .addObject(new OpObjectCreator("type", OpObjectTypes.STRING, pet.getPetType().name()).getObject())
+                .addObject(new OpObjectCreator("settings", OpObjectTypes.STRING, pet.getSettings().toString()).getObject())
+                .addObject(new OpObjectCreator("preferences", OpObjectTypes.STRING, pet.getPreferences().toString()).getObject())
+                .addObject(new OpObjectCreator("prestige", OpObjectTypes.STRING, pet.getPrestige()).getObject())
+                .addObject(new OpObjectCreator("skill", OpObjectTypes.STRING, pet.getSkillName()).getObject())
+                .addObject(new OpObjectCreator("experience", OpObjectTypes.DOUBLE, pet.getPetExperience()).getObject())
+                .addObject(new OpObjectCreator("level", OpObjectTypes.INT, pet.getLevel()).getObject())
+                .addObject(new OpObjectCreator("ownID", OpObjectTypes.CUSTOM, pet.getOwnUUID()))
+                .addObject(new OpObjectCreator("ownerID", OpObjectTypes.CUSTOM, pet.getOwnerUUID()))
+                .addObject(new OpObjectCreator("petID", OpObjectTypes.CUSTOM, pet.getPetUUID()))
+                .addObject(new OpObjectCreator("active", OpObjectTypes.BOOL, pet.isActive()).getObject())
+                .get();
     }
 
-    /**
-     * Convert pet to json json object.
-     *
-     * @param pet the pet
-     * @return the json object
-     */
-    public JSONObject convertPetToJSON(@NotNull Pet pet) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", pet.getPetName());
-        map.put("experience", pet.getPetExperience());
-        map.put("level", pet.getLevel());
-        map.put("type", String.valueOf(pet.getPetType()));
-        map.put("active", pet.isActive());
-        map.put("ownUUID", null);
-        map.put("ownerUUID", String.valueOf(pet.getOwnerUUID()));
-        map.put("settings", pet.getSettingsSerialized());
-        map.put("skill", pet.getSkillName());
-        map.put("prestige", pet.getPrestige());
-        map.put("petID", pet.getPetUUID().getID());
-        return new JSONObject(map);
+    @Contract("_ -> new")
+    public @NotNull Pet getPetFromObject(@NotNull OpObjects object) {
+        String name = object.getString("name", null), settings = object.getString("settings", null), preferences = object.getString("preferences", null), skill = object.getString("skill", null), prestige = String.valueOf(object.getString("prestige", null));
+        double experience = object.getDouble("experience", -1D);
+        int level = Integer.parseInt(String.valueOf(object.getInteger("level", -1)));
+        final TypeOfEntity[] type = new TypeOfEntity[1];
+        StringTransformer.getEnumValue(object.getString("type", null), TypeOfEntity.class).ifPresent(typeOfEntity -> type[0] = typeOfEntity);
+        boolean active = object.getBoolean("active", false);
+        UUID ownerUUID = UUID.fromString(String.valueOf(object.getObject("ownerID").getValue()));
+        PetUUID petUUID = new PetUUID(Integer.parseInt(String.valueOf(object.getObject("petID").getValue())));
+        return new Pet(name, experience, level, type[0], active, null, ownerUUID, skill, prestige, petUUID, OpObjects.get(preferences), OpObjects.get(settings));
     }
 
-    /**
-     * Convert pet list to json list list.
-     *
-     * @param pet the pet
-     * @return the list
-     */
-    public List<JSONObject> convertPetListToJSONList(List<Pet> pet) {
-        if (pet == null) {
-            return null;
+    public @NotNull OpObjects createPetPreferences(@NotNull Pet pet) {
+        OpObjects objects = new OpObjects();
+        TypeOfEntity type = pet.getPetType();
+        for (TypeOfEntity.VARIANTS variant : type.getVariants()) {
+            objects.addObject(new OpObjectCreator(variant.name().toLowerCase(), OpObjectTypes.BOOL, false).getObject());
         }
-        List<JSONObject> i = new ArrayList<>();
-        pet.forEach(pet1 -> i.add(convertPetToJSON(pet1)));
-        return i;
+        return objects;
     }
 
-    /**
-     * Convert string to pet pet.
-     *
-     * @param o the o
-     * @return the pet
-     */
-    public Pet convertStringToPet(String o) {
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject json = (JSONObject) parser.parse(o);
-            return new PetsConverter().convertJSONToPet(json);
-        } catch (ParseException e) {
-            e.printStackTrace();
+    public @NotNull OpMap<TypeOfEntity.VARIANTS, Boolean> readPetPreferences(@NotNull Pet pet) {
+        OpMap<TypeOfEntity.VARIANTS, Boolean> map = new OpMap<>();
+        OpObjects objects = pet.getPreferences();
+        TypeOfEntity type = pet.getPetType();
+        for (TypeOfEntity.VARIANTS variant : type.getVariants()) {
+            objects.hasObjectAction(variant.name().toLowerCase(), opObject -> map.put(variant, (boolean) opObject.getValue()));
         }
-        return null;
+        return map;
     }
 
-    /**
-     * Convert json array to pet list list.
-     *
-     * @param array the array
-     * @return the list
-     */
-    public List<Pet> convertJSONArrayToPetList(Object @NotNull [] array) {
-        List<Pet> i = new ArrayList<>();
-        for (Object o : array) {
-            if (o instanceof JSONObject) {
-                i.add(convertStringToPet(((JSONObject) o).toJSONString()));
-            }
-        }
-        return i;
+    public boolean readPetPreference(@NotNull Pet pet, String preference) {
+        return readPetObject(pet.getPreferences(), preference);
     }
 
-    /**
-     * Convert json array to pet list list.
-     *
-     * @param array the array
-     * @return the list
-     */
-    public List<Pet> convertJSONArrayToPetList(@NotNull JSONArray array) {
-        List<Pet> i = new ArrayList<>();
-        for (Object o : array) {
-            if (o instanceof JSONObject) {
-                i.add(convertStringToPet(((JSONObject) o).toJSONString()));
-            }
-        }
-        return i;
+    public boolean hasPetPreference(@NotNull Pet pet, String preference) {
+        return hasPetObject(pet.getPreferences(), preference);
     }
 
-    /**
-     * Gets list from pets.
-     *
-     * @param list the list
-     * @return the list from pets
-     */
-    public ArrayList<Object> getListFromPets(@NotNull List<Pet> list) {
-        ArrayList<Object> i = new ArrayList<>();
-        for (Pet pet : list) {
-            i.add(convertPetToJSON(pet));
-        }
-        return i;
+    public OpObjects negatePetPreference(@NotNull Pet pet, String preference) {
+        return negatePetObjects(pet.getPreferences(), preference);
+    }
+
+    public OpObjects createPetSettings(@NotNull Pet pet) {
+        return pet.getSettings().dump()
+                .addObject(new OpObjectCreator("visibleToOthers", OpObjectTypes.BOOL, true).getObject())
+                .addObject(new OpObjectCreator("giftable", OpObjectTypes.BOOL, false).getObject())
+                .addObject(new OpObjectCreator("glows", OpObjectTypes.BOOL, false).getObject())
+                .addObject(new OpObjectCreator("followPlayer", OpObjectTypes.BOOL, true).getObject())
+                .addObject(new OpObjectCreator("teleportToPlayer", OpObjectTypes.BOOL, true).getObject())
+                .addObject(new OpObjectCreator("rideable", OpObjectTypes.BOOL, true).getObject())
+                .addObject(new OpObjectCreator("otherRideable", OpObjectTypes.BOOL, false).getObject())
+                .addObject(new OpObjectCreator("particlesEnabled", OpObjectTypes.BOOL, true).getObject()).get();
+    }
+
+    public boolean readPetSetting(@NotNull Pet pet, String setting) {
+        return readPetObject(pet.getSettings(), setting);
+    }
+
+    public boolean hasPetSetting(@NotNull Pet pet, String setting) {
+        return hasPetObject(pet.getSettings(), setting);
+    }
+
+    public OpObjects setPetSetting(@NotNull Pet pet, String setting, boolean value) {
+        return pet.getSettings().replaceObject(setting, value).get();
     }
 }

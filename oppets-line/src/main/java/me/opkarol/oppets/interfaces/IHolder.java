@@ -8,12 +8,15 @@ package me.opkarol.oppets.interfaces;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * The interface Holder.
- */
 public interface IHolder extends InventoryHolder {
-
     String getName();
+
+    @Override
+    default @NotNull Inventory getInventory() {
+        return null;
+    }
 }

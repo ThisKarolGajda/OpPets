@@ -12,8 +12,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.opkarol.oppets.exceptions.Exception;
 import me.opkarol.oppets.exceptions.ExceptionLogger;
 import me.opkarol.oppets.exceptions.InvalidDatabaseException;
-import me.opkarol.oppets.pets.OpPetsEntityTypes;
 import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.pets.TypeOfEntity;
+import me.opkarol.oppets.storage.OpObjects;
 import me.opkarol.oppets.uuid.PetUUID;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -28,35 +29,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-/**
- * The type My sql.
- */
 public class MySQL {
-    /**
-     * The Source.
-     */
     private DataSource source;
-    /**
-     * The Hikari data source.
-     */
     private HikariDataSource hikariDataSource;
-    /**
-     * The Plugin.
-     */
     private Plugin plugin;
-    /**
-     * The Database.
-     */
     private final Database database = Database.getInstance();
     private final String NOT_CONNECTED_TO_MYSQL = "Database connection isn't stable, make sure you are connected to a working SQL provider.";
 
-    /**
-     * Sets my sql.
-     *
-     * @return the my sql
-     */
     public MySQL setupMySQL() {
         plugin = database.getPlugin();
         FileConfiguration configuration = plugin.getConfig();
@@ -71,9 +51,6 @@ public class MySQL {
         return this;
     }
 
-    /**
-     * Close connection.
-     */
     public void closeConnection() {
         if (hikariDataSource != null && !hikariDataSource.isClosed()) {
             hikariDataSource.close();
@@ -85,15 +62,16 @@ public class MySQL {
              PreparedStatement stmt = conn.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS oppets (" +
                              "id INT NOT NULL" +
-                             ", name TINYTEXT NOT NULL" +
-                             ", settings TINYTEXT NOT NULL" +
-                             ", skill TINYTEXT NOT NULL" +
+                             ", name TEXT NOT NULL" +
+                             ", settings TEXT NOT NULL" +
+                             ", preferences TEXT NOT NULL" +
+                             ", skill TEXT NOT NULL" +
                              ", experience DOUBLE NOT NULL" +
-                             ", level SMALLINT NOT NULL" +
-                             ", type TINYTEXT NOT NULL" +
+                             ", level INT NOT NULL" +
+                             ", type TEXT NOT NULL" +
                              ", active BOOLEAN NOT NULL" +
                              ", ownerUUID VARCHAR(36) NOT NULL" +
-                             ", prestige TINYTEXT NOT NULL" +
+                             ", prestige TEXT NOT NULL" +
                              ", PRIMARY KEY (id));")) {
             stmt.execute();
         } catch (SQLException e) {
@@ -101,17 +79,16 @@ public class MySQL {
         }
     }
 
-    /**
-     * Insert pet.
-     *
-     * @param pet the pet
-     */
     public void insertPet(@NotNull Pet pet) {
         try (Connection conn = source.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "INSERT INTO oppets(id, name, settings, skill, experience, level, type, active, ownerUUID, prestige) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, settings = ?, skill = ?, experience = ?, level = ?, type = ?, active = ?, ownerUUID = ?, prestige = ?;")) {
+                     "INSERT INTO oppets(id, name, settings, preferences, skill, experience, level, type, active, ownerUUID, prestige)" +
+                             " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                             "ON DUPLICATE KEY UPDATE " +
+                             "name = ?, settings = ?, preferences = ?, skill = ?, experience = ?, level = ?, type = ?, active = ?, ownerUUID = ?, prestige = ?;")) {
             String petName = pet.getPetName();
-            String settings = pet.getSettingsSerialized();
+            String settings = pet.getSettings().toString();
+            String preferences = pet.getPreferences().toString();
             String skillName = pet.getSkillName();
             double experience = pet.getPetExperience();
             int level = pet.getLevel();
@@ -123,33 +100,30 @@ public class MySQL {
             stmt.setInt(1, petID);
             stmt.setString(2, petName);
             stmt.setString(3, settings);
-            stmt.setString(4, skillName);
-            stmt.setDouble(5, experience);
-            stmt.setInt(6, level);
-            stmt.setString(7, type);
-            stmt.setBoolean(8, active);
-            stmt.setString(9, ownerUUID);
-            stmt.setString(10, prestige);
-            stmt.setString(11, petName);
-            stmt.setString(12, settings);
-            stmt.setString(13, skillName);
-            stmt.setDouble(14, experience);
-            stmt.setInt(15, level);
-            stmt.setString(16, type);
-            stmt.setBoolean(17, active);
-            stmt.setString(18, ownerUUID);
-            stmt.setString(19, prestige);
+            stmt.setString(4, preferences);
+            stmt.setString(5, skillName);
+            stmt.setDouble(6, experience);
+            stmt.setInt(7, level);
+            stmt.setString(8, type);
+            stmt.setBoolean(9, active);
+            stmt.setString(10, ownerUUID);
+            stmt.setString(11, prestige);
+            stmt.setString(12, petName);
+            stmt.setString(13, settings);
+            stmt.setString(14, preferences);
+            stmt.setString(15, skillName);
+            stmt.setDouble(16, experience);
+            stmt.setInt(17, level);
+            stmt.setString(18, type);
+            stmt.setBoolean(19, active);
+            stmt.setString(20, ownerUUID);
+            stmt.setString(21, prestige);
             stmt.executeUpdate();
         } catch (SQLException e) {
             ExceptionLogger.getInstance().addException(new Exception(this.getClass().toString(), e.fillInStackTrace(), new InvalidDatabaseException(NOT_CONNECTED_TO_MYSQL)));
         }
     }
 
-    /**
-     * Async insert pet.
-     *
-     * @param pet the pet
-     */
     public void asyncInsertPet(Pet pet) {
         new BukkitRunnable() {
             boolean b = false;
@@ -163,11 +137,6 @@ public class MySQL {
         }.runTaskAsynchronously(plugin);
     }
 
-    /**
-     * Delete pet.
-     *
-     * @param pet the pet
-     */
     public void deletePet(@NotNull Pet pet) {
         new BukkitRunnable() {
             @Override
@@ -182,7 +151,7 @@ public class MySQL {
                         try {
                             throw new InvalidDatabaseException("Could not find a pet to delete for specific id: " + pet.getPetUUID().getStringID());
                         } catch (InvalidDatabaseException exception) {
-                        ExceptionLogger.getInstance().addException(new Exception(exception.getCause().toString(), this.getClass().toString(), exception.fillInStackTrace()));
+                            ExceptionLogger.getInstance().addException(new Exception(exception.getCause().toString(), this.getClass().toString(), exception.fillInStackTrace()));
                         }
                     }
                 } catch (SQLException e) {
@@ -192,11 +161,6 @@ public class MySQL {
         }.runTaskAsynchronously(plugin);
     }
 
-    /**
-     * Gets pets.
-     *
-     * @return the pets
-     */
     public @NotNull List<Pet> getPets() {
         final List<Pet> pets = new ArrayList<>();
         try (Connection conn = source.getConnection();
@@ -205,8 +169,8 @@ public class MySQL {
              )) {
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()) {
-                Pet pet = new Pet(resultSet.getString("name"), resultSet.getDouble("experience"), resultSet.getInt("level"), OpPetsEntityTypes.TypeOfEntity.valueOf(resultSet.getString("type")), resultSet.getBoolean("active"), null, UUID.fromString(resultSet.getString("ownerUUID")), resultSet.getString("settings"), resultSet.getString("skill"), resultSet.getString("prestige"), new PetUUID(resultSet.getInt("id")));
-                Stream.of(pet).forEachOrdered(pets::add);
+                Pet pet = new Pet(resultSet.getString("name"), resultSet.getDouble("experience"), resultSet.getInt("level"), TypeOfEntity.valueOf(resultSet.getString("type")), resultSet.getBoolean("active"), null, UUID.fromString(resultSet.getString("ownerUUID")), resultSet.getString("skill"), resultSet.getString("prestige"), new PetUUID(resultSet.getInt("id")), OpObjects.get(resultSet.getString("preferences")), OpObjects.get(resultSet.getString("settings")));
+                pets.add(pet);
             }
         } catch (SQLException e) {
             ExceptionLogger.getInstance().addException(new Exception(this.getClass().toString(), e.fillInStackTrace(), new InvalidDatabaseException(NOT_CONNECTED_TO_MYSQL)));
@@ -214,12 +178,6 @@ public class MySQL {
         return pets;
     }
 
-    /**
-     * Contains id boolean.
-     *
-     * @param id the id
-     * @return the boolean
-     */
     @SuppressWarnings("unused")
     public synchronized boolean containsID(int id) {
         final boolean[] supplier = new boolean[1];

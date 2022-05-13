@@ -10,9 +10,10 @@ package me.opkarol.oppets.abilities;
 
 import me.opkarol.oppets.databases.APIDatabase;
 import me.opkarol.oppets.databases.PetsDatabase;
+import me.opkarol.oppets.exceptions.ExceptionLogger;
 import me.opkarol.oppets.misc.CooldownModule;
 import me.opkarol.oppets.misc.PetDatabaseObject;
-import me.opkarol.oppets.pets.OpPetsEntityTypes;
+import me.opkarol.oppets.pets.TypeOfEntity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,26 +23,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * The type Abilities database.
- */
 public class AbilitiesDatabase {
-    /**
-     * The Cooldown map.
-     */
     public final CooldownModule<UUID> cooldownMap = new CooldownModule<>();
-    /**
-     * The Set.
-     */
     private final Set<PetAbility> set = new HashSet<>();
 
-    /**
-     * Instantiates a new Abilities database.
-     */
     public AbilitiesDatabase() {
         APIDatabase database = APIDatabase.getInstance();
         PetsDatabase petsDatabase = database.getPetsDatabase();
-        for (OpPetsEntityTypes.TypeOfEntity type : petsDatabase.getMap().keySet()) {
+        for (TypeOfEntity type : petsDatabase.getMap().keySet()) {
             PetDatabaseObject object = petsDatabase.getObjectFromDatabase(type);
             if (object.isAbilityEnabled()) {
                 set.add(new PetAbility(getAbilityTypeFromEntity(type), type, getDescriptionFromEntity(type)));
@@ -49,26 +38,14 @@ public class AbilitiesDatabase {
         }
     }
 
-    /**
-     * Gets pet ability.
-     *
-     * @param type the type
-     * @return the pet ability
-     */
-    public PetAbility getPetAbility(OpPetsEntityTypes.TypeOfEntity type) {
+    public PetAbility getPetAbility(TypeOfEntity type) {
         return set.stream()
                 .filter(ability -> ability.getEntityType().equals(type)).collect(Collectors.toList())
                 .get(0);
     }
 
-    /**
-     * Gets ability type from entity.
-     *
-     * @param type the type
-     * @return the ability type from entity
-     */
     @Contract(pure = true)
-    private AbilitiesEnums.AbilityCategory getAbilityTypeFromEntity(OpPetsEntityTypes.@NotNull TypeOfEntity type) {
+    private AbilitiesEnums.@Nullable AbilityCategory getAbilityTypeFromEntity(@NotNull TypeOfEntity type) {
         switch (type) {
             case TURTLE:
             case SHEEP:
@@ -95,62 +72,38 @@ public class AbilitiesDatabase {
             case WOLF:
                 return AbilitiesEnums.AbilityCategory.HOSTILE;
             default:
-                throw new IllegalStateException("Unexpected value: " + type);
-        }
+                ExceptionLogger.getInstance().throwException("Unexpected value: " + type);
 
+        }
+        return null;
     }
 
-    /**
-     * Gets description from entity.
-     *
-     * @param type the type
-     * @return the description from entity
-     */
     @Contract(pure = true)
-    private @Nullable String getDescriptionFromEntity(OpPetsEntityTypes.@NotNull TypeOfEntity type) {
+    private @Nullable String getDescriptionFromEntity(@NotNull TypeOfEntity type) {
         switch (type) {
             case AXOLOTL:
-                break;
+            case WOLF:
+            case TURTLE:
+            case SHEEP:
+            case RABBIT:
+            case POLAR_BEAR:
+            case PIG:
+            case PARROT:
+            case PANDA:
+            case OCELOT:
+            case MUSHROOM_COW:
+            case MULE:
+            case LLAMA:
+            case HORSE:
+            case GOAT:
+            case FOX:
+            case DONKEY:
+            case COW:
+            case CHICKEN:
             case CAT:
                 break;
-            case CHICKEN:
-                break;
-            case COW:
-                break;
-            case DONKEY:
-                break;
-            case FOX:
-                break;
-            case GOAT:
-                break;
-            case HORSE:
-                break;
-            case LLAMA:
-                break;
-            case MULE:
-                break;
-            case MUSHROOM_COW:
-                break;
-            case OCELOT:
-                break;
-            case PANDA:
-                break;
-            case PARROT:
-                break;
-            case PIG:
-                break;
-            case POLAR_BEAR:
-                break;
-            case RABBIT:
-                break;
-            case SHEEP:
-                break;
-            case TURTLE:
-                break;
-            case WOLF:
-                break;
             default:
-                throw new IllegalStateException("Unexpected value: " + type);
+ExceptionLogger.getInstance().throwException("Unexpected value: " + type);
         }
         return null;
     }

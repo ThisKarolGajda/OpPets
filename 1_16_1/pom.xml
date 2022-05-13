@@ -12,6 +12,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
+    </properties>
+
     <artifactId>1_16_1</artifactId>
     <build>
         <plugins>
@@ -58,6 +62,7 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>1.16.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>me.opkarol.oppets</groupId>

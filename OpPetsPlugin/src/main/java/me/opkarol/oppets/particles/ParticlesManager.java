@@ -16,21 +16,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-/**
- * The type Particles manager.
- */
 public class ParticlesManager {
-    /**
-     * The Database.
-     */
-    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+    private final Database database = Database.getInstance();
 
-    /**
-     * Spawn level up pet effect.
-     *
-     * @param player the player
-     * @param entity the entity
-     */
     public void spawnLevelUpPetEffect(Player player, Entity entity) {
         new BukkitRunnable() {
             @Override
@@ -48,12 +36,6 @@ public class ParticlesManager {
         }.runTaskAsynchronously(database.getPlugin());
     }
 
-    /**
-     * Prestige change effect.
-     *
-     * @param player the player
-     * @param entity the entity
-     */
     public void prestigeChangeEffect(Player player, Entity entity) {
         new BukkitRunnable() {
             @Override

@@ -43,17 +43,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.milkbowl.vault</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.wesjd</groupId>
-            <artifactId>anvilgui</artifactId>
-            <version>1.5.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>oppets-line</artifactId>
             <version>1.0.0</version>
@@ -62,6 +51,12 @@
         <dependency>
             <groupId>me.opkarol.oppets</groupId>
             <artifactId>1_18</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.opkarol.oppets</groupId>
+            <artifactId>1_18_2</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
@@ -99,12 +94,19 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.16.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
             <version>3.3.0</version>
             <type>maven-plugin</type>
+        </dependency>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -159,14 +161,20 @@
                                     <includes>
                                         <include>me/opkarol/oppets/**</include>
                                         <include>META-INF/**</include>
-                                        <include>v1_18_1R/**</include>
-                                        <include>v1_17R/**</include>
-                                        <include>v1_17_1R/**</include>
-                                        <include>v1_16_1R/**</include>
-                                        <include>v1_16_3R/**</include>
-                                        <include>v1_16_5R/**</include>
+                                        <include>me/opkarol/oppets/v1_18_2R/**</include>
+                                        <include>me/opkarol/oppets/v1_18_1R/**</include>
+                                        <include>me/opkarol/oppets/v1_17R/**</include>
+                                        <include>me/opkarol/oppets/v1_17_1R/**</include>
+                                        <include>me/opkarol/oppets/v1_16_1R/**</include>
+                                        <include>me/opkarol/oppets/v1_16_3R/**</include>
+                                        <include>me/opkarol/oppets/v1_16_5R/**</include>
                                         <include>plugin.yml</include>
                                         <include>config.yml</include>
+                                        <include>eggs.yml</include>
+                                        <include>messages.yml</include>
+                                        <include>inventories.json</include>
+                                        <include>database/Pets.txt</include>
+                                        <include>database/ActivePets.txt</include>
                                         <include>net/wesjd/anvilgui/**</include>
                                         <include>com/zaxxer/hikari/**</include>
                                     </includes>
@@ -196,8 +204,8 @@
                 </configuration>
             </plugin>
         </plugins>
-        <directory>E:/Servers/Test3Plugin - 1.16.5/OpPetsBuild</directory>
-        <finalName>OpPets</finalName>
+        <directory>E:/Servers/Test5Plugin - 1.18.2/OpPetsBuild</directory>
+        <finalName>OpPets - ${project.version}</finalName>
         <resources>
             <resource>
                 <targetPath>.</targetPath>
@@ -206,6 +214,11 @@
                 <includes>
                     <include>plugin.yml</include>
                     <include>config.yml</include>
+                    <include>eggs.yml</include>
+                    <include>messages.yml</include>
+                    <include>inventories.json</include>
+                    <include>database/Pets.txt</include>
+                    <include>database/ActivePets.txt</include>
                 </includes>
             </resource>
         </resources>

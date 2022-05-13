@@ -8,75 +8,113 @@ package me.opkarol.oppets.misc;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
+import org.json.simple.JSONArray;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-/**
- * The type String transformer.
- */
 public class StringTransformer {
 
-    /**
-     * Gets int from string.
-     *
-     * @param s the s
-     * @return the int from string
-     */
-    public Integer getIntFromString(@NotNull String s) {
-        return Optional.of(s.replaceAll("\\s+", ""))
-                .map(Integer::valueOf).orElse(-1);
+    public static Integer getIntFromString(String s) {
+        if (s != null) {
+            return Optional.of(s.replaceAll("\\s+", "")
+                            .replaceAll("[^-0-9]", ""))
+                    .filter(s1 -> s1.length() > 0)
+                    .map(Integer::valueOf).orElse(-1);
+        }
+        return -1;
     }
 
-    /**
-     * Gets double from string.
-     *
-     * @param s the s
-     * @return the double from string
-     */
-    public Double getDoubleFromString(@NotNull String s) {
-        return Optional.of(s.replaceAll("\\s+", ""))
-                .map(Double::parseDouble).orElse(-1D);
+    public static Double getDoubleFromString(String s) {
+        if (s != null) {
+            return Optional.of(s.replaceAll("\\s+", "")
+                            .replaceAll("[^-.,0-9]", ""))
+                    .filter(s1 -> s1.length() > 0)
+                    .map(Double::parseDouble).orElse(-1D);
+        }
+        return -1D;
     }
 
-    /**
-     * Gets enum from string.
-     *
-     * @param <K> the type parameter
-     * @param s   the s
-     * @param e   the e
-     * @return the enum from string
-     * @throws IllegalArgumentException the illegal argument exception
-     */
-    public <K extends Enum<K>> Enum<K> getEnumFromString(String s, Class<K> e) throws IllegalArgumentException {
+    public static <K extends Enum<K>> boolean containsEnumFromString(String s, Class<K> e) throws IllegalArgumentException {
         Enum<K> anEnum;
         try {
             anEnum = Enum.valueOf(e, s);
         } catch (IllegalArgumentException ignore) {
-            throw new IllegalArgumentException(String.format("Couldn't find value with name %s in Enum %s.", s, e.getName()));
+            return false;
         }
-        if (anEnum.getClass().equals(e)) {
-            return anEnum;
-        }
-        throw new IllegalArgumentException("Couldn't compare an enum class which was created against specific Enum.");
+        return anEnum.getClass().equals(e);
     }
 
-    /**
-     * Contains not numbers boolean.
-     *
-     * @param s the s
-     * @return the boolean
-     */
-    @Deprecated
-    public boolean containsNotNumbers(@NotNull String s) {
-        for (char c : s.toCharArray()) {
-            String cs = String.valueOf(c);
-            for (int i = 0; i < 10; i++) {
-                if (cs.contains(String.valueOf(i))) {
-                    return true;
+    public static <K extends Enum<K>> Optional<K> getEnumValue(String s, Class<K> e) {
+        if (!StringTransformer.containsEnumFromString(s, e)) {
+            return Optional.empty();
+        }
+        return Optional.of(Enum.valueOf(e, s));
+    }
+
+    public static Material getMaterialFromString(String s) {
+        if (s != null) {
+            Material material;
+            try {
+                 material = Material.valueOf(s);
+            } catch (IllegalArgumentException ignore) {
+                return Material.STONE;
+            }
+            return material;
+        }
+        return Material.STONE;
+    }
+
+    public static boolean getBooleanFromObject(Object obj) {
+        if (obj != null) {
+            try {
+                return (boolean) obj;
+            } catch (ClassCastException ignore) {
+                if (obj instanceof String) {
+                    String s = (String) obj;
+                    return Objects.equals(s, "true");
                 }
             }
         }
         return false;
+    }
+
+    public static boolean isBoolean(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        try {
+            return (boolean) obj;
+        } catch (ClassCastException ignore) {
+            if (obj instanceof String) {
+                String s = ((String) obj).toLowerCase();
+                return Objects.equals(s, "true") || Objects.equals(s, "false");
+            }
+        }
+        return false;
+    }
+
+    public static @NotNull List<String> getListStringsFromObject(Object obj) {
+        List<String> defaultList = new ArrayList<>();
+        if (obj != null) {
+            if (obj instanceof JSONArray) {
+                for (Object object : (JSONArray) obj) {
+                    if (object instanceof String) {
+                        defaultList.add((String) object);
+                    }
+                }
+            } else if (obj instanceof List<?>) {
+                for (Object object : (List<?>) obj) {
+                    if (object instanceof String) {
+                        defaultList.add((String) object);
+                    }
+                }
+            }
+        }
+        return defaultList;
     }
 }

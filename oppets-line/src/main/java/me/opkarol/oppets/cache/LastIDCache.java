@@ -11,29 +11,20 @@ package me.opkarol.oppets.cache;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.List;
 
-/**
- * The type Last id cache.
- */
-public class LastIDCache {
-    /**
-     * The Last id.
-     */
+public class LastIDCache implements Serializable {
     private int lastID;
 
-    /**
-     * Instantiates a new Last id cache.
-     *
-     * @param database the database
-     */
-    public LastIDCache(Database database) {
+    public LastIDCache(@NotNull Database database) {
         new BukkitRunnable() {
             int largestID = 0;
             @Override
             public void run() {
-                for (List<Pet> list : database.getDatabase().getPetsMap().values()) {
+                for (List<Pet> list : database.getDatabase().getPetsMap().getValues()) {
                     for (Pet pet : list) {
                         int id = pet.getPetUUID().getID();
                         if (id > largestID) {
@@ -46,20 +37,10 @@ public class LastIDCache {
         }.runTaskAsynchronously(database.getPlugin());
     }
 
-    /**
-     * Gets last id.
-     *
-     * @return the last id
-     */
     public int getLastID() {
         return lastID;
     }
 
-    /**
-     * Sets last id.
-     *
-     * @param lastID the last id
-     */
     public void setLastID(int lastID) {
         this.lastID = lastID;
     }

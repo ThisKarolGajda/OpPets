@@ -11,91 +11,37 @@ package me.opkarol.oppets.broadcasts;
 import me.opkarol.oppets.utils.FormatUtils;
 import org.bukkit.Bukkit;
 
-/**
- * The type Broadcast.
- */
 public class Broadcast {
-    /**
-     * The Prefix.
-     */
     private final String prefix;
-    /**
-     * The Format.
-     */
     private final String format;
-    /**
-     * The Type.
-     */
     private final BROADCAST_TYPE type;
 
-    /**
-     * Instantiates a new Broadcast.
-     *
-     * @param prefix the prefix
-     * @param format the format
-     * @param type   the type
-     */
     public Broadcast(String prefix, String format, BROADCAST_TYPE type) {
         this.prefix = prefix;
         this.format = format;
         this.type = type;
     }
 
-    /**
-     * Broadcast message.
-     *
-     * @param message the message
-     */
     public void broadcastMessage(String message) {
         Bukkit.broadcastMessage(FormatUtils.formatMessage(format.replace("%prefix%", prefix).replace("%message%", message).replace("%type%", type.name())));
     }
 
-    /**
-     * Gets prefix.
-     *
-     * @return the prefix
-     */
     public String getPrefix() {
         return prefix;
     }
 
-    /**
-     * Gets format.
-     *
-     * @return the format
-     */
     public String getFormat() {
         return format;
     }
 
-    /**
-     * Gets type.
-     *
-     * @return the type
-     */
     public BROADCAST_TYPE getType() {
         return type;
     }
 
-    /**
-     * The enum Broadcast type.
-     */
     public enum BROADCAST_TYPE {
-        /**
-         * Information broadcast type.
-         */
         INFORMATION,
-        /**
-         * Warning broadcast type.
-         */
         WARNING,
-        /**
-         * Announcement broadcast type.
-         */
         ANNOUNCEMENT,
-        /**
-         * Booster broadcast type.
-         */
         BOOSTER
     }
 }

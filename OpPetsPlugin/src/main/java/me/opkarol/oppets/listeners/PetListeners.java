@@ -8,18 +8,18 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.OpPets;
+import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.events.PrestigeChangeEvent;
-import me.opkarol.oppets.inventories.GuestInventory;
-import me.opkarol.oppets.inventories.PetMainInventory;
+import me.opkarol.oppets.files.MessagesHolder;
+import me.opkarol.oppets.inventory.OpInventories;
 import me.opkarol.oppets.particles.ParticlesManager;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import me.opkarol.oppets.skills.Ability;
 import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.OpUtils;
+import me.opkarol.oppets.utils.MathUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -35,29 +35,17 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
-/**
- * The type Pet listeners.
- */
+import static me.opkarol.oppets.utils.PetsUtils.equalsFormatNames;
+
 public class PetListeners implements Listener {
-    /**
-     * The Database.
-     */
-    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
-    /**
-     * The Particles manager.
-     */
+    private final Database database = Database.getInstance();
+    private final MessagesHolder messages = MessagesHolder.getInstance();
     private final ParticlesManager particlesManager = new ParticlesManager();
 
-    /**
-     * Pet levelup.
-     *
-     * @param event the event
-     */
     @EventHandler
-    public void petLevelup(@NotNull PetLevelupEvent event) {
+    public void petLevelUp(@NotNull PetLevelupEvent event) {
         if (event.isCancelled()) {
             return;
         }
@@ -68,7 +56,7 @@ public class PetListeners implements Listener {
         if (pet.getPetName() == null) {
             return;
         }
-        player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("petLevelUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_level%", String.valueOf(OpUtils.getLevel(pet))).replace("%max_level%", String.valueOf(OpUtils.getMaxLevel(pet))).replace("%experience_level%", String.valueOf(OpUtils.getPetLevelExperience(pet))));
+        player.sendMessage(messages.getString("Messages.petLevelUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_level%", String.valueOf(pet.getLevel())).replace("%max_level%", String.valueOf(MathUtils.getMaxLevel(pet))).replace("%experience_level%", String.valueOf(MathUtils.getPetLevelExperience(pet))));
         if (pet.areParticlesEnabled()) {
             particlesManager.spawnLevelUpPetEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
         }
@@ -105,11 +93,6 @@ public class PetListeners implements Listener {
         }
     }
 
-    /**
-     * Prestige change.
-     *
-     * @param event the event
-     */
     @EventHandler
     public void prestigeChange(@NotNull PrestigeChangeEvent event) {
         PrestigeManager pm = database.getOpPets().getPrestigeManager();
@@ -121,73 +104,44 @@ public class PetListeners implements Listener {
         pet.setPetExperience(0);
         pet.setPrestige(pm.getFormatForNumber(pm.getPrestigeLevel(pet.getPrestige()) + 1));
         Player player = event.getPlayer();
-        player.sendMessage(database.getOpPets().getMessages().getMessagesAccess().stringMessage("prestigeUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_prestige%", pm.getFilledPrestige(pet.getPrestige())).replace("%max_level%", String.valueOf(OpUtils.getMaxLevel(pet))));
+        player.sendMessage(messages.getString("Messages.prestigeUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_prestige%", pm.getFilledPrestige(pet.getPrestige())).replace("%max_level%", String.valueOf(MathUtils.getMaxLevel(pet))));
         database.getOpPets().getUtils().respawnPet(pet, player);
         if (pet.areParticlesEnabled()) {
             particlesManager.prestigeChangeEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
         }
     }
 
-    /**
-     * Player interact.
-     *
-     * @param event the event
-     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerInteract(@NotNull PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         if (player.isSneaking()) {
             return;
         }
-        if (database.getDatabase().getCurrentPet(player.getUniqueId()) != null) {
-            if (database.getDatabase().getCurrentPet(player.getUniqueId()).getOwnUUID() == event.getRightClicked().getUniqueId()) {
-                event.setCancelled(true);
-                player.openInventory(new PetMainInventory().getInventory());
-                event.getPlayer().updateInventory();
-                return;
-            }
-        }
-        for (UUID uuid : database.getDatabase().getActivePetMap().keySet()) {
-            Pet pet = database.getDatabase().getCurrentPet(uuid);
-            if (pet == null || pet.getOwnUUID() == null) {
-                return;
-            }
-            if (!pet.getOwnUUID().equals(event.getRightClicked().getUniqueId())) {
-                return;
-            }
+        Pet currentPet = database.getDatabase().getCurrentPet(player.getUniqueId());
+        String name = event.getRightClicked().getName();
+        if (currentPet != null && equalsFormatNames(currentPet, name)) {
             event.setCancelled(true);
-            Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).openInventory(new GuestInventory(pet).getInventory());
-            event.getPlayer().updateInventory();
+            player.openInventory(new OpInventories.PetMainInventory().buildInventory());
+            return;
         }
-
+        database.getDatabase().getActivePetMap().keySet().stream()
+                    .map(uuid -> database.getDatabase().getCurrentPet(uuid))
+                    .filter(pet -> pet.getPetName().equals(name)).findAny().ifPresent(pet -> {
+                        event.setCancelled(true);
+                        player.openInventory(new OpInventories.GuestInventory(pet).buildInventory());
+                    });
     }
 
-    /**
-     * On chunk unload.
-     *
-     * @param event the event
-     */
     @EventHandler
     public void onChunkUnload(@NotNull ChunkUnloadEvent event) {
         checkForEntitiesByPlayer(event.getChunk().getEntities(), false);
     }
 
-    /**
-     * On world change.
-     *
-     * @param event the event
-     */
     @EventHandler
     public void onWorldChange(@NotNull PlayerChangedWorldEvent event) {
         checkForEntitiesByPlayer(event.getPlayer().getLocation().getChunk().getEntities(), true);
     }
 
-    /**
-     * Check for entities by player.
-     *
-     * @param entities       the entities
-     * @param portalCooldown the portal cooldown
-     */
     private void checkForEntitiesByPlayer(Object @NotNull [] entities, boolean portalCooldown) {
         for (Object entityObject : entities) {
             if (!(entityObject instanceof Entity entity)) {

@@ -30,36 +30,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * The type Pet abilities.
- */
 public class PetAbilities implements Listener {
-    /**
-     * The Abilities database.
-     */
     private final AbilitiesDatabase abilitiesDatabase;
-    /**
-     * The Functions.
-     */
     private final AbilitiesFunctions functions;
-    /**
-     * The Database.
-     */
-    private final Database database = Database.getInstance(OpPets.getInstance().getSessionIdentifier().getSession());
+    private final Database database = Database.getInstance();
 
-    /**
-     * Instantiates a new Pet abilities.
-     */
     public PetAbilities() {
         abilitiesDatabase = database.getOpPets().getAbilitiesDatabase();
         functions = new AbilitiesFunctions();
     }
 
-    /**
-     * Player interact.
-     *
-     * @param event the event
-     */
     @EventHandler
     public void playerInteract(@NotNull PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
@@ -77,9 +57,6 @@ public class PetAbilities implements Listener {
             String[] abilityArgs = object.getAbilityArgs(s);
             switch (object.getAbility(s)) {
                 case ACTIONBAR -> functions.sendActionbar(player, abilityArgs[1]);
-                case ACTIONBAR_AFTER, STOP_FALL_DAMAGE, FLAME, STEAL_HEALTH, STOP_KNOCKBACK, STOP_ATTACK, MESSAGE_AFTER, LIGHTING -> {
-                    return;
-                }
                 case ADD_FOOD -> functions.addFood(player, Integer.parseInt(abilityArgs[1]));
                 case ADD_HEALTH -> functions.addHealth(player, Integer.parseInt(abilityArgs[1]));
                 case CONSOLE_COMMAND -> functions.consoleCommand(player, abilityArgs[1]);
@@ -92,7 +69,6 @@ public class PetAbilities implements Listener {
                 case INVINCIBLE -> functions.invincible(player, Integer.parseInt(abilityArgs[1]));
                 case PLAYER_COMMAND -> functions.playerCommand(player, abilityArgs[1]);
                 case FIREBALL -> functions.fireball(player);
-                default -> throw new IllegalStateException("Unexpected value: " + object.getAbility(s));
             }
             activated = true;
         }
@@ -101,11 +77,6 @@ public class PetAbilities implements Listener {
         }
     }
 
-    /**
-     * Player fall.
-     *
-     * @param event the event
-     */
     @EventHandler
     public void playerFall(@NotNull EntityDamageEvent event) {
         if (!event.getEntityType().equals(EntityType.PLAYER)) {
@@ -140,11 +111,6 @@ public class PetAbilities implements Listener {
         }
     }
 
-    /**
-     * Player damaged.
-     *
-     * @param event the event
-     */
     @EventHandler
     public void playerDamaged(@NotNull EntityDamageByEntityEvent event) {
         if (!event.getDamager().getType().equals(EntityType.PLAYER)) {
@@ -184,11 +150,7 @@ public class PetAbilities implements Listener {
                     functions.addHealth(player, healthSteal);
                 }
                 case MESSAGE_AFTER -> functions.message(player, abilityArgs[1]);
-                case ACTIONBAR, STOP_FALL_DAMAGE, FIREBALL, PLAYER_COMMAND, INVINCIBLE, PARTICLE, EXP, REVIVE, MESSAGE, POTION, CURE, CONSOLE_COMMAND, ADD_HEALTH, ADD_FOOD -> {
-                    return;
-                }
                 case ACTIONBAR_AFTER -> functions.sendActionbar(player, abilityArgs[1]);
-                default -> throw new IllegalStateException("Unexpected value: " + object.getAbility(s));
             }
             activated = true;
         }

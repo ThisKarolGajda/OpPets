@@ -14,53 +14,52 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * The type Format utils.
- */
-public class FormatUtils {
+public final class FormatUtils {
+    private static final Pattern HEX_PATTERN = Pattern.compile("[A-f0-9]{6}");
+    private static final char COLOR_CHAR = '\u00A7';
 
-    /**
-     * Format message string.
-     *
-     * @param message the message
-     * @return the string
-     */
-    @Contract("_ -> new")
     public static @NotNull String formatMessage(String message) {
-        return ChatColor.translateAlternateColorCodes('&', message);
+        try {
+            return hexFormatMessage("#<", ">", format(message));
+        } catch (Exception ignored) {
+            return format(message);
+        }
     }
 
-    /**
-     * Format list list.
-     *
-     * @param list the list
-     * @return the list
-     */
+    @Contract("_ -> new")
+    private static @NotNull String format(String s) {
+        return ChatColor.translateAlternateColorCodes('&', s);
+    }
+
     public static @NotNull List<String> formatList(@NotNull List<String> list) {
         return list.stream().map(FormatUtils::formatMessage).collect(Collectors.toList());
     }
 
-    /**
-     * Return message boolean.
-     *
-     * @param sender  the sender
-     * @param message the message
-     * @return the boolean
-     */
     public static boolean returnMessage(@NotNull CommandSender sender, String message) {
         sender.sendMessage(message);
         return true;
     }
 
-    /**
-     * Gets name string.
-     *
-     * @param string the string
-     * @return the name string
-     */
     public static String getNameString(String string) {
-        return ChatColor.stripColor(formatMessage(string));
+        return ChatColor.stripColor(formatMessage(string.replace("%p%", "")));
+    }
+
+    public static @NotNull String hexFormatMessage(String startTag, String endTag, String message) {
+        final Pattern hexPattern = Pattern.compile(startTag + HEX_PATTERN + endTag);
+        Matcher matcher = hexPattern.matcher(message);
+        StringBuffer buffer = new StringBuffer(message.length() + 32);
+        while (matcher.find()) {
+            String group = matcher.group(1);
+            matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+                    + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
+                    + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
+                    + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5)
+            );
+        }
+        return matcher.appendTail(buffer).toString();
     }
 }

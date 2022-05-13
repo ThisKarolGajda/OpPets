@@ -8,38 +8,17 @@ package me.opkarol.oppets.skills;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-/**
- * The type Requirement.
- */
 public class Requirement {
-    /**
-     * The Requirement.
-     */
     private SkillEnums.SkillsRequirements requirement;
 
-    /**
-     * Instantiates a new Requirement.
-     *
-     * @param requirements the requirements
-     */
     public Requirement(SkillEnums.SkillsRequirements requirements) {
         setRequirement(requirements);
     }
 
-    /**
-     * Gets requirement.
-     *
-     * @return the requirement
-     */
     public SkillEnums.SkillsRequirements getRequirement() {
         return requirement;
     }
 
-    /**
-     * Sets requirement.
-     *
-     * @param requirement the requirement
-     */
     public void setRequirement(SkillEnums.SkillsRequirements requirement) {
         this.requirement = requirement;
     }

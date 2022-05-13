@@ -13,51 +13,22 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The type Config utils.
- */
-public class ConfigUtils {
-    /**
-     * The constant config.
-     */
+public final class ConfigUtils {
     private static final FileConfiguration config = APIDatabase.getInstance().getPlugin().getConfig();
 
-    /**
-     * Gets message.
-     *
-     * @param path the path
-     * @return the message
-     */
     @Contract("_ -> new")
     public static @NotNull String getMessage(String path) {
         return FormatUtils.formatMessage(config.getString(path));
     }
 
-    /**
-     * Gets int.
-     *
-     * @param path the path
-     * @return the int
-     */
     public static int getInt(String path) {
         return config.getInt(path);
     }
 
-    /**
-     * Gets string.
-     *
-     * @param path the path
-     * @return the string
-     */
     public static String getString(String path) {
         return config.getString(path);
     }
 
-    /**
-     * Gets config.
-     *
-     * @return the config
-     */
     public static FileConfiguration getConfig() {
         return config;
     }

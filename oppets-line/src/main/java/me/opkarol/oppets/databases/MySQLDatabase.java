@@ -8,149 +8,84 @@ package me.opkarol.oppets.databases;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.collections.OpMap;
 import me.opkarol.oppets.interfaces.IDatabase;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.OpUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-/**
- * The type My sql database.
- */
 public class MySQLDatabase implements IDatabase {
-    /**
-     * The Active pet map.
-     */
-    private HashMap<UUID, Pet>  activePetMap;
-    /**
-     * The Pets map.
-     */
-    private HashMap<UUID, List<Pet>> petsMap;
-    /**
-     * The Id pets map.
-     */
-    private HashMap<UUID, Integer> idPetsMap;
-    /**
-     * The Logger.
-     */
+    private OpMap<UUID, Pet> activePetMap = new OpMap<>();
+    private OpMap<UUID, List<Pet>> petsMap = new OpMap<>();
+    private OpMap<UUID, Integer> idPetsMap;
     private Logger logger;
-    /**
-     * The Database.
-     */
     private final Database database = Database.getInstance();
 
-    /**
-     * Gets pets map.
-     *
-     * @return the pets map
-     */
     @Override
-    public HashMap<UUID, List<Pet>> getPetsMap() {
+    public OpMap<UUID, List<Pet>> getPetsMap() {
         return petsMap;
     }
 
-    /**
-     * Sets pets map.
-     *
-     * @param loadObject the load object
-     */
     @Override
-    public void setPetsMap(HashMap<UUID, List<Pet>> loadObject) {
+    public void setPetsMap(OpMap<UUID, List<Pet>> loadObject) {
         petsMap = loadObject;
     }
 
-    /**
-     * Gets pet list.
-     *
-     * @param uuid the uuid
-     * @return the pet list
-     */
     @Override
     public List<Pet> getPetList(UUID uuid) {
         return petsMap.getOrDefault(uuid, new ArrayList<>());
     }
 
-    /**
-     * Sets current pet.
-     *
-     * @param uniqueId the unique id
-     * @param pet      the pet
-     */
     @Override
-    public void setCurrentPet(UUID uniqueId, Pet pet) {
-        List<Pet> pets = getPetsMap().get(uniqueId);
+    public void setCurrentPet(UUID uuid, Pet pet) {
+        List<Pet> pets = getPetList(uuid);
         for (Pet pet1 : pets) {
             pet1.setActive(false);
         }
         pet.setActive(true);
-        if (activePetMap.containsKey(uniqueId)) {
-            activePetMap.replace(uniqueId, pet);
-        } else {
-            activePetMap.put(uniqueId, pet);
-        }
-        setPets(uniqueId, pets);
+        activePetMap.set(uuid, pet);
+        setPets(uuid, pets);
     }
 
-    /**
-     * Gets active pet map.
-     *
-     * @return the active pet map
-     */
     @Override
-    public HashMap<UUID, Pet> getActivePetMap() {
+    public OpMap<UUID, Pet> getActivePetMap() {
         return activePetMap;
     }
 
-    /**
-     * Sets active pet map.
-     *
-     * @param loadObject the load object
-     */
     @Override
-    public void setActivePetMap(HashMap<UUID, Pet> loadObject) {
+    public void setActivePetMap(OpMap<UUID, Pet> loadObject) {
         activePetMap = loadObject;
     }
 
-    /**
-     * Start logic.
-     */
     @Override
     public void startLogic() {
-        idPetsMap = new HashMap<>();
+        idPetsMap = new OpMap<>();
         setupPetsMap();
         setupActiveMap();
         logger = database.getPlugin().getLogger();
     }
 
-    /**
-     * Sets pets map.
-     */
     private void setupPetsMap() {
         List<Pet> petList = database.getMySQL().getPets();
-        HashMap<UUID, List<Pet>> hashMap = new HashMap<>();
+        OpMap<UUID, List<Pet>> map = new OpMap<>();
         for (Pet pet : petList) {
             UUID uuid = pet.getOwnerUUID();
-            if (hashMap.containsKey(uuid)) {
-                List<Pet> list = new ArrayList<>(hashMap.get(uuid));
-                list.add(pet);
-                hashMap.replace(uuid, list);
-            } else {
-                hashMap.put(uuid, Collections.singletonList(pet));
-            }
+            List<Pet> list = map.getOrDefault(uuid, new ArrayList<>());
+            list.add(pet);
+            map.set(uuid, list);
         }
-        setPetsMap(hashMap);
+        setPetsMap(map);
     }
 
-    /**
-     * Sets active map.
-     */
     private void setupActiveMap() {
-        HashMap<UUID, Pet> hashMap = new HashMap<>();
+        OpMap<UUID, Pet> OpMap = new OpMap<>();
         for (UUID uuid : getPetsMap().keySet()) {
-            List<Pet> activePets = getPetsMap().get(uuid).stream().filter(Pet::isActive).collect(Collectors.toList());
+            List<Pet> activePets = getPetsMap().getOrDefault(uuid, new ArrayList<>()).stream().filter(Pet::isActive).collect(Collectors.toList());
             if (activePets.size() > 1) {
                 for (Pet pet : activePets) {
                     pet.setActive(false);
@@ -158,125 +93,121 @@ public class MySQLDatabase implements IDatabase {
                 activePets.get(0).setActive(true);
             }
             if (activePets.size() == 1) {
-                hashMap.put(uuid, activePets.get(0));
+                OpMap.put(uuid, activePets.get(0));
             }
         }
-        setActivePetMap(hashMap);
+        setActivePetMap(OpMap);
     }
 
-    /**
-     * Gets current pet.
-     *
-     * @param uuid the uuid
-     * @return the current pet
-     */
     @Override
     public Pet getCurrentPet(UUID uuid) {
         return activePetMap.getOrDefault(uuid, null);
     }
 
-    /**
-     * Add id pet.
-     *
-     * @param ownUUID the own uuid
-     * @param id      the id
-     */
     @Override
     public void addIdPet(UUID ownUUID, int id) {
         idPetsMap.replace(ownUUID, id);
     }
 
-    /**
-     * Gets id pet.
-     *
-     * @param ownUUID the own uuid
-     * @return the id pet
-     */
     @Override
     public int getIdPet(UUID ownUUID) {
         return idPetsMap.getOrDefault(ownUUID, 0);
     }
 
-    /**
-     * Remove pet.
-     *
-     * @param uuid the uuid
-     * @param pet  the pet
-     */
+    @Override
+    public List<Integer> getPetIDs() {
+        return new ArrayList<>(idPetsMap.getValues());
+    }
+
     @Override
     public void removePet(UUID uuid, @NotNull Pet pet) {
-        if (activePetMap.get(uuid).getPetUUID().getStringID().equals(pet.getPetUUID().getStringID())) {
+        List<Pet> list = getPetList(uuid);
+        int petID = pet.getPetUUID().getID();
+        if (list.stream().anyMatch(pet1 -> pet1.getPetUUID().getID() == petID)) {
             removeCurrentPet(uuid);
         }
         database.getMySQL().deletePet(pet);
-        List<Pet> list = petsMap.get(uuid);
-        list.removeIf(petI -> Objects.equals(FormatUtils.getNameString(petI.getPetName()), FormatUtils.getNameString(pet.getPetName())));
+        list.removeIf(pet1 -> pet1.getPetUUID().getID() == petID);
         setPets(uuid, list);
     }
 
-    /**
-     * Remove current pet.
-     *
-     * @param uuid the uuid
-     */
+    @Override
+    public Optional<Pet> removePet(UUID uuid, String name) {
+        if (hasPet(uuid, name)) {
+            Optional<Pet> pet = getPet(uuid, name);
+            pet.ifPresent(pet1 -> removePet(uuid, pet1));
+            return pet;
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean hasPet(UUID uuid, String name) {
+        if (uuid != null && name != null) {
+            return getPetList(uuid).stream()
+                    .anyMatch(pet -> PetsUtils.equalsNames(pet, name));
+        }
+        return false;
+    }
+
+    @Override
+    public Optional<Pet> getPet(UUID uuid, String name) {
+        if (hasPet(uuid, name)) {
+            return getPetList(uuid).stream()
+                    .filter(pet -> PetsUtils.equalsNames(pet, name)).findAny();
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public void updatePet(UUID uuid, @NotNull Pet pet) {
+        List<Pet> list = getPetList(uuid);
+        int petID = pet.getPetUUID().getID();
+        database.getMySQL().insertPet(pet);
+        list.removeIf(pet1 -> pet1.getPetUUID().getID() == petID);
+        list.add(pet);
+        setPets(uuid, list);
+    }
+
     @Override
     public void removeCurrentPet(UUID uuid) {
-        database.getUtils().killPetFromPlayerUUID(uuid);
+        OpUtils.killPetFromPlayerUUID(uuid);
         activePetMap.remove(uuid);
     }
 
-    /**
-     * Sets pets.
-     *
-     * @param uuid    the uuid
-     * @param objects the objects
-     */
     @Override
     public void setPets(UUID uuid, List<Pet> objects) {
-        petsMap.replace(uuid, objects);
+        petsMap.set(uuid, objects);
         for (Pet pet : objects) {
             database.getMySQL().asyncInsertPet(pet);
         }
     }
 
-    /**
-     * Add pet to pets list boolean.
-     *
-     * @param playerUUID the player uuid
-     * @param pet        the pet
-     * @return the boolean
-     */
     @Override
-    public boolean addPetToPetsList(UUID playerUUID, Pet pet) {
+    public boolean addPetToPetsList(UUID uuid, Pet pet) {
         if (pet == null) {
             return false;
         }
-        List<Pet> petList = getPetList(playerUUID);
+        List<Pet> petList = getPetList(uuid);
         petList.add(pet);
         database.getMySQL().asyncInsertPet(pet);
-        setPets(playerUUID, petList);
+        setPets(uuid, petList);
         return true;
     }
 
-    /**
-     * Database uuid saver.
-     *
-     * @param playerUUID the player uuid
-     * @param async      the async
-     */
     @Override
-    public void databaseUUIDSaver(UUID playerUUID, boolean async) {
-        if (playerUUID == null) {
+    public void databaseUUIDSaver(UUID uuid, boolean async) {
+        if (uuid == null) {
             logger.warning("Error while trying to get UUID (databaseUUIDSaver). Provided UUID seems to be invalid.");
         }
-        List<Pet> list = petsMap.get(playerUUID);
-        for (Pet pet : (list != null ? list : new ArrayList<Pet>())) {
+        List<Pet> list = petsMap.getOrDefault(uuid, new ArrayList<>());
+        for (Pet pet : list) {
             if (async) {
                 database.getMySQL().asyncInsertPet(pet);
             } else {
                 database.getMySQL().insertPet(pet);
             }
         }
-        petsMap.replace(playerUUID, list);
+        petsMap.replace(uuid, list);
     }
 }

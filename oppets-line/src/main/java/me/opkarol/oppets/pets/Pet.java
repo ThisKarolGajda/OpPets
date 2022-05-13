@@ -8,76 +8,33 @@ package me.opkarol.oppets.pets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.interfaces.IGetter;
+import me.opkarol.oppets.graphic.IGetter;
+import me.opkarol.oppets.skills.SkillUtils;
+import me.opkarol.oppets.storage.OpObjects;
 import me.opkarol.oppets.uuid.PetUUID;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-import static me.opkarol.oppets.utils.PetsUtils.getBinaryFromStringAndChar;
-import static me.opkarol.oppets.utils.PetsUtils.getBinaryFromStringToChar;
-
-/**
- * The type Pet.
- */
 public class Pet implements Serializable, IGetter {
-    /**
-     * The Name.
-     */
-    private String name;
-    /**
-     * The Experience.
-     */
+    private String name,
+    skill,
+    prestige;
+    private TypeOfEntity type;
     private double experience;
-    /**
-     * The Level.
-     */
     private int level;
-    /**
-     * The Type.
-     */
-    private OpPetsEntityTypes.TypeOfEntity type;
-    /**
-     * The Active.
-     */
     private boolean active;
-    /**
-     * The Own.
-     */
-    private UUID own;
-    /**
-     * The Owner.
-     */
-    private UUID owner;
-    /**
-     * The Settings.
-     */
-    private String settings;
-    /**
-     * The Skill.
-     */
-    private String skill;
-    /**
-     * The Prestige.
-     */
-    private String prestige;
-    /**
-     * The Uuid.
-     */
-    private PetUUID uuid;
+    private UUID ownID,
+    ownerID;
+    private PetUUID petID;
+    private OpObjects preferences = new OpObjects(),
+    settings = new OpObjects();
+    private final PetsConverter converter = new PetsConverter();
+    // AGEABLE - bool = false -> ADULT, true -> BABY
+    // PRIVATE - bool = false -> PUBLIC, true -> PRIVATE
 
-    /**
-     * Instantiates a new Pet.
-     *
-     * @param petName   the pet name
-     * @param petType   the pet type
-     * @param ownUUID   the own uuid
-     * @param ownerUUID the owner uuid
-     * @param skillName the skill name
-     * @param active    the active
-     */
-    public Pet(String petName, OpPetsEntityTypes.TypeOfEntity petType, UUID ownUUID, UUID ownerUUID, String skillName, boolean active) {
+    public Pet(String petName, TypeOfEntity petType, UUID ownUUID, UUID ownerUUID, boolean active) {
+        this();
         setPetName(petName);
         setPetExperience(0);
         setLevel(0);
@@ -85,29 +42,16 @@ public class Pet implements Serializable, IGetter {
         setActive(false);
         setOwnUUID(ownUUID);
         setOwnerUUID(ownerUUID);
-        setSkillName(skillName);
+        setSkillName(new SkillUtils().getRandomSkillName(petType));
         resetSettings();
         setActive(active);
         setPrestige("0;&a");
         setPetUUID(new PetUUID());
+        setPreferences(converter.createPetPreferences(this));
     }
 
-    /**
-     * Instantiates a new Pet.
-     *
-     * @param a        the a
-     * @param b1       the b 1
-     * @param b2       the b 2
-     * @param c        the c
-     * @param d        the d
-     * @param e1       the e 1
-     * @param e2       the e 2
-     * @param sS       the s s
-     * @param skill    the skill
-     * @param prestige the prestige
-     * @param petUUID  the pet uuid
-     */
-    public Pet(String a, double b1, int b2, OpPetsEntityTypes.TypeOfEntity c, boolean d, UUID e1, UUID e2, String sS, String skill, String prestige, PetUUID petUUID) {
+    public Pet(String a, double b1, int b2, TypeOfEntity c, boolean d, UUID e1, UUID e2, String skill, String prestige, PetUUID petUUID, OpObjects preferences, OpObjects settings) {
+        this();
         setPetName(a);
         setPetExperience(b1);
         setLevel(b2);
@@ -115,388 +59,196 @@ public class Pet implements Serializable, IGetter {
         setActive(d);
         setOwnUUID(e1);
         setOwnerUUID(e2);
-        setSettingsSerialized(sS);
+        setSettings(settings);
         setSkillName(skill);
         setPrestige(prestige);
         setPetUUID(petUUID);
+        setPreferences(preferences);
     }
 
-    /**
-     * Gets pet name.
-     *
-     * @return the pet name
-     */
-    public @Nullable String getPetName() {
+    public Pet() {
+    }
+
+    public String getPetName() {
         return name;
     }
 
-    /**
-     * Sets pet name.
-     *
-     * @param petName the pet name
-     */
     public void setPetName(String petName) {
         this.name = petName;
     }
 
-    /**
-     * Gets pet experience.
-     *
-     * @return the pet experience
-     */
     public double getPetExperience() {
         return experience;
     }
 
-    /**
-     * Sets pet experience.
-     *
-     * @param petExperience the pet experience
-     */
     public void setPetExperience(double petExperience) {
         this.experience = petExperience;
     }
 
-    /**
-     * Gets type.
-     *
-     * @return the type
-     */
     @Override
     public GETTER_TYPE getGetterType() {
         return GETTER_TYPE.PET;
     }
 
-    /**
-     * Gets object.
-     *
-     * @return the object
-     */
     @Override
     public Object getObject() {
         return this;
     }
 
-    /**
-     * Sets pet type.
-     *
-     * @param petType the pet type
-     */
-    public void setPetType(OpPetsEntityTypes.TypeOfEntity petType) {
+    public void setPetType(TypeOfEntity petType) {
         this.type = petType;
     }
 
-    /**
-     * Is active boolean.
-     *
-     * @return the boolean
-     */
     public boolean isActive() {
         return active;
     }
 
-    /**
-     * Sets active.
-     *
-     * @param active the active
-     */
     public void setActive(boolean active) {
         this.active = active;
     }
 
-    /**
-     * Gets own uuid.
-     *
-     * @return the own uuid
-     */
     public UUID getOwnUUID() {
-        return own;
+        return ownID;
     }
 
-    /**
-     * Sets own uuid.
-     *
-     * @param ownUUID the own uuid
-     */
     public void setOwnUUID(UUID ownUUID) {
-        this.own = ownUUID;
+        this.ownID = ownUUID;
     }
 
-    /**
-     * Gets owner uuid.
-     *
-     * @return the owner uuid
-     */
     public UUID getOwnerUUID() {
-        return owner;
+        return ownerID;
     }
 
-    /**
-     * Sets owner uuid.
-     *
-     * @param ownerUUID the owner uuid
-     */
     public void setOwnerUUID(UUID ownerUUID) {
-        this.owner = ownerUUID;
+        this.ownerID = ownerUUID;
     }
 
-    /**
-     * Gets skill name.
-     *
-     * @return the skill name
-     */
     public String getSkillName() {
         return skill;
     }
 
-    /**
-     * Sets skill name.
-     *
-     * @param skill the skill
-     */
     public void setSkillName(String skill) {
         this.skill = skill;
     }
 
-    /**
-     * Gets level.
-     *
-     * @return the level
-     */
     public int getLevel() {
         return level;
     }
 
-    /**
-     * Sets level.
-     *
-     * @param level the level
-     */
     public void setLevel(int level) {
         this.level = level;
     }
 
-    /**
-     * Gets prestige.
-     *
-     * @return the prestige
-     */
     public String getPrestige() {
         return prestige;
     }
 
-    /**
-     * Sets prestige.
-     *
-     * @param prestige the prestige
-     */
     public void setPrestige(String prestige) {
         this.prestige = prestige;
     }
 
-    /**
-     * Gets settings serialized.
-     *
-     * @return the settings serialized
-     */
-    public String getSettingsSerialized() {
-        return this.settings;
-    }
-
-    /**
-     * Sets settings serialized.
-     *
-     * @param settingsSerialized the settings serialized
-     */
-    public void setSettingsSerialized(String settingsSerialized) {
-        this.settings = settingsSerialized;
-    }
-
-    /**
-     * Is visible to others boolean.
-     *
-     * @return the boolean
-     */
     public boolean isVisibleToOthers() {
-        return getBinaryFromStringAndChar(getSettingsSerialized(), 0);
+        return converter.readPetSetting(this, "visibleToOthers");
     }
 
-    /**
-     * Sets visible to others.
-     *
-     * @param b the b
-     */
     public void setVisibleToOthers(boolean b) {
-        settings = getBinaryFromStringToChar(getSettingsSerialized(), 0, b);
+        setSettings(converter.setPetSetting(this, "visibleToOthers", b));
     }
 
-    /**
-     * Is giftable boolean.
-     *
-     * @return the boolean
-     */
     public boolean isGiftable() {
-        return getBinaryFromStringAndChar(getSettingsSerialized(), 1);
+        return converter.readPetSetting(this, "giftable");
     }
 
-    /**
-     * Sets giftable.
-     *
-     * @param b the b
-     */
     public void setGiftable(boolean b) {
-        settings = getBinaryFromStringToChar(getSettingsSerialized(), 1, b);
+        setSettings(converter.setPetSetting(this, "giftable", b));
     }
 
-    /**
-     * Is glowing boolean.
-     *
-     * @return the boolean
-     */
+    //TODO add glow colors
     public boolean isGlowing() {
-        return getBinaryFromStringAndChar(getSettingsSerialized(), 2);
+        return converter.readPetSetting(this, "glows");
     }
 
-    /**
-     * Sets glow.
-     *
-     * @param b the b
-     */
     public void setGlow(boolean b) {
-        settings = getBinaryFromStringToChar(getSettingsSerialized(), 2, b);
+        setSettings(converter.setPetSetting(this, "glows", b));
     }
 
-    /**
-     * Is following player boolean.
-     *
-     * @return the boolean
-     */
     public boolean isFollowingPlayer() {
-        return getBinaryFromStringAndChar(getSettingsSerialized(), 3);
+        return converter.readPetSetting(this, "followPlayer");
     }
 
-    /**
-     * Sets follow player.
-     *
-     * @param b the b
-     */
     public void setFollowPlayer(boolean b) {
-        settings = getBinaryFromStringToChar(getSettingsSerialized(), 3, b);
+        setSettings(converter.setPetSetting(this, "followPlayer", b));
     }
 
-    /**
-     * Is teleporting to player boolean.
-     *
-     * @return the boolean
-     */
     public boolean isTeleportingToPlayer() {
-        return getBinaryFromStringAndChar(getSettingsSerialized(), 4);
+        return converter.readPetSetting(this, "teleportToPlayer");
     }
 
-    /**
-     * Sets teleporting to player.
-     *
-     * @param b the b
-     */
     public void setTeleportingToPlayer(boolean b) {
-        settings = getBinaryFromStringToChar(getSettingsSerialized(), 4, b);
+        setSettings(converter.setPetSetting(this, "teleportToPlayer", b));
     }
 
-    /**
-     * Is rideable boolean.
-     *
-     * @return the boolean
-     */
     public boolean isRideable() {
-        return getBinaryFromStringAndChar(getSettingsSerialized(), 5);
+        return converter.readPetSetting(this, "rideable");
     }
 
-    /**
-     * Sets rideable.
-     *
-     * @param b the b
-     */
     public void setRideable(boolean b) {
-        settings = getBinaryFromStringToChar(getSettingsSerialized(), 5, b);
+        setSettings(converter.setPetSetting(this, "rideable", b));
     }
 
-    /**
-     * Is other rideable boolean.
-     *
-     * @return the boolean
-     */
     public boolean isOtherRideable() {
-        return getBinaryFromStringAndChar(getSettingsSerialized(), 6);
+        return converter.readPetSetting(this, "otherRideable");
     }
 
-    /**
-     * Sets other rideable.
-     *
-     * @param b the b
-     */
     public void setOtherRideable(boolean b) {
-        settings = getBinaryFromStringToChar(getSettingsSerialized(), 6, b);
+        setSettings(converter.setPetSetting(this, "otherRideable", b));
     }
 
-    /**
-     * Are particles enabled boolean.
-     *
-     * @return the boolean
-     */
     public boolean areParticlesEnabled() {
-        return getBinaryFromStringAndChar(getSettingsSerialized(), 7);
+        return converter.readPetSetting(this, "particlesEnabled");
     }
 
-    /**
-     * Sets particles enabled.
-     *
-     * @param b the b
-     */
     public void setParticlesEnabled(boolean b) {
-        settings = getBinaryFromStringToChar(getSettingsSerialized(), 7, b);
+        setSettings(converter.setPetSetting(this, "particlesEnabled", b));
     }
 
-    /**
-     * Reset settings.
-     */
     public void resetSettings() {
-        this.settings = "10011101";
+        setSettings(converter.createPetSettings(this));
     }
 
-    /**
-     * Gets pet uuid.
-     *
-     * @return the pet uuid
-     */
     public PetUUID getPetUUID() {
-        return uuid;
+        return petID;
     }
 
-    /**
-     * Sets pet uuid.
-     *
-     * @param uuid the uuid
-     */
     public void setPetUUID(PetUUID uuid) {
-        this.uuid = uuid;
+        this.petID = uuid;
     }
 
-    /**
-     * Sets type.
-     *
-     * @param type the type
-     */
-    public void setType(OpPetsEntityTypes.TypeOfEntity type) {
+    public void setType(TypeOfEntity type) {
         this.type = type;
     }
 
-    /**
-     * Gets pet type.
-     *
-     * @return the pet type
-     */
-    public OpPetsEntityTypes.TypeOfEntity getPetType() {
+    public TypeOfEntity getPetType() {
         return type;
     }
 
+    public void setPreferences(OpObjects object) {
+        this.preferences = object;
+    }
+
+    public OpObjects getPreferences() {
+        return this.preferences;
+    }
+
+    public boolean isBaby() {
+        return converter.readPetPreference(this, "ageable");
+    }
+
+    public OpObjects getSettings() {
+        return settings;
+    }
+
+    public void setSettings(OpObjects settings) {
+        this.settings = settings;
+    }
 }

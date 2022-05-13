@@ -8,97 +8,34 @@ package me.opkarol.oppets.skills;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-/**
- * The type Skill enums.
- */
 public class SkillEnums {
 
-    /**
-     * The enum Skills abilities.
-     */
     public enum SkillsAbilities {
-        /**
-         * The Custom command.
-         */
-// CURRENT PLUGIN CONNECTIONS: Vault
+        // CURRENT PLUGIN CONNECTIONS: Vault
         CUSTOM_COMMAND,
-        /**
-         * Plugin connection skills abilities.
-         */
         PLUGIN_CONNECTION,
-        /**
-         * Vanilla effect skills abilities.
-         */
         VANILLA_EFFECT,
-        /**
-         * Treasure skills abilities.
-         */
         TREASURE,
-        /**
-         * Custom message skills abilities.
-         */
         CUSTOM_MESSAGE
     }
 
-    /**
-     * The enum Skills requirements.
-     */
     public enum SkillsRequirements {
-        /**
-         * Pet level skills requirements.
-         */
         PET_LEVEL,
     }
 
-    /**
-     * The enum Skills boosters.
-     */
     public enum SkillsBoosters {
-        /**
-         * Custom booster skills boosters.
-         */
         CUSTOM_BOOSTER,
-        /**
-         * Server boost skills boosters.
-         */
         SERVER_BOOST,
-        /**
-         * Player boost skills boosters.
-         */
         PLAYER_BOOST,
-        /**
-         * World boost skills boosters.
-         */
         WORLD_BOOST,
-        /**
-         * Pet boost skills boosters.
-         */
         PET_BOOST
     }
 
-    /**
-     * The enum Skills adders.
-     */
     public enum SkillsAdders {
-        /**
-         * Mining skills adders.
-         */
         MINING,
-        /**
-         * Harvesting skills adders.
-         */
         HARVESTING,
-        /**
-         * Crafting skills adders.
-         */
         CRAFTING,
-        /**
-         * Smelting skills adders.
-         */
         SMELTING,
-        /**
-         * Fishing skills adders.
-         */
         FISHING
     }
 }

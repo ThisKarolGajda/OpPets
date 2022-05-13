@@ -9,9 +9,10 @@ package me.opkarol.oppets.skills;
  */
 
 import me.opkarol.oppets.databases.APIDatabase;
-import me.opkarol.oppets.pets.OpPetsEntityTypes;
+import me.opkarol.oppets.pets.TypeOfEntity;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.ConfigUtils;
+import me.opkarol.oppets.utils.MathUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -22,55 +23,32 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * The type Skill utils.
- */
 public class SkillUtils {
-    /**
-     * The Config.
-     */
     private final FileConfiguration config = ConfigUtils.getConfig();
-    /**
-     * The Skill database.
-     */
     private final SkillDatabase skillDatabase;
 
-    /**
-     * Instantiates a new Skill utils.
-     */
     public SkillUtils() {
         skillDatabase = APIDatabase.getInstance().getSkillDatabase();
     }
 
-    /**
-     * Instantiates a new Skill utils.
-     *
-     * @param database the database
-     */
     public SkillUtils(SkillDatabase database) {
         this.skillDatabase = database;
     }
 
-    /**
-     * Gets allowed entities.
-     *
-     * @param string the string
-     * @return the allowed entities
-     */
-    public List<OpPetsEntityTypes.TypeOfEntity> getAllowedEntities(@NotNull String string) {
+    public List<TypeOfEntity> getAllowedEntities(@NotNull String string) {
         String substring = string.substring(1, string.length() - 1);
         String[] strings = substring.split(",");
-        List<OpPetsEntityTypes.TypeOfEntity> list = new ArrayList<>();
+        List<TypeOfEntity> list = new ArrayList<>();
         try {
             for (String pseudoType : strings) {
                 if (pseudoType.equals("[]")) {
                     break;
                 }
                 if (pseudoType.equals("ALL")) {
-                    list.addAll(Arrays.stream(OpPetsEntityTypes.TypeOfEntity.values()).collect(Collectors.toList()));
+                    list.addAll(Arrays.stream(TypeOfEntity.values()).collect(Collectors.toList()));
                     break;
                 }
-                list.add(OpPetsEntityTypes.TypeOfEntity.valueOf(pseudoType));
+                list.add(TypeOfEntity.valueOf(pseudoType));
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -78,17 +56,11 @@ public class SkillUtils {
         return list;
     }
 
-    /**
-     * Gets skill abilities from section.
-     *
-     * @param pathI the path i
-     * @return the skill abilities from section
-     */
     public List<Ability> getSkillAbilitiesFromSection(String pathI) {
         if (pathI == null) {
             return null;
         }
-        pathI = pathI.substring(0, pathI.length() - 1);
+        pathI = MathUtils.substringFromEnd(pathI, 1);
         List<Ability> list = new ArrayList<>();
         ConfigurationSection sec = config.getConfigurationSection(pathI + ".abilities");
         if (sec == null) {
@@ -101,17 +73,11 @@ public class SkillUtils {
         return list;
     }
 
-    /**
-     * Gets skill requirement from section.
-     *
-     * @param path the path
-     * @return the skill requirement from section
-     */
     public List<Requirement> getSkillRequirementFromSection(String path) {
         if (path == null) {
             return null;
         }
-        path = path.substring(0, path.length() - 1);
+        path = MathUtils.substringFromEnd(path, 1);
         List<Requirement> list = new ArrayList<>();
         ConfigurationSection sec = config.getConfigurationSection(path + ".requirements");
         if (sec == null) {
@@ -124,17 +90,11 @@ public class SkillUtils {
         return list;
     }
 
-    /**
-     * Gets skill adder from section.
-     *
-     * @param path the path
-     * @return the skill adder from section
-     */
     public List<Adder> getSkillAdderFromSection(String path) {
         if (path == null) {
             return null;
         }
-        path = path.substring(0, path.length() - 1);
+        path = MathUtils.substringFromEnd(path, 1);
         List<Adder> list = new ArrayList<>();
         ConfigurationSection sec = config.getConfigurationSection(path + ".adders");
         if (sec == null) {
@@ -152,13 +112,6 @@ public class SkillUtils {
         return list;
     }
 
-    /**
-     * Gets granted points from enum.
-     *
-     * @param pet         the pet
-     * @param skillsAdder the skills adder
-     * @return the granted points from enum
-     */
     public double getGrantedPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
         List<Double> values = skillDatabase.getSkillFromMap(pet.getSkillName()).getAdderList().stream()
                 .filter(adder -> adder.getAdder() == skillsAdder)
@@ -170,13 +123,6 @@ public class SkillUtils {
         return values.get(0);
     }
 
-    /**
-     * Gets max points from enum.
-     *
-     * @param pet         the pet
-     * @param skillsAdder the skills adder
-     * @return the max points from enum
-     */
     public double getMaxPointsFromEnum(@NotNull Pet pet, SkillEnums.SkillsAdders skillsAdder) {
         List<Object> values = skillDatabase.getSkillFromMap(pet.getSkillName()).getAdderList()
                 .stream().map(adder -> {
@@ -195,15 +141,11 @@ public class SkillUtils {
         return (double) values.get(0);
     }
 
-    /**
-     * Gets random skill name.
-     *
-     * @param type the type
-     * @return the random skill name
-     */
-    public String getRandomSkillName(OpPetsEntityTypes.TypeOfEntity type) {
+    public String getRandomSkillName(TypeOfEntity type) {
         List<Skill> list = skillDatabase.getAccessibleSkillsToPetType(type);
-        if (list == null) return null;
+        if (list == null || list.size() == 0) {
+            return "";
+        }
         if (list.size() == 1) {
             return list.get(0).getName();
         } else {
@@ -211,13 +153,6 @@ public class SkillUtils {
         }
     }
 
-    /**
-     * Gets random number.
-     *
-     * @param min the min
-     * @param max the max
-     * @return the random number
-     */
     public int getRandomNumber(int min, int max) {
         if (min == max) {
             return min;

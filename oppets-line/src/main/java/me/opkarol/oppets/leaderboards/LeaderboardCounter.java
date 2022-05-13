@@ -9,7 +9,10 @@ package me.opkarol.oppets.leaderboards;
  */
 
 import me.opkarol.oppets.cache.InventoryCache;
+import me.opkarol.oppets.collections.OpMap;
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.exceptions.ExceptionLogger;
+import me.opkarol.oppets.inventory.OpInventories;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -17,28 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * The type Leaderboard counter.
- */
 public class LeaderboardCounter {
-    /**
-     * The Active leaderboards.
-     */
     private final HashSet<Leaderboard> activeLeaderboards = new HashSet<>();
-    /**
-     * The Database.
-     */
     private final Database database;
-    /**
-     * The Cache.
-     */
     private InventoryCache cache;
 
-    /**
-     * Instantiates a new Leaderboard counter.
-     *
-     * @param database the database
-     */
     public LeaderboardCounter(Database database) {
         this.database = database;
         setupLeaderboards();
@@ -46,106 +32,79 @@ public class LeaderboardCounter {
         cache = new InventoryCache();
     }
 
-    /**
-     * Sets leaderboards.
-     */
     private void setupLeaderboards() {
         addLeaderboard("top_level", Leaderboard.LEADERBOARD_TYPE.TOP_LEVEL);
         addLeaderboard("top_prestige", Leaderboard.LEADERBOARD_TYPE.TOP_PRESTIGE);
         addLeaderboard("top_experience", Leaderboard.LEADERBOARD_TYPE.TOP_EXPERIENCE);
     }
 
-    /**
-     * Update tick.
-     */
     private void updateTick() {
-        updateLeaderboards();
         new BukkitRunnable() {
             @Override
             public void run() {
                 updateLeaderboards();
             }
-        }.runTaskTimerAsynchronously(database.getPlugin(), 1200, 1200);
+        }.runTaskTimerAsynchronously(database.getPlugin(), 0, 1200);
     }
 
-    /**
-     * Update leaderboards.
-     */
     private void updateLeaderboards() {
         new BukkitRunnable() {
             @Override
             public void run() {
-                HashMap<UUID, Pet> pets = database.getDatabase().getActivePetMap();
+                OpMap<UUID, Pet> pets = database.getDatabase().getActivePetMap();
+                if (pets == null) {
+                    return;
+                }
                 activeLeaderboards.forEach(leaderboard -> {
-                    Collection<Pet> value = pets.values();
-                    List<Pet> places;
-                    switch (leaderboard.getType()) {
-                        case TOP_LEVEL:
-                            places = value.stream()
-                                    .sorted(Comparator.comparing(Pet::getLevel))
-                                    .collect(Collectors.toList());
-                            break;
-                        case TOP_PRESTIGE:
-                            places = value.stream()
-                                    .sorted(Comparator.comparing(Pet::getPrestige))
-                                    .collect(Collectors.toList());
-                            break;
-                        case TOP_EXPERIENCE:
-                            places = value.stream()
-                                    .sorted(Comparator.comparing(Pet::getPetExperience))
-                                    .collect(Collectors.toList());
-                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + leaderboard.getType());
+                    Collection<Pet> value = pets.getValues();
+                    if (value != null) {
+                        List<Pet> places = null;
+                        switch (leaderboard.getType()) {
+                            case TOP_LEVEL:
+                                places = value.stream()
+                                        .sorted(Comparator.comparing(Pet::getLevel))
+                                        .collect(Collectors.toList());
+                                break;
+                            case TOP_PRESTIGE:
+                                places = value.stream()
+                                        .sorted(Comparator.comparing(Pet::getPrestige))
+                                        .collect(Collectors.toList());
+                                break;
+                            case TOP_EXPERIENCE:
+                                places = value.stream()
+                                        .sorted(Comparator.comparing(Pet::getPetExperience))
+                                        .collect(Collectors.toList());
+                                break;
+                            default:
+                                ExceptionLogger.getInstance().throwException("Unexpected value: " + leaderboard.getType());
+                        }
+                        Collections.reverse(places);
+                        leaderboard.setPlaces(places);
                     }
-                    Collections.reverse(places);
-                    leaderboard.setPlaces(places);
                 });
-                cache.setInventory(new LeaderboardInventory().getInventory());
+                cache.setInventory(new OpInventories.LeaderboardInventory().buildInventory());
             }
         }.runTaskAsynchronously(database.getPlugin());
     }
 
-    /**
-     * Add leaderboard.
-     *
-     * @param name the name
-     * @param type the type
-     */
     public void addLeaderboard(String name, Leaderboard.LEADERBOARD_TYPE type) {
         activeLeaderboards.add(new Leaderboard(name, new ArrayList<>(), type));
     }
 
-    /**
-     * Gets leaderboards from name.
-     *
-     * @param name the name
-     * @return the leaderboards from name
-     */
     public List<Leaderboard> getLeaderboardsFromName(String name) {
         return activeLeaderboards.stream().filter(leaderboard -> leaderboard.getName().equals(name)).collect(Collectors.toList());
     }
 
-    /**
-     * Gets cache.
-     *
-     * @return the cache
-     */
     public @NotNull InventoryCache getCache() {
         if (cache == null) {
             cache = new InventoryCache();
         }
         if (cache.getInventory() == null) {
-            cache.setInventory(new LeaderboardInventory().getInventory());
+            cache.setInventory(new OpInventories.LeaderboardInventory().buildInventory());
         }
         return cache;
     }
 
-    /**
-     * Sets cache.
-     *
-     * @param cache the cache
-     */
     public void setCache(InventoryCache cache) {
         this.cache = cache;
     }

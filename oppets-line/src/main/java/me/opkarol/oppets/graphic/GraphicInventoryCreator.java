@@ -8,7 +8,6 @@ package me.opkarol.oppets.graphic;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.interfaces.IGraphicInventoryData;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,7 @@ public class GraphicInventoryCreator {
                 if (graphicItem == null) {
                     continue;
                 }
-                inventory.setItem(graphicItem.getButtonItem().getSlot(), graphicItem.getButtonItem().getItem());
+                inventory.setItem(graphicItem.getSlot(), graphicItem.getItem());
             }
         }
     }

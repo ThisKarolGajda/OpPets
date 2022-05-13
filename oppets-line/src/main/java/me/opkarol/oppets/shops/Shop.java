@@ -8,133 +8,62 @@ package me.opkarol.oppets.shops;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.interfaces.IGetter;
-import me.opkarol.oppets.interfaces.IInventory;
+import me.opkarol.oppets.graphic.IGetter;
+import me.opkarol.oppets.items.OpItemBuilder;
+import me.opkarol.oppets.items.OpItemShopData;
 import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.InventoryUtils;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * The type Shop.
- */
-public class Shop implements IGetter, IInventory {
-    /**
-     * The Price.
-     */
+public class Shop implements IGetter {
     private final int price;
-    /**
-     * The Type.
-     */
     private final String type;
-    /**
-     * The Path.
-     */
     private final String path;
-    /**
-     * The Item.
-     */
-    private final ItemStack item;
+    private final OpItemBuilder item;
 
-    /**
-     * Instantiates a new Shop.
-     *
-     * @param price the price
-     * @param type  the type
-     * @param path  the path
-     */
     public Shop(int price, String type, String path) {
         this.price = price;
         this.type = type;
         this.path = path;
-        item = InventoryUtils.itemCreatorShop(getShopType(), getPrice(), getPath(), this);
+        item = OpItemBuilder.getBuilder().setPath(getPath()).setShopData(new OpItemShopData(String.valueOf(price), type));
     }
 
-    /**
-     * Gets price.
-     *
-     * @return the price
-     */
     public int getPrice() {
         return price;
     }
 
-    /**
-     * Gets path.
-     *
-     * @return the path
-     */
     public String getPath() {
         return path;
     }
 
-    /**
-     * Gets shop type.
-     *
-     * @return the shop type
-     */
     public String getShopType() {
         return type;
     }
 
-    /**
-     * Gets type.
-     *
-     * @return the type
-     */
     @Override
     public GETTER_TYPE getGetterType() {
         return GETTER_TYPE.SHOP;
     }
 
-    /**
-     * Gets object.
-     *
-     * @return the object
-     */
     @Override
     public Object getObject() {
         return this;
     }
 
-    /**
-     * Sets place holders.
-     *
-     * @param lore the lore
-     * @return the place holders
-     */
-    @Override
-    public @NotNull List<String> setPlaceHolders(@NotNull List<String> lore) {
-        return lore.stream().map(s -> FormatUtils.formatMessage(s
-                        .replace("%type%", type)
-                        .replace("%price%", String.valueOf(price))))
-                .collect(Collectors.toList());    }
-
-    @Override
-    public Inventory getInventory() {
-        return null;
-    }
-
-    @Override
-    public void loadButtons() {
-
-    }
-
-    @Override
-    public String getHolderName() {
-        return null;
-    }
-
-    /**
-     * Gets item.
-     *
-     * @return the item
-     */
-    public ItemStack getItem() {
+    public OpItemBuilder getItem() {
         return item;
+    }
+
+    public String getShopPrice() {
+        return String.valueOf(price);
+    }
+
+    public Function<List<String>, List<String>> getFunction() {
+        return strings -> strings.stream().map(s -> FormatUtils.formatMessage(s
+                        .replace("%type%", getShopType())
+                        .replace("%price%", getShopPrice())))
+                .collect(Collectors.toList());
     }
 }

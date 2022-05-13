@@ -1,0 +1,40 @@
+Commands:
+  badCommandUsage: '&cBad command usage! Use &f&l%proper_usage% &cinstead.'
+  noPermission: '&cYou don`t have permission &f&l%permission% &cto use this command.'
+  noConsole: '&7Console cannot use this command.'
+  petWithSameName: '&cYour pet has already a name &f&l%pet_name%&c.'
+  wrongType: '&cSelected type &f&l%pet_type% &cis not available'
+  createdPet: '&7Created &f&l%pet_name%&7, pet type of &f&l%pet_type%&7.'
+  invalidPet: '&cPet is invalid!'
+  petIsntGiftable: '&cPet isn`t giftable!'
+  petIsntRideable: '&cPet isn`t rideable'
+  receiverSameNamedPet: '&cReceiver already has pet named &f&l%pet_name%&c!'
+  receiverInvalid: '&cReceiver is invalid.'
+  petGifted: '&f&l%pet_name% &7has been gifted to &f&l%player_name%&7!'
+  petBlockedName: '&cPet name contains blocked phrase &f&l%blocked_word%&c!'
+  petListEmpty: '&cPet list is empty.'
+  samePet: '&cYou have the same pet equipped.'
+  summonedPet: '&7You have summoned pet &f&l%pet_name%&7!'
+  cantPrestige: '&cYour pet cannot prestige now. Need &f&l%more_levels% &cmore levels
+    to be able to!'
+  changedAdminValue: '&7Set value: &f&l%value%&7 for object: &f&l%key%&7, for &f&l%player_name%&7
+    pet: &f&l%pet_name%&7!'
+  calledSuccessfully: '&7Your pet has been called successfully!'
+  respawnedSuccessfully: '&7Your pet has been respawned without any problems, enjoy!'
+  boostersListFormat: '%name% - %type% - %multiplier% - %running%'
+  broadcastListFormat: '%prefix% - %type% - %format%'
+  invalidBooster: '&cInvalid booster.'
+  invalidObjectProvided: '&cProvided object / argument is invalid.'
+Messages:
+  petLevelUpMessage: '&2-------------------------------%newline%&eNew level &6&l%pet_name%&e!%newline%&eYour
+    pet is now level &6&l%current_level%&e!%newline%Your pet needs &6&l%experience_level%
+    &eexp &eto reach next level.%newline%&2-------------------------------%newline%'
+  prestigeUpMessage: '&2-------------------------------%newline%&eNew prestige &6&l%pet_name%&e!%newline%&eYour
+    pet is now on prestige &6&l%current_prestige%&e!%newline%Your pet needs &6&l%max_level%
+    &elevels &eto reach next prestige.%newline%&2-------------------------------%newline%'
+  notEnoughMoney: '&cYou don`t have enough money to buy it.'
+  successfullyBought: '&7You successfully purchased it.'
+Formats:
+  broadcastFormat: "&f&l%prefix% &7[&c&l%type%&7]: &f%message%"
+  boosterEnabledMessage: "&7Booster %name% has been activated for %time% seconds!"
+  defaultServerValue: "SERVER"

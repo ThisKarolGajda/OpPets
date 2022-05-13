@@ -9,26 +9,15 @@ package me.opkarol.oppets.shops;
  */
 
 import me.opkarol.oppets.cache.InventoryCache;
+import me.opkarol.oppets.inventory.OpInventories;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The type Shop cache.
- */
 public class ShopCache {
-    /**
-     * The Cache.
-     */
     private static List<InventoryCache> cache;
 
-    /**
-     * Gets cache.
-     *
-     * @param page the page
-     * @return the cache
-     */
     public static @NotNull InventoryCache getCache(int page) {
         if (cache == null) {
             cache = new ArrayList<>();
@@ -38,7 +27,7 @@ public class ShopCache {
         }
         InventoryCache current = cache.get(page);
         if (current.getInventory() == null) {
-            current.setInventory(new ShopInventory(page).getInventory());
+            current.setInventory(new OpInventories.ShopInventory(page).buildInventory());
         }
         return current;
     }

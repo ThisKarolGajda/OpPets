@@ -8,142 +8,114 @@ package me.opkarol.oppets.databases;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.collections.OpMap;
 import me.opkarol.oppets.interfaces.IDatabase;
 import me.opkarol.oppets.pets.Pet;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
+import me.opkarol.oppets.utils.OpUtils;
+import me.opkarol.oppets.utils.PetsUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-import static me.opkarol.oppets.utils.FormatUtils.getNameString;
-
-/**
- * The type Mini pets database.
- */
 public class MiniPetsDatabase implements IDatabase {
-    /**
-     * The Active pet map.
-     */
-    private HashMap<UUID, Pet> activePetMap;
-    /**
-     * The Pets map.
-     */
-    private HashMap<UUID, List<Pet>> petsMap;
-    /**
-     * The Id pets map.
-     */
-    private HashMap<UUID, Integer> idPetsMap;
-    /**
-     * The Database.
-     */
-    private final Database database = Database.getInstance();
+    private OpMap<UUID, Pet> activePetMap = new OpMap<>();
+    private OpMap<UUID, List<Pet>> petsMap = new OpMap<>();
+    private OpMap<UUID, Integer> idPetsMap;
 
-    /**
-     * Start logic.
-     */
     @Override
     public void startLogic() {
-        if (activePetMap == null) {
-            activePetMap = new HashMap<>();
-        }
-        if (petsMap == null) {
-            petsMap = new HashMap<>();
-        }
-        if (idPetsMap == null) {
-            idPetsMap = new HashMap<>();
-        }
+        idPetsMap = new OpMap<>();
     }
 
-    /**
-     * Add id pet.
-     *
-     * @param petUUID the pet uuid
-     * @param petId   the pet id
-     */
     @Override
     public void addIdPet(UUID petUUID, int petId) {
         idPetsMap.replace(petUUID, petId);
     }
 
-    /**
-     * Gets id pet.
-     *
-     * @param petUUID the pet uuid
-     * @return the id pet
-     */
     @Override
     public int getIdPet(UUID petUUID) {
         return idPetsMap.getOrDefault(petUUID, 0);
     }
 
-    /**
-     * Remove pet.
-     *
-     * @param uuid the uuid
-     * @param pet  the pet
-     */
+    @Override
+    public List<Integer> getPetIDs() {
+       return new ArrayList<>(idPetsMap.getValues());
+    }
+
     @Override
     public void removePet(UUID uuid, @NotNull Pet pet) {
-        ArrayList<Pet> list = (ArrayList<Pet>) petsMap.get(uuid);
-        if (pet.getPetName() == null) {
-            return;
+        List<Pet> list = getPetList(uuid);
+        int petID = pet.getPetUUID().getID();
+        if (list.stream().anyMatch(pet1 -> pet1.getPetUUID().getID() == petID)) {
+            removeCurrentPet(uuid);
         }
-        if (getCurrentPet(uuid) != null) {
-            if (Objects.equals(getNameString(Objects.requireNonNull(getCurrentPet(uuid).getPetName())), getNameString(pet.getPetName()))) {
-                removeCurrentPet(uuid);
-            }
-        }
-        list.removeIf(pet1 -> Objects.equals(getNameString(pet1.getPetName()), getNameString(pet.getPetName())));
+        list.removeIf(pet1 -> pet1.getPetUUID().getID() == petID);
         setPets(uuid, list);
     }
 
-    /**
-     * Gets active pet map.
-     *
-     * @return the active pet map
-     */
     @Override
-    public HashMap<UUID, Pet> getActivePetMap() {
+    public Optional<Pet> removePet(UUID uuid, String name) {
+        if (hasPet(uuid, name)) {
+            Optional<Pet> pet = getPet(uuid, name);
+            pet.ifPresent(pet1 -> removePet(uuid, pet1));
+            return pet;
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean hasPet(UUID uuid, String name) {
+        if (uuid != null && name != null) {
+            return getPetList(uuid).stream()
+                    .anyMatch(pet -> PetsUtils.equalsNames(pet, name));
+        }
+        return false;
+    }
+
+    @Override
+    public Optional<Pet> getPet(UUID uuid, String name) {
+        if (hasPet(uuid, name)) {
+            return getPetList(uuid).stream()
+                    .filter(pet -> PetsUtils.equalsNames(pet, name)).findAny();
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public void updatePet(UUID uuid, Pet pet) {
+        removePet(uuid, pet);
+        addPetToPetsList(uuid, pet);
+    }
+
+    @Override
+    public OpMap<UUID, Pet> getActivePetMap() {
         return activePetMap;
     }
 
-    /**
-     * Sets active pet map.
-     *
-     * @param activePetMap the active pet map
-     */
     @Override
-    public void setActivePetMap(HashMap<UUID, Pet> activePetMap) {
+    public void setActivePetMap(OpMap<UUID, Pet> activePetMap) {
+        if (activePetMap == null) {
+            activePetMap = new OpMap<>();
+        }
         this.activePetMap = activePetMap;
     }
 
-    /**
-     * Gets pets map.
-     *
-     * @return the pets map
-     */
     @Override
-    public HashMap<UUID, List<Pet>> getPetsMap() {
+    public OpMap<UUID, List<Pet>> getPetsMap() {
         return petsMap;
     }
 
-    /**
-     * Sets pets map.
-     *
-     * @param petsMap the pets map
-     */
     @Override
-    public void setPetsMap(HashMap<UUID, List<Pet>> petsMap) {
+    public void setPetsMap(OpMap<UUID, List<Pet>> petsMap) {
+        if (petsMap == null) {
+            petsMap = new OpMap<>();
+        }
         this.petsMap = petsMap;
     }
 
-    /**
-     * Sets current pet.
-     *
-     * @param uuid the uuid
-     * @param pet  the pet
-     */
     @Override
     public void setCurrentPet(UUID uuid, Pet pet) {
         if (activePetMap.containsKey(uuid)) {
@@ -153,84 +125,33 @@ public class MiniPetsDatabase implements IDatabase {
         }
     }
 
-    /**
-     * Gets current pet.
-     *
-     * @param uuid the uuid
-     * @return the current pet
-     */
     @Override
     public Pet getCurrentPet(UUID uuid) {
-        return activePetMap.get(uuid);
+        return activePetMap.getOrDefault(uuid, null);
     }
 
-    /**
-     * Remove current pet.
-     *
-     * @param uuid the uuid
-     */
     @Override
     public void removeCurrentPet(UUID uuid) {
-        Pet pet = getCurrentPet(uuid);
-        activePetMap.values().stream().filter(pet1 -> Objects.equals(pet1.getPetName(), pet.getPetName())).forEach(pet1 -> {
-            Entity entity = Bukkit.getEntity(pet.getOwnUUID());
-            if (entity != null) {
-                entity.remove();
-            }
-            database.getDatabase().removePet(uuid, pet);
-        });
+        OpUtils.killPetFromPlayerUUID(uuid);
         activePetMap.remove(uuid);
     }
 
-    /**
-     * Sets pets.
-     *
-     * @param uuid the uuid
-     * @param list the list
-     */
     @Override
     public void setPets(UUID uuid, List<Pet> list) {
-        petsMap.remove(uuid);
-        if (petsMap.containsKey(uuid)) {
-            petsMap.remove(uuid, list);
-        }
-        petsMap.put(uuid, list);
-
+        petsMap.set(uuid, list);
     }
 
-    /**
-     * Gets pet list.
-     *
-     * @param uuid the uuid
-     * @return the pet list
-     */
     @Override
     public List<Pet> getPetList(UUID uuid) {
-        List<Pet> petList = petsMap.get(uuid);
-        if (petList == null) {
-            petList = new ArrayList<>();
-        } else {
-            petList = new ArrayList<>(petList);
-        }
-        return petList;
+        return petsMap.getOrDefault(uuid, new ArrayList<>());
     }
 
-    /**
-     * Add pet to pets list boolean.
-     *
-     * @param uuid the uuid
-     * @param pet  the pet
-     * @return the boolean
-     */
     @Override
     public boolean addPetToPetsList(UUID uuid, Pet pet) {
-        List<Pet> petList;
-        if (getPetList(uuid) == null) {
-            setPets(uuid, new ArrayList<>(Collections.singletonList(pet)));
-            return true;
-        } else {
-            petList = new ArrayList<>(getPetList(uuid));
+        if (pet == null) {
+            return false;
         }
+        List<Pet> petList = getPetList(uuid);
         petList.add(pet);
         setPets(uuid, petList);
         return true;

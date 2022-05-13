@@ -9,18 +9,25 @@ package me.opkarol.oppets;
  */
 
 import me.opkarol.oppets.cache.NamespacedKeysCache;
-import me.opkarol.oppets.commands.OpPetsCommand;
+import me.opkarol.oppets.collections.OpMap;
+import me.opkarol.oppets.collections.commands.OpCommandBuilder;
+import me.opkarol.oppets.collections.commands.OpSubCommand;
+import me.opkarol.oppets.commands.OpPetsCommandExecutor;
 import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.entities.manager.IEntityManager;
 import me.opkarol.oppets.files.FileManager;
+import me.opkarol.oppets.files.MessagesHolder;
 import me.opkarol.oppets.graphic.GraphicInterface;
-import me.opkarol.oppets.interfaces.IBabyEntityCreator;
-import me.opkarol.oppets.interfaces.IEntityManager;
-import me.opkarol.oppets.interfaces.IPacketPlayInSteerVehicleEvent;
 import me.opkarol.oppets.interfaces.IUtils;
+import me.opkarol.oppets.inventory.OpInventories;
 import me.opkarol.oppets.listeners.*;
 import me.opkarol.oppets.misc.Metrics;
+import me.opkarol.oppets.misc.ServerVersion;
+import me.opkarol.oppets.packets.IPacketPlayInSteerVehicleEvent;
 import me.opkarol.oppets.packets.PacketManager;
 import me.opkarol.oppets.pets.Pet;
+import me.opkarol.oppets.utils.MathUtils;
+import me.opkarol.oppets.utils.OpUtils;
 import me.opkarol.oppets.utils.PDCUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -30,70 +37,26 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.Nullable;
-import v1_16_1R.SessionHolder;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
-/**
- * PetPluginController is a controlling class that can run methods
- * which would be redundant in the main OpPets class.
- * <p>
- * This public class contains methods that helps build and compile
- * OpPets but also has some Logic, File Managers and MySQL access.
- */
 public class PetPluginController {
-    /**
-     * The Session.
-     */
-    private final String session = OpPets.getInstance().getSessionIdentifier().getSession();
-    /**
-     * The Database.
-     */
-    private final Database database = Database.getInstance(session);
-    /**
-     * The Instance.
-     */
+    private final Database database = Database.getInstance();
     private final OpPets instance;
-    /**
-     * The Local path.
-     */
-    private final String localPath = database.getPlugin().getDataFolder().getAbsolutePath();
-    /**
-     * The Packet event.
-     */
     private IPacketPlayInSteerVehicleEvent packetEvent;
-    /**
-     * The Version.
-     */
     private String version;
+    private OpPetsCommandExecutor executor;
 
-    /**
-     * Instantiates a new Pet plugin controller.
-     *
-     * @param opPets the op pets
-     */
     public PetPluginController(OpPets opPets) {
         this.instance = opPets;
         init();
     }
 
-    /**
-     * Gets instance.
-     *
-     * @return the instance
-     */
     public OpPets getInstance() {
         return instance;
     }
 
-    /**
-     * Plugin initialization method that runs File Configuration saver, loading files
-     * Database logic and Registers event and Commands.
-     * It's also used to set up InventoryManager and activate bStats with plugin id.
-     */
     public void init() {
         getInstance().saveDefaultConfig();
         loadFiles();
@@ -101,58 +64,32 @@ public class PetPluginController {
         bStatsActivation(13211);
     }
 
-    /**
-     * Void method which run track operation that hooks to your server,
-     * which also counts pet numbers in the server.
-     *
-     * @param pluginId plugin id used to connect with bStats site
-     * @see me.opkarol.oppets.misc.Metrics
-     */
     public void bStatsActivation(int pluginId) {
         Metrics metrics = new Metrics(getInstance(), pluginId);
         metrics.addCustomChart(new Metrics.SingleLineChart("pets", () -> database.getDatabase().getPetsMap().keySet().stream().mapToInt(uuid -> database.getDatabase().getPetList(uuid).size()).sum()));
     }
 
-    /**
-     * Method which runs in OpPets onDisable method.
-     * This saves mySql and normal database files to a simple connector.
-     * Can be used in both ways.
-     *
-     * @see me.opkarol.oppets.OpPets
-     */
     public void saveFiles() {
-        if (!database.mySQLAccess) {
-            new FileManager<HashMap<UUID, List<Pet>>>().saveObject(localPath + "/PetsMap.db", database.getDatabase().getPetsMap());
-            new FileManager<HashMap<UUID, Pet>>().saveObject(localPath + "/ActivePetMap.db", database.getDatabase().getActivePetMap());
-        } else {
+        executor.getCommandListener().unregister();
+        if (database.mySQLAccess) {
             Bukkit.getOnlinePlayers().forEach(player -> database.getDatabase().databaseUUIDSaver(player.getUniqueId(), false));
+        } else {
+            new FileManager<OpMap<UUID, List<Pet>>>("database/Pets.txt").saveObject(database.getDatabase().getPetsMap());
+            new FileManager<OpMap<UUID, Pet>>("database/ActivePets.txt").saveObject(database.getDatabase().getActivePetMap());
         }
         killAllPets();
     }
 
-    /**
-     * Method which runs in OpPets onEnable method.
-     * Only used if there isn't active mysql connection,
-     * because mysql updates itself with every type connection.
-     *
-     * @see me.opkarol.oppets.OpPets
-     */
     public void loadFiles() {
         if (!database.mySQLAccess) {
-            database.getDatabase().setPetsMap(new FileManager<HashMap<UUID, List<Pet>>>().loadObject(localPath + "/PetsMap.db"));
-            database.getDatabase().setActivePetMap(new FileManager<HashMap<UUID, Pet>>().loadObject(localPath + "/ActivePetMap.db"));
+            database.getDatabase().setPetsMap(new FileManager<OpMap<UUID, List<Pet>>>("database/Pets.txt").loadObject());
+            database.getDatabase().setActivePetMap(new FileManager<OpMap<UUID, Pet>>("database/ActivePets.txt").loadObject());
         }
     }
 
-    /**
-     * Method used to registerEvents which were previously provided.
-     *
-     * @see org.bukkit.plugin.PluginManager
-     */
     public void registerEvents() {
         PluginManager manager = instance.getServer().getPluginManager();
-        manager.registerEvents(new PlayerJoin(), instance);
-        manager.registerEvents(new PlayerLeaves(), instance);
+        manager.registerEvents(new PlayerListeners(), instance);
         manager.registerEvents(new SkillsListeners(), instance);
         manager.registerEvents(new PetListeners(), instance);
         manager.registerEvents(new ChatReceiver(), instance);
@@ -160,26 +97,30 @@ public class PetPluginController {
         manager.registerEvents(new GraphicInterface(), instance);
     }
 
-    /**
-     * Method used to register not null commands which registers both
-     * Executor and TabCompleter in a MainCommand class.
-     *
-     * @see me.opkarol.oppets.commands.OpPetsCommand
-     */
     public void registerCommands() {
-        Objects.requireNonNull(getInstance().getCommand("oppets")).setExecutor(new OpPetsCommand());
-        Objects.requireNonNull(getInstance().getCommand("oppets")).setTabCompleter(new OpPetsCommand());
+        OpMap<String, OpSubCommand> builder = new OpCommandBuilder().addKey("Addons").addKey("Admin").addKey("Booster").addKey("Call").addKey("Create").addKey("Delete").addKey("Eggs").addKey("Gift").addKey("Help").addKey("Leaderboard").addKey("Preferences").addKey("Prestige").addKey("Rename").addKey("Ride").addKey("Shop").addKey("Summon")
+                .addDummyKey("respawn", (commandSender, strings) -> {
+                    //TODO add cooldown
+                    if (commandSender instanceof Player player) {
+                        Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
+                        database.getUtils().respawnPet(pet, player);
+                        player.sendMessage(MessagesHolder.getInstance().getString("Commands.respawnedSuccessfully"));
+                    }
+                })
+                .addDummyKey("settings", (commandSender, strings) -> {
+                    if (commandSender instanceof Player player) {
+                        Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
+                        player.openInventory(new OpInventories.SettingsInventory(pet).buildInventory());
+                    }
+                })
+                .getMap();
+        executor = new OpPetsCommandExecutor(builder);
     }
 
-    /**
-     * Final method which loops through every UUID from activePetsMap key set
-     * and checks if it's valid.
-     * If result is valid, it can be successfully removed using Bukkit method.
-     */
     public void killAllPets() {
         database.getDatabase().getActivePetMap().keySet().forEach(uuid -> {
             if (uuid != null) {
-                database.getUtils().killPetFromPlayerUUID(uuid);
+                OpUtils.killPetFromPlayerUUID(uuid);
             }
         });
         Bukkit.getWorlds()
@@ -189,12 +130,6 @@ public class PetPluginController {
                         .forEach(LivingEntity::remove));
     }
 
-    /**
-     * This is a main method of this class, which provides classified information about every
-     * version, and sets it to main OpPets class, PacketManager class and Database class.
-     *
-     * @return the version
-     */
     public boolean setupVersion() {
         String version;
         try {
@@ -204,47 +139,29 @@ public class PetPluginController {
             instance.disablePlugin(exception.getCause().getMessage());
             return false;
         }
-
         this.instance.getLogger().info("Your server is running version " + version);
         PluginManager manager = this.instance.getServer().getPluginManager();
         String versionR;
         switch (getVersion()) {
-            case "1.16", "1.16.1", "1.16.2" -> {
-                versionR = "v1_16_1R.";
-                SessionHolder.setSession(session);
-            }
-            case "1.16.3", "1.16.4" -> {
-                versionR = "v1_16_3R.";
-                v1_16_3R.SessionHolder.setSession(session);
-            }
-            case "1.16.5" -> {
-                versionR = "v1_16_5R.";
-                v1_16_5R.SessionHolder.setSession(session);
-            }
-            case "1.17" -> {
-                versionR = "v1_17R.";
-                v1_17R.SessionHolder.setSession(session);
-            }
-            case "1.17.1" -> {
-                versionR = "v1_17_1R.";
-                v1_17_1R.SessionHolder.setSession(session);
-            }
-            case "1.18" -> {
-                versionR = "v1_18_1R.";
-                v1_18_1R.SessionHolder.setSession(session);
-            }
+            case "1.16", "1.16.1", "1.16.2" -> versionR = "v1_16_1R.";
+            case "1.16.3", "1.16.4" -> versionR = "v1_16_3R.";
+            case "1.16.5" -> versionR = "v1_16_5R.";
+            case "1.17" -> versionR = "v1_17R.";
+            case "1.17.1" -> versionR = "v1_17_1R.";
+            case "1.18", "1.18.1" -> versionR = "v1_18_1R.";
+            case "1.18.2" -> versionR = "v1_18_2R.";
             default -> throw new IllegalStateException("Unexpected value: " + getVersion());
         }
-        String substring = versionR.substring(0, versionR.length() - 2);
-
+        String substring = MathUtils.substringFromEnd(versionR, 2);
         try {
-            instance.setCreator((IBabyEntityCreator) Class.forName(versionR + "BabyEntityCreator").newInstance());
-            instance.setEntityManager((IEntityManager) Class.forName(versionR + "entities.EntityManager").newInstance());
-            this.setPacketEvent((IPacketPlayInSteerVehicleEvent) Class.forName(versionR + "PacketPlayInSteerVehicleEvent_" + substring).newInstance());
-            manager.registerEvents((Listener) Class.forName(versionR + "PlayerSteerVehicleEvent_" + substring).newInstance(), instance);
+            ServerVersion.setSeverVersion(MathUtils.substringFromEnd(versionR, 1));
+            versionR = "me.opkarol.oppets." + versionR;
             IUtils utils = (IUtils) Class.forName(versionR + "Utils").newInstance();
             instance.setUtils(utils);
             PacketManager.setUtils(utils);
+            instance.setEntityManager((IEntityManager) Class.forName(versionR + "entities.EntityManager").newInstance());
+            this.setPacketEvent((IPacketPlayInSteerVehicleEvent) Class.forName(versionR + "PacketPlayInSteerVehicleEvent_" + substring).newInstance());
+            manager.registerEvents((Listener) Class.forName(versionR + "PlayerSteerVehicleEvent_" + substring).newInstance(), instance);
             PacketManager.setEvent(getPacketEvent());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -252,47 +169,22 @@ public class PetPluginController {
         return true;
     }
 
-    /**
-     * Gets packet event.
-     *
-     * @return the packet event
-     */
     public IPacketPlayInSteerVehicleEvent getPacketEvent() {
         return this.packetEvent;
     }
 
-    /**
-     * Sets packet event.
-     *
-     * @param packetEvent the packet event
-     */
     public void setPacketEvent(IPacketPlayInSteerVehicleEvent packetEvent) {
         this.packetEvent = packetEvent;
     }
 
-    /**
-     * Gets version.
-     *
-     * @return the version
-     */
     public String getVersion() {
         return this.version;
     }
 
-    /**
-     * Sets version.
-     *
-     * @param version the version
-     */
     public void setVersion(String version) {
         this.version = version;
     }
 
-    /**
-     * Sets economy.
-     *
-     * @return the economy
-     */
     public @Nullable Object setupEconomy() {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
             return null;

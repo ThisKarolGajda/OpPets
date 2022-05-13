@@ -6,14 +6,6 @@ authors: [ OpKarol, ThisOpKarol, NotOpKarol ]
 softdepend: [ Vault ]
 description: This plugin allows your players to enjoy vanilla animals with custom additions such as pet levelling, riding, presitge, leaderboards, shops, broadcasts, gifts and more!
 
-commands:
-  oppets:
-    description: "This command is responsible for the entire plugin OpPets. There are many sub-commands pinned to it."
-    aliases:
-      - pets
-      - pet
-    usage: "Usage: /<command> [addons|admin|booster|broadcast|call|create|delete|gift|help|leaderboard|prestige|rename|ride|shop|summon]"
-
 permissions:
   oppets.*:
     description: "Permission designed for operators"

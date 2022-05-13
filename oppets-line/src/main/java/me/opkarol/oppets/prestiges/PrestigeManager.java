@@ -14,18 +14,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The type Prestige manager.
- */
 public class PrestigeManager {
-    /**
-     * The Format.
-     */
     public String format;
 
-    /**
-     * Instantiates a new Prestige manager.
-     */
     public PrestigeManager() {
         FileConfiguration config = ConfigUtils.getConfig();
         format = config.getString("Prestiges.format");
@@ -34,12 +25,6 @@ public class PrestigeManager {
         }
     }
 
-    /**
-     * Gets format for number.
-     *
-     * @param prestigeLevel the prestige level
-     * @return the format for number
-     */
     @Contract(pure = true)
     public @NotNull String getFormatForNumber(int prestigeLevel) {
         if (format == null) return "";
@@ -51,34 +36,16 @@ public class PrestigeManager {
         return builder.toString();
     }
 
-    /**
-     * Gets prestige level.
-     *
-     * @param prestigeString the prestige string
-     * @return the prestige level
-     */
     public int getPrestigeLevel(@NotNull String prestigeString) {
         String[] strings = prestigeString.split(";");
         return Integer.parseInt(strings[0]);
     }
 
-    /**
-     * Gets prestige codes.
-     *
-     * @param prestigeString the prestige string
-     * @return the prestige codes
-     */
     public String getPrestigeCodes(@NotNull String prestigeString) {
         String[] strings = prestigeString.split(";");
         return strings[1];
     }
 
-    /**
-     * Gets filled prestige.
-     *
-     * @param prestige the prestige
-     * @return the filled prestige
-     */
     public String getFilledPrestige(String prestige) {
         String prestigeLevel = String.valueOf(getPrestigeLevel(prestige));
         String prestigeCode = getPrestigeCodes(prestige);
