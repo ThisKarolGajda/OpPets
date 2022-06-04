@@ -12,16 +12,15 @@ import me.opkarol.oppets.abilities.AbilitiesDatabase;
 import me.opkarol.oppets.boosters.BoosterProvider;
 import me.opkarol.oppets.broadcasts.BroadcastManager;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.databases.PetsDatabase;
+import me.opkarol.oppets.databases.external.PetsDatabase;
 import me.opkarol.oppets.eggs.EggManager;
 import me.opkarol.oppets.entities.manager.IEntityManager;
-import me.opkarol.oppets.interfaces.IDatabase;
 import me.opkarol.oppets.interfaces.IOpPets;
+import me.opkarol.oppets.interfaces.database.IPetsDatabase;
 import me.opkarol.oppets.interfaces.IUtils;
 import me.opkarol.oppets.leaderboards.LeaderboardCounter;
-import me.opkarol.oppets.misc.SessionIdentifier;
 import me.opkarol.oppets.prestiges.PrestigeManager;
-import me.opkarol.oppets.skills.SkillDatabase;
+import me.opkarol.oppets.databases.external.SkillDatabase;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
@@ -39,7 +38,6 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     private BoosterProvider boosterProvider;
     private LeaderboardCounter leaderboardCounter;
     private BroadcastManager broadcastManager;
-    private SessionIdentifier sessionIdentifier;
     private EggManager eggManager;
 
     @Override
@@ -64,8 +62,8 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     @Override
     public void onDisable() {
         controller.saveFiles();
-        if (database != null && database.getMySQL() != null) {
-            database.getMySQL().closeConnection();
+        if (database != null && database.getIDatabase() != null) {
+            database.getIDatabase().closeConnection();
         }
         database = null;
         opPets = null;
@@ -94,7 +92,7 @@ public final class OpPets extends JavaPlugin implements IOpPets {
         return opPets;
     }
 
-    public IDatabase getDatabase() {
+    public IPetsDatabase getDatabase() {
         return database.getDatabase();
     }
 
@@ -146,10 +144,6 @@ public final class OpPets extends JavaPlugin implements IOpPets {
     @Override
     public Object getEconomy() {
         return controller.setupEconomy();
-    }
-
-    public SessionIdentifier getSessionIdentifier() {
-        return sessionIdentifier;
     }
 
     @Override

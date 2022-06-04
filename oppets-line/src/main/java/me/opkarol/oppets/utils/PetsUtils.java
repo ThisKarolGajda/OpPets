@@ -14,6 +14,7 @@ import me.opkarol.oppets.files.MessagesHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
 import me.opkarol.oppets.prestiges.PrestigeManager;
+import me.opkarol.oppets.utils.external.FormatUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.UUID;
 
-import static me.opkarol.oppets.utils.FormatUtils.getNameString;
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static me.opkarol.oppets.utils.external.FormatUtils.getNameString;
+import static me.opkarol.oppets.utils.external.FormatUtils.returnMessage;
 
 public final class PetsUtils {
     private static Database database;

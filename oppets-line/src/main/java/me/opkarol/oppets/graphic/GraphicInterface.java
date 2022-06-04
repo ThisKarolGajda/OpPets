@@ -8,11 +8,14 @@ package me.opkarol.oppets.graphic;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.cache.GraphicCache;
-import me.opkarol.oppets.collections.OpMap;
+import me.opkarol.oppets.graphic.cache.GraphicCache;
+import me.opkarol.oppets.collections.map.OpMap;
+import me.opkarol.oppets.graphic.builder.GraphicInventoryCreator;
+import me.opkarol.oppets.graphic.builder.GraphicItem;
+import me.opkarol.oppets.graphic.builder.IGraphicInventoryData;
 import me.opkarol.oppets.interfaces.IHolder;
-import me.opkarol.oppets.interfaces.IInventory;
-import me.opkarol.oppets.items.OpItemBuilder;
+import me.opkarol.oppets.inventory.IInventory;
+import me.opkarol.oppets.items.builder.OpItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

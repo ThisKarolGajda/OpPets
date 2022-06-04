@@ -53,10 +53,10 @@ public class PathfinderGoalPet_1_18_1 extends Goal {
         } else if (!(this.a.getDisplayName().getString().equals(PetsUtils.getPetFormattedName(p)))) {
             return;
         } else if (b.distanceTo(this.a) >= (this.g * this.g)) {
-            if (p.isTeleportingToPlayer()) this.a.teleportTo(b.getX(), b.getY(), b.getZ());
+            if (p.settings.isTeleportingToPlayer()) this.a.teleportTo(b.getX(), b.getY(), b.getZ());
             return;
         }
-        if (p.isFollowingPlayer()) {
+        if (p.settings.isFollowingPlayer()) {
             this.a.getNavigation().moveTo(b.getX(), b.getY(), b.getZ(), this.f);
             l = b.getBukkitEntity().getLocation();
         }

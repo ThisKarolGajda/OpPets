@@ -9,9 +9,9 @@ package me.opkarol.oppets.shops;
  */
 
 import me.opkarol.oppets.graphic.IGetter;
-import me.opkarol.oppets.items.OpItemBuilder;
-import me.opkarol.oppets.items.OpItemShopData;
-import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.items.builder.OpItemBuilder;
+import me.opkarol.oppets.items.data.OpItemShopData;
+import me.opkarol.oppets.utils.external.FormatUtils;
 
 import java.util.List;
 import java.util.function.Function;

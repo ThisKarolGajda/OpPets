@@ -8,14 +8,15 @@ package me.opkarol.oppets.addons;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.cache.InventoryCache;
+import me.opkarol.oppets.addons.types.AddonConfig;
+import me.opkarol.oppets.addons.types.IAddon;
+import me.opkarol.oppets.inventory.cache.InventoryCache;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.exceptions.Exception;
 import me.opkarol.oppets.exceptions.ExceptionLogger;
-import me.opkarol.oppets.exceptions.InvalidAddonException;
+import me.opkarol.oppets.exceptions.types.InvalidAddonException;
 import me.opkarol.oppets.inventory.OpInventories;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
@@ -26,11 +27,10 @@ public class AddonManager {
     private static final List<IAddon> addons = new ArrayList<>();
     private static Database database = null;
 
-    public static @Nullable Database addAddon(@NotNull IAddon addon) {
+    public static void addAddon(@NotNull AddonConfig addon) {
         if (addon.canBeLaunched()) {
             if (addon.getPlugin().getName().equals(addon.getName())) {
                 addons.add(addon);
-                return database;
             } else {
                 try {
                     throw new InvalidAddonException("Provided addon contains invalid name: " + addon.getName() + ", plugin name should be equal to " + addon.getPlugin().getName() + ".");
@@ -45,7 +45,6 @@ public class AddonManager {
                 ExceptionLogger.getInstance().addException(new Exception(exception.getCause().toString(), AddonManager.class.toString(), exception.fillInStackTrace()));
             }
         }
-        return null;
     }
 
     public static List<IAddon> getAddons() {

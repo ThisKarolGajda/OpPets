@@ -11,10 +11,10 @@ package me.opkarol.oppets.v1_18_2R.entities;
 import me.opkarol.oppets.cache.NamespacedKeysCache;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.entities.IEntityPet;
-import me.opkarol.oppets.misc.PetDatabaseObject;
+import me.opkarol.oppets.misc.external.api.PetDatabaseObject;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
-import me.opkarol.oppets.utils.PDCUtils;
+import me.opkarol.oppets.utils.external.PDCUtils;
 import me.opkarol.oppets.utils.PetsUtils;
 import me.opkarol.oppets.v1_18_2R.PathfinderGoalPet_1_18_2;
 import me.opkarol.oppets.v1_18_2R.Utils;
@@ -55,7 +55,7 @@ public class EntityManager extends me.opkarol.oppets.entities.manager.EntityMana
     }
 
     @Override
-    public void spawnEntity(@NotNull Object obj1, @NotNull Object obj2, @NotNull Object obj3) {
+    public void spawnEntity(@NotNull Object obj1, @NotNull Player obj2, @NotNull Pet obj3) {
         Animal entity = (Animal) obj1;
         Player player = (Player) obj2;
         Pet pet = (Pet) obj3;
@@ -66,8 +66,7 @@ public class EntityManager extends me.opkarol.oppets.entities.manager.EntityMana
         entity.setBaby(true);
         entity.setCustomNameVisible(true);
         entity.setTarget((LivingEntity) player, EntityTargetEvent.TargetReason.CUSTOM, false);
-        pet.setOwnerUUID(player.getUniqueId());
-        pet.setOwnUUID(entity.getUUID());
+        pet.petUUID.setOwnUUID(entity.getUUID());
         new Utils().removePathfinders(entity.goalSelector, entity.targetSelector);
     }
 
@@ -91,7 +90,7 @@ public class EntityManager extends me.opkarol.oppets.entities.manager.EntityMana
         entity.setCustomNameVisible(true);
         entity.setInvulnerable(true);
         entity.setCustomName(PetsUtils.getPetFormattedName(pet));
-        entity.setGlowing(pet.isGlowing());
+        entity.setGlowing(pet.settings.isGlowing());
         PDCUtils.addNBT(entity, NamespacedKeysCache.petKey, iPet.getTypeOfEntity().getName());
 
         // Setting database values into pet
@@ -123,7 +122,7 @@ public class EntityManager extends me.opkarol.oppets.entities.manager.EntityMana
         if (iPet.canBeAgeable()) {
             AgeableMob ageableMob = (AgeableMob) iPet.getEntity();
             ageableMob.ageLocked = true;
-            ageableMob.setBaby(pet.isBaby());
+            ageableMob.setBaby(pet.preferences.isBaby());
         }
     }
 

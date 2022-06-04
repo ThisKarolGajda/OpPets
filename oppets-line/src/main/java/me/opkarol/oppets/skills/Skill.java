@@ -9,6 +9,9 @@ package me.opkarol.oppets.skills;
  */
 
 import me.opkarol.oppets.pets.TypeOfEntity;
+import me.opkarol.oppets.skills.types.Ability;
+import me.opkarol.oppets.skills.types.Adder;
+import me.opkarol.oppets.skills.types.Requirement;
 
 import java.util.List;
 

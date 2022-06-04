@@ -1,7 +1,13 @@
 package me.opkarol.oppets.commands;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.collections.commands.OpSubCommand;
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
@@ -14,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static me.opkarol.oppets.utils.external.FormatUtils.returnMessage;
 
 public class AdminSubCommand extends OpSubCommand {
     private final Database database = Database.getInstance();
@@ -46,12 +52,12 @@ public class AdminSubCommand extends OpSubCommand {
         switch (args[3]) {
             case "level" -> pet.setLevel(Integer.parseInt(value));
             case "xp" -> pet.setPetExperience(Double.parseDouble(value));
-            case "settings" -> pet.setSettings(OpObjects.get(value));
+            case "settings" -> pet.settings.setSettings(OpObjects.get(value));
             case "prestige" -> pet.setPrestige(value);
             case "name" -> pet.setPetName(value);
             case "type" -> pet.setPetType(TypeOfEntity.valueOf(value));
             case "skill" -> pet.setSkillName(value);
-            case "preferences" -> pet.setPreferences((OpObjects.get(value)));
+            case "preferences" -> pet.preferences.setPreferences((OpObjects.get(value)));
         }
         database.getDatabase().addPetToPetsList(uuid, pet);
         return returnMessage(sender, getMessages().getString("Commands.changedAdminValue").replace("%value%", value).replace("%key%", args[3]).replace("%player_name%", playerName).replace("%pet_name%", args[2]));
@@ -87,7 +93,7 @@ public class AdminSubCommand extends OpSubCommand {
                             return pet.getPetName();
                         }
                         case "settings" -> {
-                            return pet.getSettings().toString();
+                            return pet.settings.toString();
                         }
                         case "type" -> {
                             return String.valueOf(pet.getPetType());
@@ -96,7 +102,7 @@ public class AdminSubCommand extends OpSubCommand {
                             return pet.getSkillName();
                         }
                         case "preferences" -> {
-                            return pet.getPreferences().toString();
+                            return pet.preferences.toString();
                         }
                         default -> {
                             return "<WRONG-TYPE>";

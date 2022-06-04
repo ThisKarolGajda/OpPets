@@ -9,11 +9,10 @@ package me.opkarol.oppets.listeners;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.skills.Adder;
+import me.opkarol.oppets.skills.types.Adder;
 import me.opkarol.oppets.skills.Skill;
-import me.opkarol.oppets.skills.SkillDatabase;
+import me.opkarol.oppets.databases.external.SkillDatabase;
 import me.opkarol.oppets.skills.SkillEnums;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

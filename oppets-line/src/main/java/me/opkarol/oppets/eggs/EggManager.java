@@ -8,11 +8,14 @@ package me.opkarol.oppets.eggs;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.eggs.types.EggCost;
+import me.opkarol.oppets.eggs.types.EggItem;
+import me.opkarol.oppets.eggs.types.EggRecipe;
 import me.opkarol.oppets.exceptions.Exception;
 import me.opkarol.oppets.exceptions.ExceptionLogger;
-import me.opkarol.oppets.exceptions.InvalidDatabaseException;
-import me.opkarol.oppets.files.IConfigFile;
-import me.opkarol.oppets.items.OpItemBuilder;
+import me.opkarol.oppets.exceptions.types.InvalidDatabaseException;
+import me.opkarol.oppets.files.manager.IConfigFile;
+import me.opkarol.oppets.items.builder.OpItemBuilder;
 import me.opkarol.oppets.misc.StringTransformer;
 import me.opkarol.oppets.pets.TypeOfEntity;
 import org.bukkit.Material;

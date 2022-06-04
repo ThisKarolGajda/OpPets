@@ -1,7 +1,13 @@
 package me.opkarol.oppets.commands;
 
-import me.opkarol.oppets.OpPets;
-import me.opkarol.oppets.collections.commands.OpSubCommand;
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.OpUtils;
@@ -14,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
+import static me.opkarol.oppets.utils.external.FormatUtils.returnMessage;
 
 public class GiftSubCommand extends OpSubCommand {
     private final Database database = Database.getInstance();
@@ -38,7 +44,7 @@ public class GiftSubCommand extends OpSubCommand {
             return returnMessage(sender, getMessages().getString("Commands.invalidPet"));
         }
         Pet pet = optional.get();
-        if (!pet.isGiftable()) {
+        if (!pet.settings.isGiftable()) {
             return returnMessage(sender, getMessages().getString("Commands.petIsntGiftable"));
         }
         String playerName = args[2];

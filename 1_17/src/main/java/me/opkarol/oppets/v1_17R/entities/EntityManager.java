@@ -10,7 +10,7 @@ package me.opkarol.oppets.v1_17R.entities;
 
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.entities.IEntityPet;
-import me.opkarol.oppets.misc.PetDatabaseObject;
+import me.opkarol.oppets.misc.external.api.PetDatabaseObject;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
 import me.opkarol.oppets.v1_17R.PathfinderGoalPet_1_17;
@@ -41,7 +41,7 @@ public class EntityManager extends me.opkarol.oppets.entities.manager.EntityMana
     }
 
     @Override
-    public void spawnEntity(@NotNull Object obj1, @NotNull Object obj2, @NotNull Object obj3) {
+    public void spawnEntity(@NotNull Object obj1, @NotNull Player obj2, @NotNull Pet obj3) {
         Animal entity = (Animal) obj1;
         Player player = (Player) obj2;
         Pet pet = (Pet) obj3;
@@ -52,8 +52,7 @@ public class EntityManager extends me.opkarol.oppets.entities.manager.EntityMana
         entity.setBaby(true);
         entity.setCustomNameVisible(true);
         entity.setGoalTarget(((CraftPlayer) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
-        pet.setOwnerUUID(player.getUniqueId());
-        pet.setOwnUUID(entity.getUUID());
+        pet.petUUID.setOwnUUID(entity.getUUID());
         Utils utils = new Utils();
         utils.removePathfinders(entity.goalSelector, entity.targetSelector);
         initPathfinder(null, pet.getPetType());

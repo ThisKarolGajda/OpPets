@@ -10,11 +10,14 @@ package me.opkarol.oppets.utils;
 
 import me.opkarol.oppets.cache.NamespacedKeysCache;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.eggs.EggItem;
+import me.opkarol.oppets.eggs.types.EggItem;
 import me.opkarol.oppets.files.MessagesHolder;
 import me.opkarol.oppets.misc.StringTransformer;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
+import me.opkarol.oppets.pets.id.UniquePet;
+import me.opkarol.oppets.utils.external.FormatUtils;
+import me.opkarol.oppets.utils.external.PDCUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -33,7 +36,7 @@ import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.cache.NamespacedKeysCache.priceKey;
 import static me.opkarol.oppets.cache.NamespacedKeysCache.typeKey;
-import static me.opkarol.oppets.utils.MathUtils.getMaxLevel;
+import static me.opkarol.oppets.utils.external.MathUtils.getMaxLevel;
 
 public final class OpUtils {
     private static final MessagesHolder messages = MessagesHolder.getInstance();
@@ -120,12 +123,11 @@ public final class OpUtils {
         }
         database.getDatabase().getActivePetMap()
                 .getValuesStream()
-                .filter(pet1 -> pet1.getPetUUID().getID() == pet.getPetUUID().getID())
-                .map(Pet::getOwnUUID)
+                .filter(pet1 -> pet1.petUUID.getDatabaseId() == pet.petUUID.getDatabaseId())
+                .map(Pet::getPetUUID)
+                .map(UniquePet::getOwnUUID)
+                .filter(Objects::nonNull)
                 .forEach(uuid1 -> {
-                    if (uuid1 == null) {
-                        return;
-                    }
                     LivingEntity entity = (LivingEntity) Bukkit.getEntity(uuid1);
                     if (entity != null && PDCUtils.hasNBT(entity, NamespacedKeysCache.petKey)) {
                         entity.remove();

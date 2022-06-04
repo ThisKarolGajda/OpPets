@@ -27,8 +27,6 @@ public interface IUtils {
 
     void respawnPet(Pet pet, @NotNull Player player);
 
-    String getVersion();
-
     void removePathfinders(Object goalSelector, Object targetSelector);
 
     Object getPlayerChannel(Player player);

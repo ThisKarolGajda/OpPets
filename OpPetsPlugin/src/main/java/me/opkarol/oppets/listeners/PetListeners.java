@@ -8,7 +8,6 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.events.PrestigeChangeEvent;
@@ -17,9 +16,9 @@ import me.opkarol.oppets.inventory.OpInventories;
 import me.opkarol.oppets.particles.ParticlesManager;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.prestiges.PrestigeManager;
-import me.opkarol.oppets.skills.Ability;
-import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.MathUtils;
+import me.opkarol.oppets.skills.types.Ability;
+import me.opkarol.oppets.utils.external.FormatUtils;
+import me.opkarol.oppets.utils.external.MathUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -57,8 +56,8 @@ public class PetListeners implements Listener {
             return;
         }
         player.sendMessage(messages.getString("Messages.petLevelUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_level%", String.valueOf(pet.getLevel())).replace("%max_level%", String.valueOf(MathUtils.getMaxLevel(pet))).replace("%experience_level%", String.valueOf(MathUtils.getPetLevelExperience(pet))));
-        if (pet.areParticlesEnabled()) {
-            particlesManager.spawnLevelUpPetEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
+        if (pet.settings.areParticlesEnabled()) {
+            particlesManager.spawnLevelUpPetEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().petUUID.getOwnUUID()));
         }
         List<Ability> abilities = database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getAbilityList();
         for (Ability ability : abilities) {
@@ -106,8 +105,8 @@ public class PetListeners implements Listener {
         Player player = event.getPlayer();
         player.sendMessage(messages.getString("Messages.prestigeUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_prestige%", pm.getFilledPrestige(pet.getPrestige())).replace("%max_level%", String.valueOf(MathUtils.getMaxLevel(pet))));
         database.getOpPets().getUtils().respawnPet(pet, player);
-        if (pet.areParticlesEnabled()) {
-            particlesManager.prestigeChangeEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().getOwnUUID()));
+        if (pet.settings.areParticlesEnabled()) {
+            particlesManager.prestigeChangeEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().petUUID.getOwnUUID()));
         }
     }
 
@@ -156,7 +155,7 @@ public class PetListeners implements Listener {
             if (pet == null) {
                 continue;
             }
-            Entity entityPet = Bukkit.getEntity(pet.getOwnUUID());
+            Entity entityPet = Bukkit.getEntity(pet.petUUID.getOwnUUID());
             if (entityPet == null) {
                 continue;
             }

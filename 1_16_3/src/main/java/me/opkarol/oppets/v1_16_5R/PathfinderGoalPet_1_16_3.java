@@ -46,10 +46,10 @@ public class PathfinderGoalPet_1_16_3 extends PathfinderGoal {
         } else if (!(this.a.getDisplayName().getString().equals(PetsUtils.getPetFormattedName(pet)))) {
             return false;
         } else if (this.b.h(this.a) > (this.g * this.g)) {
-            if (pet.isTeleportingToPlayer()) this.a.setPosition(this.b.locX(), b.locY(), b.locZ());
+            if (pet.settings.isTeleportingToPlayer()) this.a.setPosition(this.b.locX(), b.locY(), b.locZ());
             return false;
         } else {
-            if (!pet.isFollowingPlayer()) return false;
+            if (!pet.settings.isFollowingPlayer()) return false;
             Vec3D vec = RandomPositionGenerator.a(this.a, 16, 7, this.b.getPositionVector());
             return vec != null;
         }

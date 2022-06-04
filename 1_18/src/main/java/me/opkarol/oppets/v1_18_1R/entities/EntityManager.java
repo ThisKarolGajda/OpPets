@@ -8,11 +8,11 @@ package me.opkarol.oppets.v1_18_1R.entities;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.collections.OpMap;
+import me.opkarol.oppets.collections.map.OpMap;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.entities.IEntityPet;
 import me.opkarol.oppets.entities.manager.IEntityManager;
-import me.opkarol.oppets.misc.PetDatabaseObject;
+import me.opkarol.oppets.misc.external.api.PetDatabaseObject;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
 import me.opkarol.oppets.v1_18_1R.PathfinderGoalPet_1_18_1;
@@ -44,7 +44,7 @@ public class EntityManager implements IEntityManager {
     }
 
     @Override
-    public void spawnEntity(@NotNull Object obj1, @NotNull Object obj2, @NotNull Object obj3) {
+    public void spawnEntity(@NotNull Object obj1, @NotNull Player obj2, @NotNull Pet obj3) {
         Animal entity = (Animal) obj1;
         Player player = (Player) obj2;
         Pet pet = (Pet) obj3;
@@ -55,8 +55,7 @@ public class EntityManager implements IEntityManager {
         entity.setBaby(true);
         entity.setCustomNameVisible(true);
         entity.setTarget(((CraftPlayer) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
-        pet.setOwnerUUID(player.getUniqueId());
-        pet.setOwnUUID(entity.getUUID());
+        pet.petUUID.setOwnUUID(entity.getUUID());
         new Utils().removePathfinders(entity.goalSelector, entity.targetSelector);
         initPathfinder(null, pet.getPetType());
     }

@@ -8,11 +8,11 @@ package me.opkarol.oppets.abilities;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.databases.APIDatabase;
-import me.opkarol.oppets.databases.PetsDatabase;
+import me.opkarol.oppets.databases.external.APIDatabase;
+import me.opkarol.oppets.databases.external.PetsDatabase;
 import me.opkarol.oppets.exceptions.ExceptionLogger;
-import me.opkarol.oppets.misc.CooldownModule;
-import me.opkarol.oppets.misc.PetDatabaseObject;
+import me.opkarol.oppets.misc.external.api.CooldownModule;
+import me.opkarol.oppets.misc.external.api.PetDatabaseObject;
 import me.opkarol.oppets.pets.TypeOfEntity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

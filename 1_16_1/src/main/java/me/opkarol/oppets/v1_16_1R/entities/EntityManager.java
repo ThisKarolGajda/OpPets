@@ -8,7 +8,7 @@ package me.opkarol.oppets.v1_16_1R.entities;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.collections.OpMap;
+import me.opkarol.oppets.collections.map.OpMap;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.entities.IEntityPet;
 import me.opkarol.oppets.entities.manager.IEntityManager;
@@ -36,7 +36,7 @@ public class EntityManager implements IEntityManager {
     }
 
     @Override
-    public void spawnEntity(@NotNull Object obj1, @NotNull Object obj2, @NotNull Object obj3) {
+    public void spawnEntity(@NotNull Object obj1, @NotNull Player obj2, @NotNull Pet obj3) {
         EntityAnimal entity = (EntityAnimal) obj1;
         Player player = (Player) obj2;
         Pet pet = (Pet) obj3;
@@ -48,8 +48,7 @@ public class EntityManager implements IEntityManager {
         entity.setCustomNameVisible(true);
         entity.setInvulnerable(true);
         entity.setGoalTarget(((CraftPlayer) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
-        pet.setOwnerUUID(player.getUniqueId());
-        pet.setOwnUUID(entity.getUniqueID());
+        pet.petUUID.setOwnUUID(entity.getUniqueID());
         new Utils().removePathfinders(entity.goalSelector, entity.targetSelector);
         initPathfinder(null, pet.getPetType());
     }

@@ -9,26 +9,26 @@ package me.opkarol.oppets;
  */
 
 import me.opkarol.oppets.cache.NamespacedKeysCache;
-import me.opkarol.oppets.collections.OpMap;
-import me.opkarol.oppets.collections.commands.OpCommandBuilder;
-import me.opkarol.oppets.collections.commands.OpSubCommand;
+import me.opkarol.oppets.collections.map.OpMap;
+import me.opkarol.oppets.commands.builder.OpCommandBuilder;
+import me.opkarol.oppets.commands.OpSubCommand;
 import me.opkarol.oppets.commands.OpPetsCommandExecutor;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.entities.manager.IEntityManager;
-import me.opkarol.oppets.files.FileManager;
+import me.opkarol.oppets.files.manager.FileManager;
 import me.opkarol.oppets.files.MessagesHolder;
 import me.opkarol.oppets.graphic.GraphicInterface;
 import me.opkarol.oppets.interfaces.IUtils;
 import me.opkarol.oppets.inventory.OpInventories;
 import me.opkarol.oppets.listeners.*;
-import me.opkarol.oppets.misc.Metrics;
-import me.opkarol.oppets.misc.ServerVersion;
+import me.opkarol.oppets.misc.external.bstats.Metrics;
+import me.opkarol.oppets.versions.ServerVersion;
 import me.opkarol.oppets.packets.IPacketPlayInSteerVehicleEvent;
 import me.opkarol.oppets.packets.PacketManager;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.MathUtils;
+import me.opkarol.oppets.utils.external.MathUtils;
 import me.opkarol.oppets.utils.OpUtils;
-import me.opkarol.oppets.utils.PDCUtils;
+import me.opkarol.oppets.utils.external.PDCUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
@@ -59,7 +59,6 @@ public class PetPluginController {
 
     public void init() {
         getInstance().saveDefaultConfig();
-        loadFiles();
         registerCommands();
         bStatsActivation(13211);
     }
@@ -71,20 +70,10 @@ public class PetPluginController {
 
     public void saveFiles() {
         executor.getCommandListener().unregister();
-        if (database.mySQLAccess) {
-            Bukkit.getOnlinePlayers().forEach(player -> database.getDatabase().databaseUUIDSaver(player.getUniqueId(), false));
-        } else {
-            new FileManager<OpMap<UUID, List<Pet>>>("database/Pets.txt").saveObject(database.getDatabase().getPetsMap());
-            new FileManager<OpMap<UUID, Pet>>("database/ActivePets.txt").saveObject(database.getDatabase().getActivePetMap());
-        }
+        Bukkit.getOnlinePlayers().forEach(player -> database.getDatabase().databaseUUIDSaver(player.getUniqueId(), false));
+        new FileManager<OpMap<UUID, List<Pet>>>("database/Pets.txt").saveObject(database.getDatabase().getPetsMap());
+        new FileManager<OpMap<UUID, Pet>>("database/ActivePets.txt").saveObject(database.getDatabase().getActivePetMap());
         killAllPets();
-    }
-
-    public void loadFiles() {
-        if (!database.mySQLAccess) {
-            database.getDatabase().setPetsMap(new FileManager<OpMap<UUID, List<Pet>>>("database/Pets.txt").loadObject());
-            database.getDatabase().setActivePetMap(new FileManager<OpMap<UUID, Pet>>("database/ActivePets.txt").loadObject());
-        }
     }
 
     public void registerEvents() {

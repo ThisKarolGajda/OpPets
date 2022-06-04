@@ -8,9 +8,9 @@ package me.opkarol.oppets.entities.manager;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.collections.OpMap;
+import me.opkarol.oppets.collections.map.OpMap;
 import me.opkarol.oppets.entities.IEntityPet;
-import me.opkarol.oppets.misc.ServerVersion;
+import me.opkarol.oppets.versions.ServerVersion;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
 import org.bukkit.entity.Player;
@@ -21,9 +21,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface IEntityManager {
-    void initPathfinder(@NotNull Object pathfinderMob, TypeOfEntity type);
+    void initPathfinder(Object pathfinderMob, TypeOfEntity type);
 
-    void spawnEntity(@NotNull Object entity, @NotNull Object player, @NotNull Object pet);
+    void spawnEntity(@NotNull Object entity, @NotNull Player player, @NotNull Pet pet);
 
     Optional<IEntityPet> spawnEntity(Player player, @NotNull Pet pet);
 

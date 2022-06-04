@@ -11,7 +11,7 @@ package me.opkarol.oppets.inventory.anvil;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.files.MessagesHolder;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.external.FormatUtils;
 import me.opkarol.oppets.utils.OpUtils;
 import me.opkarol.oppets.utils.PetsUtils;
 import net.wesjd.anvilgui.AnvilGUI;

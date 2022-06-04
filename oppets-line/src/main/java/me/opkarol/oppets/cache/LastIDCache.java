@@ -26,7 +26,7 @@ public class LastIDCache implements Serializable {
             public void run() {
                 for (List<Pet> list : database.getDatabase().getPetsMap().getValues()) {
                     for (Pet pet : list) {
-                        int id = pet.getPetUUID().getID();
+                        int id = pet.petUUID.getDatabaseId();
                         if (id > largestID) {
                             largestID = id;
                         }

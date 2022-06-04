@@ -8,11 +8,10 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.abilities.AbilitiesDatabase;
 import me.opkarol.oppets.abilities.AbilitiesFunctions;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.misc.PetDatabaseObject;
+import me.opkarol.oppets.misc.external.api.PetDatabaseObject;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.Particle;
 import org.bukkit.entity.EntityType;
@@ -48,7 +47,7 @@ public class PetAbilities implements Listener {
             return;
         }
         Pet pet = database.getDatabase().getCurrentPet(uuid);
-        if (pet == null || pet.getOwnUUID() != event.getRightClicked().getUniqueId() || abilitiesDatabase.cooldownMap.hasActiveCooldown(uuid)) {
+        if (pet == null || pet.petUUID.getOwnUUID() != event.getRightClicked().getUniqueId() || abilitiesDatabase.cooldownMap.hasActiveCooldown(uuid)) {
             return;
         }
         boolean activated = false;

@@ -4,8 +4,9 @@
 
 # (Recommended turning on )
 # MySQL values (by default turned off, switch enabled value to true, in order to activate SQL).
-mysql:
-  enabled: false
+sql:
+  # Available types: "mysql", "flat"
+  type: "mysql"
   user: "login"
   password: "password"
   url: "jdbc:mysql://localhost:3306/database"

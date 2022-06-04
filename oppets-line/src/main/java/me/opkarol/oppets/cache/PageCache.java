@@ -8,12 +8,12 @@ package me.opkarol.oppets.cache;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.collections.OpMap;
-import me.opkarol.oppets.graphic.GraphicItemStack;
+import me.opkarol.oppets.collections.map.OpMap;
+import me.opkarol.oppets.graphic.builder.GraphicItemStack;
 import me.opkarol.oppets.graphic.IGetter;
-import me.opkarol.oppets.items.OpItemBuilder;
-import me.opkarol.oppets.utils.FormatUtils;
-import me.opkarol.oppets.utils.PDCUtils;
+import me.opkarol.oppets.items.builder.OpItemBuilder;
+import me.opkarol.oppets.utils.external.FormatUtils;
+import me.opkarol.oppets.utils.external.PDCUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.InventoryUtils.*;
+import static me.opkarol.oppets.utils.external.InventoryUtils.*;
 
 public class PageCache<K extends IGetter> {
     private final List<IGetter[]> list = new ArrayList<>();

@@ -1,6 +1,14 @@
 package me.opkarol.oppets.entities.manager;
 
-import me.opkarol.oppets.collections.OpMap;
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+import me.opkarol.oppets.collections.map.OpMap;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.entities.IEntityPet;
 import me.opkarol.oppets.pets.Pet;
@@ -42,14 +50,14 @@ public abstract class EntityManager implements IEntityManager {
 
     public void setPrivate(@NotNull IEntityPet iPet, @NotNull Pet pet, Player player, @NotNull Database database) {
         int id = iPet.getEntityId();
-        database.getDatabase().addIdPet(pet.getOwnUUID(), id);
-        if (!pet.isVisibleToOthers()) {
+        database.getDatabase().addIdPet(pet.petUUID.getOwnUUID(), id);
+        if (!pet.settings.isVisibleToOthers()) {
             database.getUtils().hideEntityFromServer(player, id);
         }
     }
 
     public void setPetIDInDatabase(@NotNull Player player, UUID uuid, @NotNull Pet pet, @NotNull Database database) {
-        pet.setOwnUUID(uuid);
+        pet.petUUID.setOwnUUID(uuid);
         database.getDatabase().setCurrentPet(player.getUniqueId(), pet);
     }
 

@@ -1,35 +1,60 @@
 package me.opkarol.oppets.inventory;
 
-import me.opkarol.oppets.addons.AddonConfig;
+/*
+ * Copyright (c) 2021-2022.
+ * [OpPets] ThisKarolGajda
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+/*
+ = Copyright (c) 2021-2022.
+ = [OpPets] ThisKarolGajda
+ = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ = http://www.apache.org/licenses/LICENSE-2.0
+ = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+import me.opkarol.oppets.addons.types.AddonConfig;
 import me.opkarol.oppets.addons.AddonManager;
-import me.opkarol.oppets.addons.IAddon;
-import me.opkarol.oppets.cache.InventoriesCache;
+import me.opkarol.oppets.addons.types.IAddon;
+import me.opkarol.oppets.inventory.cache.InventoriesCache;
 import me.opkarol.oppets.cache.PageCache;
-import me.opkarol.oppets.collections.OpMap;
-import me.opkarol.oppets.databases.APIDatabase;
+import me.opkarol.oppets.collections.map.OpMap;
+import me.opkarol.oppets.databases.external.APIDatabase;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.eggs.EggItem;
+import me.opkarol.oppets.eggs.types.EggItem;
 import me.opkarol.oppets.eggs.EggManager;
-import me.opkarol.oppets.eggs.EggRecipe;
+import me.opkarol.oppets.eggs.types.EggRecipe;
 import me.opkarol.oppets.exceptions.ExceptionLogger;
 import me.opkarol.oppets.files.MessagesHolder;
 import me.opkarol.oppets.graphic.IGetter;
 import me.opkarol.oppets.interfaces.IUtils;
+import me.opkarol.oppets.inventory.accessors.InventoryAccessor;
+import me.opkarol.oppets.inventory.accessors.PagesInventoryAccessor;
+import me.opkarol.oppets.inventory.accessors.PetInventoryAccessor;
+import me.opkarol.oppets.inventory.accessors.ShopInventoryAccessor;
 import me.opkarol.oppets.inventory.anvil.PrestigeConfirmAnvilInventory;
 import me.opkarol.oppets.inventory.anvil.RenameAnvilInventory;
-import me.opkarol.oppets.items.OpItemBuilder;
+import me.opkarol.oppets.inventory.builder.OpInventoryBuilder;
+import me.opkarol.oppets.items.builder.OpItemBuilder;
 import me.opkarol.oppets.items.OpItemEnums;
-import me.opkarol.oppets.items.OpItemLampData;
-import me.opkarol.oppets.items.OpItemShopData;
+import me.opkarol.oppets.items.data.OpItemLampData;
+import me.opkarol.oppets.items.data.OpItemShopData;
 import me.opkarol.oppets.leaderboards.Leaderboard;
 import me.opkarol.oppets.leaderboards.LeaderboardCounter;
 import me.opkarol.oppets.misc.StringTransformer;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.pets.PetsConverter;
+import me.opkarol.oppets.pets.converter.PetsConverter;
 import me.opkarol.oppets.pets.TypeOfEntity;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import me.opkarol.oppets.shops.Shop;
 import me.opkarol.oppets.utils.*;
+import me.opkarol.oppets.utils.external.FormatUtils;
+import me.opkarol.oppets.utils.external.InventoryUtils;
+import me.opkarol.oppets.utils.external.MathUtils;
+import me.opkarol.oppets.utils.external.PDCUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.HumanEntity;
@@ -45,8 +70,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.cache.NamespacedKeysCache.summonItemKey;
-import static me.opkarol.oppets.utils.FormatUtils.returnMessage;
-import static me.opkarol.oppets.utils.InventoryUtils.fillStyledInventory;
+import static me.opkarol.oppets.utils.external.FormatUtils.returnMessage;
+import static me.opkarol.oppets.utils.external.InventoryUtils.fillStyledInventory;
 
 public class OpInventories {
     public static class LevelInventory extends PetInventoryAccessor {
@@ -135,7 +160,7 @@ public class OpInventories {
                     String directory = "%" + number + "_" + value + "%";
                     switch (value) {
                         case "player_name": {
-                            currentString = currentString.replace(directory, OpUtils.getNameFromUUID(pet.getOwnerUUID()));
+                            currentString = currentString.replace(directory, OpUtils.getNameFromUUID(pet.petUUID.getOwnerUUID()));
                             break;
                         }
                         case "player_object": {
@@ -281,7 +306,7 @@ public class OpInventories {
                     .fillVariable(0, String.valueOf(MathUtils.getMaxLevel(getPet())))
                     .fillVariable(1, MathUtils.getPercentageOfNextLevel(getPet()) + "%")
                     .fillVariable(2, PetsUtils.getPrestige(getPet()))
-                    .fillVariable(3, FormatUtils.formatMessage(OpUtils.getNameFromUUID(getPet().getOwnerUUID())))
+                    .fillVariable(3, FormatUtils.formatMessage(OpUtils.getNameFromUUID(getPet().petUUID.getOwnerUUID())))
                     .fillVariable(4, PetsUtils.getPetFormattedName(getPet()))
                     .fillVariable(5, String.valueOf(MathUtils.getPetLevelExperience(getPet())))
                     .fillVariable(6, String.valueOf(getPet().getLevel()))
@@ -391,29 +416,29 @@ public class OpInventories {
             return inventoryBuilder
                     .cloneWithClearGraphic()
                     .setTitle(InventoriesCache.settingsInventoryTitle.replace("%pet_name%", FormatUtils.formatMessage(getPet().getPetName())))
-                    .fillVariable(0, getPet().isVisibleToOthers())
-                    .fillVariable(1, getPet().isGiftable())
-                    .fillVariable(2, getPet().isGlowing())
-                    .fillVariable(3, getPet().isFollowingPlayer())
-                    .fillVariable(4, getPet().isTeleportingToPlayer())
-                    .fillVariable(5, getPet().isRideable())
-                    .fillVariable(6, getPet().isOtherRideable())
-                    .fillVariable(7, getPet().areParticlesEnabled())
+                    .fillVariable(0, getPet().settings.isVisibleToOthers())
+                    .fillVariable(1, getPet().settings.isGiftable())
+                    .fillVariable(2, getPet().settings.isGlowing())
+                    .fillVariable(3, getPet().settings.isFollowingPlayer())
+                    .fillVariable(4, getPet().settings.isTeleportingToPlayer())
+                    .fillVariable(5, getPet().settings.isRideable())
+                    .fillVariable(6, getPet().settings.isOtherRideable())
+                    .fillVariable(7, getPet().settings.areParticlesEnabled())
                     .updateTranslationsAsFunction()
                     .getOwnConsumer(builder -> {
                         Pet pet = getPet();
                         String defaultPath = builder.getDefaultPath();
                         int i = 9;
                         for (String s : Arrays.asList("visibleToOthers", "giftable", "glows", "followPlayer", "teleportToPlayer", "rideable", "otherRideable", "particlesEnabled")) {
-                            builder.addButton(b -> b.setPath(defaultPath + s).setLampData(new OpItemLampData(pet.getSettings().getBoolean(s, false))), i, player -> {
-                                pet.setSettings(pet.getSettings().negate(s));
+                            builder.addButton(b -> b.setPath(defaultPath + s).setLampData(new OpItemLampData(pet.settings.getSettings().getBoolean(s, false))), i, player -> {
+                                pet.setSettings(pet.settings.negate(s));
                                 saveProgress(pet, player);
                             });
                             i++;
                         }
                     })
                     .addTextButton("resetSettings", 17, player -> {
-                        getPet().resetSettings();
+                        getPet().settings.resetSettings();
                         saveProgress(getPet(), player);
                     })
                     .getInventory();
@@ -559,7 +584,7 @@ public class OpInventories {
 
         private void saveProgress(@NotNull Player player, String s) {
             Pet pet = getPet();
-            pet.setPreferences(converter.negatePetPreference(pet, s));
+            pet.preferences.setPreferences(converter.negatePetPreference(pet, s));
             PetsUtils.savePetProgress(pet, player.getUniqueId());
             database.getUtils().respawnPet(pet, player);
             player.openInventory(new PreferencesInventory(pet).buildInventory());

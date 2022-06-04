@@ -8,8 +8,8 @@ package me.opkarol.oppets.prestiges;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.utils.ConfigUtils;
-import me.opkarol.oppets.utils.FormatUtils;
+import me.opkarol.oppets.utils.external.ConfigUtils;
+import me.opkarol.oppets.utils.external.FormatUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

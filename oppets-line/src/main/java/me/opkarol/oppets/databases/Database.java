@@ -9,28 +9,30 @@ package me.opkarol.oppets.databases;
  */
 
 import me.opkarol.oppets.cache.LastIDCache;
-import me.opkarol.oppets.interfaces.IDatabase;
+import me.opkarol.oppets.databases.external.APIDatabase;
+import me.opkarol.oppets.databases.external.PetsDatabase;
+import me.opkarol.oppets.databases.types.FlatDatabase;
+import me.opkarol.oppets.databases.types.MySQLDatabase;
 import me.opkarol.oppets.interfaces.IOpPets;
 import me.opkarol.oppets.interfaces.IUtils;
+import me.opkarol.oppets.interfaces.database.IDatabase;
+import me.opkarol.oppets.interfaces.database.IPetsDatabase;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 public class Database {
     protected static Database database;
-
     public boolean mySQLAccess = false;
+    private String sqlFormat = "";
     private final Plugin instance;
     private IOpPets opPets;
-    private IUtils utils;
+    private IPetsDatabase iPetsDatabase;
     private IDatabase iDatabase;
-    private PetsDatabase petsDatabase;
-    private MySQL mySQL;
     private LastIDCache cache;
     private APIDatabase apiDatabase;
 
@@ -41,26 +43,30 @@ public class Database {
     }
 
     public void setupDatabase() {
-        mySQLAccess = instance.getConfig().getBoolean("mysql.enabled");
+        mySQLAccess = instance.getConfig().getBoolean("sql.enabled");
         cache = new LastIDCache(this);
-        if (mySQLAccess) {
-            mySQL = new MySQL().setupMySQL();
-            setDatabase(new MySQLDatabase());
-        } else {
-            setDatabase(new MiniPetsDatabase());
-            sendMultiMessageWarning(Arrays.asList("SQL database isn't enabled.", "Please enable it to get the best experience from OpPets plugin.", "Current database could have a problems with performance.", "For more information visit this page: https://github.com/ThisKarolGajda/OpPets/wiki/"));
+        switch (sqlFormat) {
+            case "mysql": {
+                iDatabase = new MySQLDatabase.MySQL().setupDatabase();
+                setDatabase(new MySQLDatabase());
+                break;
+            }
+            case "flat": {
+                setDatabase(new FlatDatabase());
+                sendMultiMessageWarning("SQL database isn't enabled.", "Please enable it to get the best experience from OpPets plugin.", "Current database could have a problems with performance.", "For more information visit this page: https://github.com/ThisKarolGajda/OpPets/wiki/");
+                break;
+            }
         }
         apiDatabase = new APIDatabase(this);
-        iDatabase.startLogic();
-        petsDatabase = new PetsDatabase();
+        iPetsDatabase.startLogic();
     }
 
-    public IDatabase getDatabase() {
-        return iDatabase;
+    public IPetsDatabase getDatabase() {
+        return iPetsDatabase;
     }
 
-    public void setDatabase(IDatabase database) {
-        this.iDatabase = database;
+    public void setDatabase(IPetsDatabase database) {
+        this.iPetsDatabase = database;
     }
 
     public Plugin getPlugin() {
@@ -68,11 +74,11 @@ public class Database {
     }
 
     public IUtils getUtils() {
-        return utils;
+        return opPets.getUtils();
     }
 
     public PetsDatabase getPetsDatabase() {
-        return petsDatabase;
+        return opPets.getPetsDatabase();
     }
 
     public IOpPets getOpPets() {
@@ -87,25 +93,24 @@ public class Database {
         return database;
     }
 
-    public MySQL getMySQL() {
-        return mySQL;
+    public IDatabase getIDatabase() {
+        return iDatabase;
     }
 
     public void setOpPets(@NotNull IOpPets opPets) {
         this.opPets = opPets;
-        this.utils = opPets.getUtils();
     }
 
     public APIDatabase getAPIDatabase() {
         return apiDatabase;
     }
 
-    public void sendMultiMessageWarning(List<String> messages) {
+    public void sendMultiMessageWarning(String... messages) {
         Logger logger = getPlugin().getLogger();
         if (messages == null) {
             return;
         }
-        messages.forEach(logger::warning);
+        Arrays.stream(messages).forEach(logger::warning);
     }
 
     public void hideEntity(@NotNull Player playerFrom) {

@@ -59,11 +59,6 @@ public class Utils implements IUtils {
         database.getOpPets().getEntityManager().spawnEntity(player, pet);
     }
 
-    @Override
-    public String getVersion() {
-        return "v1_16_1R";
-    }
-
     public void removePathfinders(Object bP, Object bQ) {
         PathfinderGoalSelector goalSelector = (PathfinderGoalSelector) bP;
         PathfinderGoalSelector targetSelector = (PathfinderGoalSelector) bQ;

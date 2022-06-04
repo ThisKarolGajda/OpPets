@@ -9,7 +9,6 @@ package me.opkarol.oppets.particles;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.OpPets;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
@@ -18,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ParticlesManager {
     private final Database database = Database.getInstance();
+    //TODO set real particles, maybe using external api
 
     public void spawnLevelUpPetEffect(Player player, Entity entity) {
         new BukkitRunnable() {
