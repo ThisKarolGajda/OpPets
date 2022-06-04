@@ -104,107 +104,107 @@ public class IConfigFile<K> {
     public String getPath() {
         return getYmlConfiguration().getYamlConfig().getPath();
     }
-}
 
-class YmlConfiguration {
-    private File ymlConfiguration;
-    private File pluginDataFolder;
-    private String name;
-    private final Plugin plugin;
-    private FileConfiguration config;
+    public static class YmlConfiguration {
+        private File ymlConfiguration;
+        private File pluginDataFolder;
+        private String name;
+        private final Plugin plugin;
+        private FileConfiguration config;
 
-    public YmlConfiguration(String name) {
-        this.plugin = APIDatabase.getInstance().getPlugin();
-        if (name == null) {
-            ExceptionLogger.getInstance().throwException("Provided name is invalid: null");
-            return;
-        }
-        if (name.contains(".")) {
-            this.name = name;
-        } else {
-            this.name = name + ".yml";
-        }
-        this.pluginDataFolder = plugin.getDataFolder();
-        ymlConfiguration = new File(pluginDataFolder, this.name);
-        config = YamlConfiguration.loadConfiguration(ymlConfiguration);
-    }
-
-    public YmlConfiguration(String name, boolean readOnly) {
-        this.plugin = APIDatabase.getInstance().getPlugin();
-        if (name == null) {
-            ExceptionLogger.getInstance().throwException("Provided name is invalid: null");
-            return;
-        }
-        if (name.contains(".")) {
-            this.name = name;
-        } else {
-            this.name = name + ".yml";
-        }
-        this.pluginDataFolder = plugin.getDataFolder();
-        ymlConfiguration = new File(pluginDataFolder, this.name);
-        if (!readOnly) {
+        public YmlConfiguration(String name) {
+            this.plugin = APIDatabase.getInstance().getPlugin();
+            if (name == null) {
+                ExceptionLogger.getInstance().throwException("Provided name is invalid: null");
+                return;
+            }
+            if (name.contains(".")) {
+                this.name = name;
+            } else {
+                this.name = name + ".yml";
+            }
+            this.pluginDataFolder = plugin.getDataFolder();
+            ymlConfiguration = new File(pluginDataFolder, this.name);
             config = YamlConfiguration.loadConfiguration(ymlConfiguration);
         }
 
-    }
-
-    public void createConfig() {
-        if (!ymlConfiguration.exists()) {
-            if (!getPluginDataFolder().exists()) {
-                this.pluginDataFolder.mkdir();
+        public YmlConfiguration(String name, boolean readOnly) {
+            this.plugin = APIDatabase.getInstance().getPlugin();
+            if (name == null) {
+                ExceptionLogger.getInstance().throwException("Provided name is invalid: null");
+                return;
             }
-            plugin.saveResource(name, false);
+            if (name.contains(".")) {
+                this.name = name;
+            } else {
+                this.name = name + ".yml";
+            }
+            this.pluginDataFolder = plugin.getDataFolder();
+            ymlConfiguration = new File(pluginDataFolder, this.name);
+            if (!readOnly) {
+                config = YamlConfiguration.loadConfiguration(ymlConfiguration);
+            }
+
         }
-    }
 
-    public FileConfiguration getConfig() {
-        return config;
-    }
+        public void createConfig() {
+            if (!ymlConfiguration.exists()) {
+                if (!getPluginDataFolder().exists()) {
+                    this.pluginDataFolder.mkdir();
+                }
+                plugin.saveResource(name, false);
+            }
+        }
 
-    public File getPluginDataFolder() {
-        return pluginDataFolder;
-    }
+        public FileConfiguration getConfig() {
+            return config;
+        }
 
-    public String getName() {
-        return name;
-    }
+        public File getPluginDataFolder() {
+            return pluginDataFolder;
+        }
 
-    public File getYamlConfig() {
-        return ymlConfiguration;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public void addDefault(String key, String value) {
-        if (config.getString(key) == null) {
-            config.set(key, value);
+        public File getYamlConfig() {
+            return ymlConfiguration;
+        }
+
+        public void addDefault(String key, String value) {
+            if (config.getString(key) == null) {
+                config.set(key, value);
+                try {
+                    config.save(getYamlConfig());
+                } catch (IOException e) {
+                    ExceptionLogger.getInstance().addException(new Exception(String.format("Couldn't add value for %s in %s", value, key), this.getClass().toString(), e.getCause()));
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void addDefaults(@NotNull OpMap<String,Object> defaults) {
+            for (String s : defaults.keySet()) {
+                this.config.set(s, defaults.getOrDefault(s, null));
+                try {
+                    config.save(getYamlConfig());
+                } catch (IOException e) {
+                    ExceptionLogger.getInstance().addException(new Exception(String.format("Couldn't add values in %s", s), this.getClass().toString(), e.getCause()));
+                }
+            }
+        }
+
+        public void save() {
             try {
                 config.save(getYamlConfig());
-            } catch (IOException e) {
-                ExceptionLogger.getInstance().addException(new Exception(String.format("Couldn't add value for %s in %s", value, key), this.getClass().toString(), e.getCause()));
-                e.printStackTrace();
+            } catch(IOException e) {
+                ExceptionLogger.getInstance().addException(new Exception("Couldn't save configuration file", this.getClass().toString(), e.getCause()));
             }
         }
-    }
 
-    public void addDefaults(@NotNull OpMap<String,Object> defaults) {
-        for (String s : defaults.keySet()) {
-            this.config.set(s, defaults.getOrDefault(s, null));
-            try {
-                config.save(getYamlConfig());
-            } catch (IOException e) {
-                ExceptionLogger.getInstance().addException(new Exception(String.format("Couldn't add values in %s", s), this.getClass().toString(), e.getCause()));
-            }
+        public void reload() {
+            config = YamlConfiguration.loadConfiguration(getYamlConfig());
         }
-    }
-
-    public void save() {
-        try {
-            config.save(getYamlConfig());
-        } catch(IOException e) {
-            ExceptionLogger.getInstance().addException(new Exception("Couldn't save configuration file", this.getClass().toString(), e.getCause()));
-        }
-    }
-
-    public void reload() {
-        config = YamlConfiguration.loadConfiguration(getYamlConfig());
     }
 }
