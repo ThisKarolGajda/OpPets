@@ -22,7 +22,7 @@ public class Sheep extends EntitySheep {
 
     public Sheep(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.SHEEP, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
 
     }
 }

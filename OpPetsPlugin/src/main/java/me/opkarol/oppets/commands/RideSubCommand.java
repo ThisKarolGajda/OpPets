@@ -47,7 +47,7 @@ public class RideSubCommand extends OpSubCommand {
 
         if (entity != null) {
             entity.addPassenger(player);
-            PacketManager.injectPlayer(player);
+            PacketManager.injectRider(player);
         }
         return true;
     }

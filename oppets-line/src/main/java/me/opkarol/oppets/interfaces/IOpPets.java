@@ -13,7 +13,7 @@ import me.opkarol.oppets.boosters.BoosterProvider;
 import me.opkarol.oppets.broadcasts.BroadcastManager;
 import me.opkarol.oppets.databases.external.PetsDatabase;
 import me.opkarol.oppets.eggs.EggManager;
-import me.opkarol.oppets.entities.manager.IEntityManager;
+import me.opkarol.oppets.api.entities.manager.IEntityManager;
 import me.opkarol.oppets.leaderboards.LeaderboardCounter;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import me.opkarol.oppets.databases.external.SkillDatabase;

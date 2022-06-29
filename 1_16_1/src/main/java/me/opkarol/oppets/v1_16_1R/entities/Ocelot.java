@@ -22,6 +22,6 @@ public class Ocelot extends EntityOcelot {
 
     public Ocelot(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.OCELOT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

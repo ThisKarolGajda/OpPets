@@ -22,7 +22,7 @@ public class Pig extends net.minecraft.world.entity.animal.Pig {
 
     public Pig(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.PIG, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+
     }
 
     @Override

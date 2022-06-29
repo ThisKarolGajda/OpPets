@@ -10,8 +10,8 @@ package me.opkarol.oppets.commands;
 
 import me.opkarol.oppets.boosters.Booster;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.misc.StringTransformer;
-import me.opkarol.oppets.utils.OpUtils;
+import me.opkarol.oppets.api.misc.StringTransformer;
+import me.opkarol.oppets.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,7 +77,7 @@ public class BoosterSubCommand extends OpSubCommand {
                         database.getOpPets().getBoosterProvider().createNewBooster(name, multiplier, time, type);
                     } else {
                         String playerName = args[6];
-                        database.getOpPets().getBoosterProvider().createNewBooster(name, multiplier, time, type, OpUtils.getUUIDFromName(playerName));
+                        database.getOpPets().getBoosterProvider().createNewBooster(name, multiplier, time, type, Utils.getUUIDFromName(playerName));
                     }
                 }
             }

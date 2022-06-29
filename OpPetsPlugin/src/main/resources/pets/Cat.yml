@@ -1,0 +1,16 @@
+RandomNames:
+  - Soot
+  - Oreo
+  - Brownie
+  - Misty
+  - Tiger
+  - Ash
+  - Stripes
+  - Vanilla
+
+Settings:
+  special_ability:
+    - ACTIONBAR:&7Your cat likes fish!
+    - ADD_FOOD:10
+  speed: 1.9
+  distance: 30

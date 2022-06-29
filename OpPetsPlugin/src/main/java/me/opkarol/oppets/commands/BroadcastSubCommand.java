@@ -10,7 +10,7 @@ package me.opkarol.oppets.commands;
 
 import me.opkarol.oppets.broadcasts.Broadcast;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.misc.StringTransformer;
+import me.opkarol.oppets.api.misc.StringTransformer;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 

@@ -8,10 +8,13 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.api.misc.StringTransformer;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.eggs.types.EggItem;
-import me.opkarol.oppets.files.MessagesHolder;
+import me.opkarol.oppets.api.files.MessagesHolder;
+import me.opkarol.oppets.eggs.types.EggRecipe;
 import me.opkarol.oppets.inventory.OpInventories;
+import me.opkarol.oppets.pets.TypeOfEntity;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.opkarol.oppets.utils.external.FormatUtils.returnMessage;
-import static me.opkarol.oppets.utils.OpUtils.getEggItemFromString;
+import static me.opkarol.oppets.utils.Utils.getEggItemFromString;
 
 @Deprecated
 public class EggsSubCommand extends OpSubCommand {
@@ -42,8 +45,7 @@ public class EggsSubCommand extends OpSubCommand {
             if (optional.isEmpty()) {
                 return returnMessage(player, messages.getString("Commands.invalidObjectProvided"));
             }
-            EggItem eggItem = optional.get();
-            player.openInventory(new OpInventories.EggRecipesInventory(eggItem.getType(), eggItem.getRecipes(), 0).buildInventory());
+            player.openInventory(new OpInventories.EggRecipesInventory(optional, 0).buildInventory());
         }
         if (args.length == 3) {
             Optional<EggItem> optional = getEggItemFromString(args[1]);
@@ -51,8 +53,9 @@ public class EggsSubCommand extends OpSubCommand {
                 return returnMessage(player, messages.getString("Commands.invalidObjectProvided"));
             }
             EggItem eggItem = optional.get();
-            //TODO select recipe
-            player.openInventory(new OpInventories.EggRecipeInventory(eggItem.getRecipes().get(0), eggItem.getItem()).buildInventory());
+            String stringRecipe = args[2];
+            Optional<EggRecipe> recipe = eggItem.getRecipe(stringRecipe);
+            recipe.ifPresent(eggRecipe -> player.openInventory(new OpInventories.EggRecipeInventory(eggRecipe, eggItem.getItem()).buildInventory()));
             return true;
         }
         return true;
@@ -60,8 +63,20 @@ public class EggsSubCommand extends OpSubCommand {
 
     @Override
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String @NotNull [] args) {
-        if (args.length == 2) {
-            return database.getOpPets().getEggManager().getTypes();
+        switch (args.length) {
+            case 2 -> {
+                return database.getOpPets().getEggManager().getTypes();
+            }
+            case 3 -> {
+                Optional<TypeOfEntity> type = StringTransformer.getEnumValue(args[1].toUpperCase(), TypeOfEntity.class);
+                if (type.isPresent()) {
+                    Optional<EggItem> item = database.getOpPets().getEggManager().getEggFromType(type.get());
+                    if (item.isPresent()) {
+                        return item.get().getRecipes().stream().map(EggRecipe::getRecipeName).toList();
+                    }
+                }
+
+            }
         }
         return new ArrayList<>();
     }

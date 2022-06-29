@@ -22,6 +22,6 @@ public class Cat extends EntityCat {
 
     public Cat(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.CAT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

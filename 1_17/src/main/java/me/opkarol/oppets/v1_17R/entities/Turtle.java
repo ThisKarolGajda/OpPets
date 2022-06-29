@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Turtle extends net.minecraft.world.entity.animal.Turtle {
     public Turtle(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.TURTLE, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

@@ -10,7 +10,7 @@ package me.opkarol.oppets.commands;
 
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.OpUtils;
+import me.opkarol.oppets.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,7 @@ public class GiftSubCommand extends OpSubCommand {
             return returnMessage(sender, getMessages().getString("Commands.petIsntGiftable"));
         }
         String playerName = args[2];
-        UUID uuid1 = OpUtils.getUUIDFromName(playerName);
+        UUID uuid1 = Utils.getUUIDFromName(playerName);
         if (database.getDatabase().hasPet(uuid1, petName)) {
             return returnMessage(sender, getMessages().getString("Commands.receiverSameNamedPet").replace("%pet_name%", petName));
         }

@@ -22,6 +22,6 @@ public class Pig extends EntityPig {
 
     public Pig(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.PIG, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

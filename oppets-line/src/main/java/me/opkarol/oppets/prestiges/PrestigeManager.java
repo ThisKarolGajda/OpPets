@@ -11,7 +11,6 @@ package me.opkarol.oppets.prestiges;
 import me.opkarol.oppets.utils.external.ConfigUtils;
 import me.opkarol.oppets.utils.external.FormatUtils;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class PrestigeManager {
@@ -25,7 +24,6 @@ public class PrestigeManager {
         }
     }
 
-    @Contract(pure = true)
     public @NotNull String getFormatForNumber(int prestigeLevel) {
         if (format == null) return "";
         StringBuilder builder = new StringBuilder();

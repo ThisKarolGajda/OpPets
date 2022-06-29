@@ -8,16 +8,20 @@ package me.opkarol.oppets.commands;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.api.misc.StringTransformer;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.misc.StringTransformer;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
+import me.opkarol.oppets.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.opkarol.oppets.utils.external.FormatUtils.returnMessage;
@@ -49,13 +53,8 @@ public class CreateSubCommand extends OpSubCommand {
             return returnMessage(sender, getMessages().getString("Commands.wrongType").replace("%pet_type%", petType));
         }
         String petName = args[2];
-        if (database.getDatabase().getPetList(playerUUID) != null) {
-            for (Pet pet : database.getDatabase().getPetList(playerUUID)) {
-                assert pet.getPetName() != null;
-                if (pet.getPetName().equals(petName)) {
-                    return returnMessage(sender, getMessages().getString("Commands.petWithSameName").replace("%pet_name%", petName));
-                }
-            }
+        if (Utils.hasPetByName(playerUUID, petName)) {
+            return returnMessage(sender, getMessages().getString("Commands.petWithSameName").replace("%pet_name%", petName));
         }
         Optional<TypeOfEntity> type = StringTransformer.getEnumValue(petType.toUpperCase(), TypeOfEntity.class);
         String finalPetType = petType;

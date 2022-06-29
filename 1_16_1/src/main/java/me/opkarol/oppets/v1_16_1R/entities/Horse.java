@@ -22,6 +22,6 @@ public class Horse extends EntityHorse {
 
     public Horse(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.HORSE, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

@@ -10,7 +10,7 @@ package me.opkarol.oppets.v1_18_1R;
 
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.PetsUtils;
+import me.opkarol.oppets.utils.Utils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
@@ -50,7 +50,7 @@ public class PathfinderGoalPet_1_18_1 extends Goal {
         }
         else if (l != null && l == b.getBukkitEntity().getLocation()) {
             return;
-        } else if (!(this.a.getDisplayName().getString().equals(PetsUtils.getPetFormattedName(p)))) {
+        } else if (!(this.a.getDisplayName().getString().equals(Utils.getFilledPetName(p)))) {
             return;
         } else if (b.distanceTo(this.a) >= (this.g * this.g)) {
             if (p.settings.isTeleportingToPlayer()) this.a.teleportTo(b.getX(), b.getY(), b.getZ());

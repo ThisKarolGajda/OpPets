@@ -8,8 +8,8 @@ package me.opkarol.oppets.v1_18_2R.entities.common;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.entities.IAgeablePet;
-import me.opkarol.oppets.entities.IEntityPet;
+import me.opkarol.oppets.api.entities.IAgeablePet;
+import me.opkarol.oppets.api.entities.IEntityPet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;

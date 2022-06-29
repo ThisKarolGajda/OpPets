@@ -11,7 +11,6 @@ package me.opkarol.oppets.cache;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,12 +18,12 @@ import java.util.List;
 public class LastIDCache implements Serializable {
     private int lastID;
 
-    public LastIDCache(@NotNull Database database) {
+    public LastIDCache() {
         new BukkitRunnable() {
             int largestID = 0;
             @Override
             public void run() {
-                for (List<Pet> list : database.getDatabase().getPetsMap().getValues()) {
+                for (List<Pet> list : Database.getInstance().getDatabase().getPetsMap().getValues()) {
                     for (Pet pet : list) {
                         int id = pet.petUUID.getDatabaseId();
                         if (id > largestID) {
@@ -34,7 +33,7 @@ public class LastIDCache implements Serializable {
                 }
                 lastID = largestID;
             }
-        }.runTaskAsynchronously(database.getPlugin());
+        }.runTaskAsynchronously(Database.getInstance().getPlugin());
     }
 
     public int getLastID() {

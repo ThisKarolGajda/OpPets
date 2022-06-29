@@ -10,14 +10,14 @@ package me.opkarol.oppets.pets.objects;
 
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.converter.PetsConverter;
-import me.opkarol.oppets.storage.OpObjects;
+import me.opkarol.oppets.api.storage.OpObjects;
 
 import java.io.Serializable;
 
 public class PetPreferences implements Serializable {
     private OpObjects preferences = new OpObjects();
     private final PetsConverter converter = new PetsConverter();
-    private final Pet pet;
+    private Pet pet;
 
     public PetPreferences(Pet pet) {
         this.pet = pet;
@@ -27,6 +27,10 @@ public class PetPreferences implements Serializable {
     public PetPreferences(Pet pet, OpObjects objects) {
         this.pet = pet;
         setPreferences(objects);
+    }
+
+    public PetPreferences() {
+
     }
 
     public void setPreferences(OpObjects object) {

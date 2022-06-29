@@ -9,7 +9,7 @@ package me.opkarol.oppets.boosters;
  */
 
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.MessagesHolder;
+import me.opkarol.oppets.api.files.MessagesHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Llama extends net.minecraft.world.entity.animal.horse.Llama {
     public Llama(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.LLAMA, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

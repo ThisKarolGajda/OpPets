@@ -21,6 +21,6 @@ import java.util.Objects;
 public class Llama extends EntityLlama {
     public Llama(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.LLAMA, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

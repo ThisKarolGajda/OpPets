@@ -21,6 +21,6 @@ import java.util.Objects;
 public class Turtle extends EntityTurtle {
     public Turtle(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.TURTLE, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

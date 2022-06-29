@@ -31,7 +31,7 @@ import java.util.Objects;
 public class Donkey extends net.minecraft.world.entity.animal.horse.Donkey {
     public Donkey(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.DONKEY, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

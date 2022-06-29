@@ -10,7 +10,7 @@ package me.opkarol.oppets.v1_16_1R;
 
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.PetsUtils;
+import me.opkarol.oppets.utils.Utils;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 
@@ -44,7 +44,7 @@ public class PathfinderGoalPet_1_16_1 extends PathfinderGoal {
             return false;
         } else if (l != null && l == b.getBukkitEntity().getLocation()) {
             return false;
-        } else if (!(this.a.getDisplayName().getString().equals(PetsUtils.getPetFormattedName(pet)))) {
+        } else if (!(this.a.getDisplayName().getString().equals(Utils.getFilledPetName(pet)))) {
             return false;
         } else if (this.b.h(this.a) > (this.g * this.g)) {
             if (pet.settings.isTeleportingToPlayer()) this.a.setPosition(this.b.locX(), b.locY(), b.locZ());

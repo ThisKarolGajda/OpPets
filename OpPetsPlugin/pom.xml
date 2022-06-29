@@ -2,14 +2,6 @@
 <!--
   ~ Copyright (c) 2021-2022.
   ~ [OpPets] ThisKarolGajda
-  ~  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
-  ~  compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-  ~   Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-  -->
-
-<!--
-  ~ Copyright (c) 2021-2022.
-  ~ [OpPets] ThisKarolGajda
   ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
   ~ http://www.apache.org/licenses/LICENSE-2.0
   ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -105,11 +97,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-shared-utils</artifactId>
-            <version>3.3.3</version>
-        </dependency>
-        <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
@@ -126,31 +113,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.7.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.1.2</version>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -179,6 +141,7 @@
                                         <include>config.yml</include>
                                         <include>eggs.yml</include>
                                         <include>messages.yml</include>
+                                        <include>skills.yml</include>
                                         <include>inventories.json</include>
                                         <include>database/Pets.txt</include>
                                         <include>database/ActivePets.txt</include>
@@ -197,7 +160,9 @@
                                     <shadedPattern>me.opkarol.oppets.hikaricp</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <minimizeJar>false</minimizeJar>
+                            <outputFile>E:/Servers/Test5Plugin - 1.18.2/plugins/OpPets - ${project.version}.jar</outputFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -211,24 +176,5 @@
                 </configuration>
             </plugin>
         </plugins>
-        <directory>E:/Servers/Test5Plugin - 1.18.2/OpPetsBuild</directory>
-        <finalName>OpPets - ${project.version}</finalName>
-        <resources>
-            <resource>
-                <targetPath>.</targetPath>
-                <filtering>true</filtering>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>plugin.yml</include>
-                    <include>config.yml</include>
-                    <include>eggs.yml</include>
-                    <include>messages.yml</include>
-                    <include>inventories.json</include>
-                    <include>database/Pets.txt</include>
-                    <include>database/ActivePets.txt</include>
-                </includes>
-            </resource>
-        </resources>
     </build>
-
 </project>

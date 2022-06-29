@@ -11,7 +11,7 @@ package me.opkarol.oppets.boosters;
 import me.opkarol.oppets.broadcasts.Broadcast;
 import me.opkarol.oppets.broadcasts.BroadcastManager;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.files.MessagesHolder;
+import me.opkarol.oppets.api.files.MessagesHolder;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 

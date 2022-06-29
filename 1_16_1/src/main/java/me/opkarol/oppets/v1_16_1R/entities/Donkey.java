@@ -21,6 +21,6 @@ import java.util.Objects;
 public class Donkey extends EntityHorseDonkey {
     public Donkey(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.DONKEY, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

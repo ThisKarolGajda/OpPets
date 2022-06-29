@@ -21,7 +21,7 @@ import java.util.Objects;
 public class PolarBear extends net.minecraft.world.entity.animal.PolarBear {
     public PolarBear(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.POLAR_BEAR, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

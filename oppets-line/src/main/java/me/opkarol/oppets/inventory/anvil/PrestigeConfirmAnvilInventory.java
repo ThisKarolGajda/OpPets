@@ -10,7 +10,7 @@ package me.opkarol.oppets.inventory.anvil;
 
 import me.opkarol.oppets.databases.external.APIDatabase;
 import me.opkarol.oppets.events.PrestigeChangeEvent;
-import me.opkarol.oppets.files.MessagesHolder;
+import me.opkarol.oppets.api.files.MessagesHolder;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.external.FormatUtils;
 import net.wesjd.anvilgui.AnvilGUI;

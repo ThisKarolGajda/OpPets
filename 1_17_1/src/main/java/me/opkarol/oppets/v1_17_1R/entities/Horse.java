@@ -22,7 +22,7 @@ public class Horse extends net.minecraft.world.entity.animal.horse.Horse {
 
     public Horse(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.HORSE, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

@@ -12,21 +12,22 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
+import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 public class PacketManager implements Listener {
-    private static IUtils utils;
+    private static IUtils utils = Database.getInstance().getUtils();
     private static Object event;
 
-    public static void removePlayer(Player player) {
+    public static void removeRider(Player player) {
         Channel channel = (Channel) utils.getPlayerChannel(player);
         channel.pipeline().remove(player.getName());
     }
 
-    public static void injectPlayer(@NotNull Player player) {
+    public static void injectRider(@NotNull Player player) {
         ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
             @Override
             public void channelRead(ChannelHandlerContext channelHandlerContext, Object packet) {
@@ -36,7 +37,6 @@ public class PacketManager implements Listener {
 
         ChannelPipeline pipeline = (ChannelPipeline) utils.getPlayerPipeline(player);
         pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
-
     }
 
     public static Object getEvent() {
@@ -45,9 +45,5 @@ public class PacketManager implements Listener {
 
     public static void setEvent(Object event) {
         PacketManager.event = event;
-    }
-
-    public static void setUtils(IUtils utils) {
-        PacketManager.utils = utils;
     }
 }

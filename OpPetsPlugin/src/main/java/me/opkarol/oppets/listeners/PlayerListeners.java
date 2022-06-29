@@ -8,12 +8,11 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.OpPets;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.interfaces.IHolder;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.OpUtils;
-import me.opkarol.oppets.utils.PetsUtils;
+import me.opkarol.oppets.utils.Utils;
+import me.opkarol.oppets.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,7 +41,7 @@ public class PlayerListeners implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
         database.getDatabase().databaseUUIDSaver(playerUUID, true);
-        OpUtils.killPetFromPlayerUUID(playerUUID);
+        Utils.killPetFromPlayerUUID(playerUUID);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -50,7 +49,7 @@ public class PlayerListeners implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
         Pet currentPet = database.getDatabase().getCurrentPet(uuid);
-        PetsUtils.summonPet(currentPet, player, true);
+        Utils.summonPet(currentPet, player, true);
         database.hideEntity(player);
     }
 
@@ -58,7 +57,7 @@ public class PlayerListeners implements Listener {
     public void serverLoad(@NotNull ServerLoadEvent event) {
         if (event.getType().equals(ServerLoadEvent.LoadType.RELOAD)) {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                PetsUtils.summonPet(database.getDatabase().getCurrentPet(player.getUniqueId()), player, true);
+                Utils.summonPet(database.getDatabase().getCurrentPet(player.getUniqueId()), player, true);
             }
         }
     }

@@ -21,7 +21,7 @@ public class Sheep extends net.minecraft.world.entity.animal.Sheep {
 
     public Sheep(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.SHEEP, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
 }

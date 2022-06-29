@@ -22,7 +22,7 @@ public class Fox extends net.minecraft.world.entity.animal.Fox {
 
     public Fox(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.FOX, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

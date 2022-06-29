@@ -21,7 +21,7 @@ public class Axolotl extends net.minecraft.world.entity.animal.axolotl.Axolotl {
 
     public Axolotl(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.AXOLOTL, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
 }

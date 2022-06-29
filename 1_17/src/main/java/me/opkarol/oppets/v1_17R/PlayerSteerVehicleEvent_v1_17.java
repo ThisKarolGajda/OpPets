@@ -48,7 +48,7 @@ public class PlayerSteerVehicleEvent_v1_17 implements Listener {
 
         if (sneaking) {
             vehicle.removePassenger(player);
-            PacketManager.removePlayer(player);
+            PacketManager.removeRider(player);
         }
 
         if (jump && vehicle.isOnGround()) {

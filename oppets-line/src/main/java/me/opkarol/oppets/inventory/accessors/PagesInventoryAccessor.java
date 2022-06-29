@@ -9,7 +9,7 @@ package me.opkarol.oppets.inventory.accessors;
  */
 
 import me.opkarol.oppets.cache.PageCache;
-import me.opkarol.oppets.graphic.IGetter;
+import me.opkarol.oppets.api.graphic.IGetter;
 
 public abstract class PagesInventoryAccessor<K extends IGetter> extends InventoryAccessor {
     private PageCache<K> cache;
@@ -20,9 +20,7 @@ public abstract class PagesInventoryAccessor<K extends IGetter> extends Inventor
         this.page = page;
     }
 
-    public PagesInventoryAccessor() {
-
-    }
+    public PagesInventoryAccessor() {}
 
     public PagesInventoryAccessor(int page) {
         this.page = page;

@@ -21,6 +21,6 @@ import java.util.Objects;
 public class Panda extends EntityPanda {
     public Panda(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.PANDA, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+
     }
 }

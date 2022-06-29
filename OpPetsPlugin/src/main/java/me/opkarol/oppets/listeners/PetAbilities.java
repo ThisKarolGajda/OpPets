@@ -11,7 +11,7 @@ package me.opkarol.oppets.listeners;
 import me.opkarol.oppets.abilities.AbilitiesDatabase;
 import me.opkarol.oppets.abilities.AbilitiesFunctions;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.misc.external.api.PetDatabaseObject;
+import me.opkarol.oppets.api.misc.PetDatabaseObject;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.Particle;
 import org.bukkit.entity.EntityType;

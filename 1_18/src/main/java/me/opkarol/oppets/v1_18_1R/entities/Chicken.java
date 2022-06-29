@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Chicken extends net.minecraft.world.entity.animal.Chicken {
     public Chicken(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.CHICKEN, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

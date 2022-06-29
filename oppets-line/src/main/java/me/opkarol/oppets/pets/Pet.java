@@ -8,12 +8,12 @@ package me.opkarol.oppets.pets;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.graphic.IGetter;
+import me.opkarol.oppets.api.graphic.IGetter;
+import me.opkarol.oppets.api.storage.OpObjects;
+import me.opkarol.oppets.databases.Database;
+import me.opkarol.oppets.pets.id.UniquePet;
 import me.opkarol.oppets.pets.objects.PetPreferences;
 import me.opkarol.oppets.pets.objects.PetSettings;
-import me.opkarol.oppets.utils.SkillUtils;
-import me.opkarol.oppets.storage.OpObjects;
-import me.opkarol.oppets.pets.id.UniquePet;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -24,20 +24,21 @@ public class Pet implements Serializable, IGetter {
     private double experience;
     private int level;
     private boolean active;
-    public UniquePet petUUID;
-    public PetSettings settings;
-    public PetPreferences preferences;
+    public UniquePet petUUID = new UniquePet();
+    public PetSettings settings = new PetSettings();
+    public PetPreferences preferences = new PetPreferences();
 
     public Pet(String petName, TypeOfEntity petType, UUID ownUUID, UUID ownerUUID, boolean active) {
-        this();
         setPetName(petName);
         setPetExperience(0);
         setLevel(0);
         setPetUUID(new UniquePet().setOwnUUID(ownUUID).setOwnerUUID(ownerUUID));
         setPetType(petType);
-        setSkillName(new SkillUtils().getRandomSkillName(petType));
+        setRandomSkillName();
         setActive(active);
         setPrestige("0;&a");
+        setSettings(new PetSettings(this));
+        setPreferences(new PetPreferences(this));
     }
 
     public Pet(String name, double experience, int level, TypeOfEntity type, boolean active, UUID ownUUID, UUID ownerUUID, String skill, String prestige, UniquePet petUUID, OpObjects preferences, OpObjects settings) {
@@ -54,10 +55,7 @@ public class Pet implements Serializable, IGetter {
         setSettings(new PetSettings(this, settings));
     }
 
-    public Pet() {
-        setSettings(new PetSettings(this));
-        setPreferences(new PetPreferences(this));
-    }
+    public Pet() {}
 
     @Override
     public GETTER_TYPE getGetterType() {
@@ -143,5 +141,9 @@ public class Pet implements Serializable, IGetter {
 
     public UniquePet getPetUUID() {
         return petUUID;
+    }
+
+    public void setRandomSkillName() {
+        setSkillName(Database.getInstance().getOpPets().getSkillDatabase().getRandomSkillName(getPetType()));
     }
 }

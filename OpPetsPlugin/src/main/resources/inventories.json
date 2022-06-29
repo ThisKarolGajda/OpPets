@@ -365,7 +365,7 @@
   "RenameInventory": {
     "anvilTitle": "&7Enter &f&lnew &7pet name!",
     "thisNameIsBlocked": "&cThis name is blocked.",
-    "nameWithSpaces": "&c Pet name can't have spaces.",
+    "nameWithSpaces": "&cPet name can't have spaces.",
     "changedName": "&7Changed pet name to &f&l%new_pet_name%&7!",
     "incorrectValueName": "&cInvalid value entered."
   },
@@ -385,20 +385,14 @@
     "title": "&e&lYour pet preferences!",
     "items": {
       "ageable": {
-        "material": "SEED",
+        "material": "WHEAT",
         "name": "&a&lToggle your pet age!",
         "lore": [
-          "&7Available: &f&l%state_available%",
-          "&7Current: &f&l%state_current%"
-        ],
-        "glow": true
-      },
-      "private": {
-        "material": "BARRIER",
-        "name": "&a&lToggle your pet publicity!",
-        "lore": [
-          "&7Available: &f&l%state_available%",
-          "&7Current: &f&l%state_current%"
+          "&7Age of this pet determines if it should be",
+          "&7an adult or a baby.",
+          "",
+          "&7Available for this type: &f&l%state_ageable%",
+          "&7Is baby: &f&l%state_ageable_current%"
         ],
         "glow": true
       }

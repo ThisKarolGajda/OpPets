@@ -1,14 +1,6 @@
 package me.opkarol.oppets.inventory;
 
 /*
- * Copyright (c) 2021-2022.
- * [OpPets] ThisKarolGajda
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- */
-
-/*
  = Copyright (c) 2021-2022.
  = [OpPets] ThisKarolGajda
  = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -21,15 +13,15 @@ import me.opkarol.oppets.addons.AddonManager;
 import me.opkarol.oppets.addons.types.IAddon;
 import me.opkarol.oppets.inventory.cache.InventoriesCache;
 import me.opkarol.oppets.cache.PageCache;
-import me.opkarol.oppets.collections.map.OpMap;
+import me.opkarol.oppets.api.map.OpMap;
 import me.opkarol.oppets.databases.external.APIDatabase;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.eggs.types.EggItem;
 import me.opkarol.oppets.eggs.EggManager;
 import me.opkarol.oppets.eggs.types.EggRecipe;
-import me.opkarol.oppets.exceptions.ExceptionLogger;
-import me.opkarol.oppets.files.MessagesHolder;
-import me.opkarol.oppets.graphic.IGetter;
+import me.opkarol.oppets.api.exceptions.ExceptionLogger;
+import me.opkarol.oppets.api.files.MessagesHolder;
+import me.opkarol.oppets.api.graphic.IGetter;
 import me.opkarol.oppets.interfaces.IUtils;
 import me.opkarol.oppets.inventory.accessors.InventoryAccessor;
 import me.opkarol.oppets.inventory.accessors.PagesInventoryAccessor;
@@ -38,13 +30,13 @@ import me.opkarol.oppets.inventory.accessors.ShopInventoryAccessor;
 import me.opkarol.oppets.inventory.anvil.PrestigeConfirmAnvilInventory;
 import me.opkarol.oppets.inventory.anvil.RenameAnvilInventory;
 import me.opkarol.oppets.inventory.builder.OpInventoryBuilder;
-import me.opkarol.oppets.items.builder.OpItemBuilder;
-import me.opkarol.oppets.items.OpItemEnums;
-import me.opkarol.oppets.items.data.OpItemLampData;
-import me.opkarol.oppets.items.data.OpItemShopData;
+import me.opkarol.oppets.api.items.builder.OpItemBuilder;
+import me.opkarol.oppets.api.items.OpItemEnums;
+import me.opkarol.oppets.api.items.data.OpItemLampData;
+import me.opkarol.oppets.api.items.data.OpItemShopData;
 import me.opkarol.oppets.leaderboards.Leaderboard;
 import me.opkarol.oppets.leaderboards.LeaderboardCounter;
-import me.opkarol.oppets.misc.StringTransformer;
+import me.opkarol.oppets.api.misc.StringTransformer;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.converter.PetsConverter;
 import me.opkarol.oppets.pets.TypeOfEntity;
@@ -92,14 +84,19 @@ public class OpInventories {
         @Override
         public Inventory buildInventory() {
             return inventoryBuilder
-                    .cloneWithClearGraphic()
+                    .cloneWithClearedGraphic()
                     .setTitle(InventoriesCache.levelInventoryTitle.replace("%pet_name%", FormatUtils.formatMessage(getPet().getPetName())))
-                    .fillVariable(0, String.valueOf(MathUtils.getMaxLevel(getPet())))
+                    .fillVariable(0, String.valueOf(MathUtils.getPrestigeLevel(getPet())))
                     .fillVariable(1, MathUtils.getPercentageOfNextLevel(getPet()) + "%")
                     .fillVariable(2, String.valueOf(MathUtils.getPetLevelExperience(getPet())))
                     .fillVariable(3, String.valueOf(getPet().getLevel()))
                     .updateTranslationsAsFunction()
-                    .addTextButton("informationBook", 10)
+                    .addTextButton("informationBook", 10, player -> {
+                        Pet pet = Database.getInstance().getDatabase().getCurrentPet(player.getUniqueId());
+                        player.sendMessage(pet.getSkillName());
+                        pet.setRandomSkillName();
+                        player.sendMessage(pet.getSkillName());
+                    })
                     .addTextButton("level", 13)
                     .addTextButton("abilities", 16)
                     .getInventory();
@@ -160,7 +157,7 @@ public class OpInventories {
                     String directory = "%" + number + "_" + value + "%";
                     switch (value) {
                         case "player_name": {
-                            currentString = currentString.replace(directory, OpUtils.getNameFromUUID(pet.petUUID.getOwnerUUID()));
+                            currentString = currentString.replace(directory, Utils.getNameFromUUID(pet.petUUID.getOwnerUUID()));
                             break;
                         }
                         case "player_object": {
@@ -263,7 +260,7 @@ public class OpInventories {
                 .getOwnConsumer(builder -> {
                     builder.addButton(b -> b.setPath(builder.getDefaultPath() + "decline"), 10, HumanEntity::closeInventory);
                     builder.addButton(b -> b.setPath(builder.getDefaultPath() + "informationBook").setLoreAction(getShop().getFunction()), 13);
-                    builder.addButton(b -> b.setPath(builder.getDefaultPath() + "confirm").setShopData(new OpItemShopData(getShop())), 16, OpUtils::tryToBuyItemFromInventory);
+                    builder.addButton(b -> b.setPath(builder.getDefaultPath() + "confirm").setShopData(new OpItemShopData(getShop())), 16, Utils::tryToBuyItemFromInventory);
                 });
 
 
@@ -301,13 +298,13 @@ public class OpInventories {
         @Override
         public Inventory buildInventory() {
             return inventoryBuilder
-                    .cloneWithClearGraphic()
+                    .cloneWithClearedGraphic()
                     .setTitle(InventoriesCache.guestInventoryTitle.replace("%pet_name%", FormatUtils.formatMessage(getPet().getPetName())))
-                    .fillVariable(0, String.valueOf(MathUtils.getMaxLevel(getPet())))
+                    .fillVariable(0, String.valueOf(MathUtils.getPrestigeLevel(getPet())))
                     .fillVariable(1, MathUtils.getPercentageOfNextLevel(getPet()) + "%")
-                    .fillVariable(2, PetsUtils.getPrestige(getPet()))
-                    .fillVariable(3, FormatUtils.formatMessage(OpUtils.getNameFromUUID(getPet().petUUID.getOwnerUUID())))
-                    .fillVariable(4, PetsUtils.getPetFormattedName(getPet()))
+                    .fillVariable(2, Utils.getPrestige(getPet()))
+                    .fillVariable(3, FormatUtils.formatMessage(Utils.getNameFromUUID(getPet().petUUID.getOwnerUUID())))
+                    .fillVariable(4, Utils.getFilledPetName(getPet()))
                     .fillVariable(5, String.valueOf(MathUtils.getPetLevelExperience(getPet())))
                     .fillVariable(6, String.valueOf(getPet().getLevel()))
                     .fillVariable(7, getPet().getPetType().getName())
@@ -414,7 +411,7 @@ public class OpInventories {
         @Override
         public Inventory buildInventory() {
             return inventoryBuilder
-                    .cloneWithClearGraphic()
+                    .cloneWithClearedGraphic()
                     .setTitle(InventoriesCache.settingsInventoryTitle.replace("%pet_name%", FormatUtils.formatMessage(getPet().getPetName())))
                     .fillVariable(0, getPet().settings.isVisibleToOthers())
                     .fillVariable(1, getPet().settings.isGiftable())
@@ -445,7 +442,7 @@ public class OpInventories {
         }
 
         private void saveProgress(Pet pet, @NotNull Player player) {
-            PetsUtils.savePetProgress(pet, player.getUniqueId());
+            Utils.savePetProgress(pet, player.getUniqueId());
             utils.respawnPet(pet, player);
             player.openInventory(new SettingsInventory(pet).buildInventory());
         }
@@ -473,7 +470,7 @@ public class OpInventories {
         @Override
         public Inventory buildInventory() {
             return inventoryBuilder
-                    .cloneWithClearGraphic()
+                    .cloneWithClearedGraphic()
                     .getOwnConsumer(builder -> {
                         OpMap<Integer, IGetter> map = getCache().getPagedInventory(getPage());
                         for (int i : map.keySet()) {
@@ -484,7 +481,7 @@ public class OpInventories {
                             switch (object.getGetterType()) {
                                 case PET: {
                                     Pet pet = (Pet) object.getObject();
-                                    builder.addButton(b -> b.setMaterial(PetsUtils.getMaterialByPetType(pet.getPetType())).setName(pet.getPetName()).setGlows(true).setType(OpItemEnums.PATH_BUILDER_TYPE.NORMAL), i, (player, item) -> {
+                                    builder.addButton(b -> b.setMaterial(Utils.getMaterialByPetType(pet.getPetType())).setName(pet.getPetName()).setGlows(true).setType(OpItemEnums.PATH_BUILDER_TYPE.NORMAL), i, (player, item) -> {
                                                 if (item != null) {
                                                     UUID uuid = player.getUniqueId();
                                                     if (PDCUtils.hasNBT(item, summonItemKey)) {
@@ -497,7 +494,7 @@ public class OpInventories {
                                                         ItemMeta meta = item.getItemMeta();
                                                         if (meta != null) {
                                                             String name = meta.getDisplayName();
-                                                            if (PetsUtils.summonPet(name, player)) {
+                                                            if (Utils.summonPet(name, player)) {
                                                                 player.closeInventory();
                                                             }
                                                         }
@@ -534,7 +531,7 @@ public class OpInventories {
                 .addTextButton("informationBook", 11)
                 .addTextButton("prestige", 15, player -> {
                     Pet pet = database.getDatabase().getCurrentPet(player.getUniqueId());
-                    if (!OpUtils.canPrestige(pet)) {
+                    if (!Utils.canPrestige(pet)) {
                         returnMessage(player, messages.getString("Messages.cantPrestige").replace("%more_levels%", String.valueOf(MathUtils.getLevelsForPrestige(pet))));
                     } else {
                         player.closeInventory();
@@ -558,7 +555,7 @@ public class OpInventories {
                 .setSize(27)
                 .setAutoDefaultPath()
                 .setTitle(InventoriesCache.preferencesInventoryTitle)
-                .addTranslationsWithValue(Arrays.asList("%state_ageable%", "%state_ageable_access%"), "ageable");
+                .addEmptyTranslations("%state_ageable%", "%state_ageable_current%");
 
         public PreferencesInventory(Pet pet) {
             super(pet);
@@ -567,16 +564,8 @@ public class OpInventories {
         @Override
         public Inventory buildInventory() {
             return inventoryBuilder
-                    .cloneWithClearGraphic()
-                    .getOwnConsumer(builder -> {
-                        int i = 0;
-                        while (builder.hasVariable(i)) {
-                            builder.fillVariable(i, converter.hasPetPreference(getPet(), builder.getVariableValue(i)));
-                            builder.fillVariable(i + 1, converter.readPetPreference(getPet(), builder.getVariableValue(i + 1)));
-                            i = i + 2;
-                        }
-                    })
-                    //TODO item is working, lore isn't properly setup
+                    .cloneWithClearedGraphic()
+                    .fillVariablesFromStart(converter.hasPetPreference(getPet(), "ageable"), converter.readPetPreference(getPet(), "ageable"))
                     .updateTranslationsAsFunction()
                     .addTextButton("ageable", 9, player -> saveProgress(player, "ageable"))
                     .getInventory();
@@ -585,7 +574,7 @@ public class OpInventories {
         private void saveProgress(@NotNull Player player, String s) {
             Pet pet = getPet();
             pet.preferences.setPreferences(converter.negatePetPreference(pet, s));
-            PetsUtils.savePetProgress(pet, player.getUniqueId());
+            Utils.savePetProgress(pet, player.getUniqueId());
             database.getUtils().respawnPet(pet, player);
             player.openInventory(new PreferencesInventory(pet).buildInventory());
         }
@@ -609,8 +598,8 @@ public class OpInventories {
         @Override
         public Inventory buildInventory() {
             return inventoryBuilder
-                    .cloneWithClearGraphic()
-                    .setTitle(InventoriesCache.eggRecipeInventoryTitle)
+                    .cloneWithClearedGraphic()
+                    .setTitle(InventoriesCache.eggRecipeInventoryTitle.replace("%recipe%", recipe.getRecipeName()))
                     .getOwnConsumer(builder -> {
                         loopThroughValues(builder, "TOP", 10);
                         loopThroughValues(builder, "MIDDLE", 19);
@@ -640,27 +629,48 @@ public class OpInventories {
     }
 
     public static class EggRecipesInventory extends PagesInventoryAccessor<EggRecipe> {
-        private final TypeOfEntity type;
+        private TypeOfEntity type;
         private List<EggRecipe> recipes;
-        private final OpInventoryBuilder inventoryBuilder = getEmptyBuilder()
-                .setHolder(getClass())
-                .setSize(54)
-                .getOwnConsumer(builder -> {
-                    setCache(new PageCache<>(recipes, 28));
-                    getCache().setupInventory(getPage());
-                })
-                .setAutoDefaultPath();
+        private OpInventoryBuilder inventoryBuilder;
+
+        public EggRecipesInventory(Optional<EggItem> item, int page) {
+            setPage(page);
+            if (!item.isPresent()) {
+                return;
+            }
+            item.ifPresent(eggItem -> {
+                this.type = eggItem.getType();
+                this.recipes = eggItem.getRecipes();
+            });
+            inventoryBuilder = getEmptyBuilder()
+                    .setHolder(getClass())
+                    .setSize(54)
+                    .getOwnConsumer(builder -> {
+                        setCache(new PageCache<>(recipes, 28));
+                        getCache().setupInventory(getPage());
+                    })
+                    .setAutoDefaultPath();
+        }
 
         public EggRecipesInventory(TypeOfEntity type, List<EggRecipe> recipes, int page) {
             setPage(page);
             this.type = type;
             this.recipes = recipes;
+
+            inventoryBuilder = getEmptyBuilder()
+                    .setHolder(getClass())
+                    .setSize(54)
+                    .getOwnConsumer(builder -> {
+                        setCache(new PageCache<>(recipes, 28));
+                        getCache().setupInventory(getPage());
+                    })
+                    .setAutoDefaultPath();
         }
 
         @Override
         public Inventory buildInventory() {
             return inventoryBuilder
-                    .cloneWithClearGraphic()
+                    .cloneWithClearedGraphic()
                     .setTitle(InventoriesCache.eggRecipesInventoryTitle.replace("%type%", type.name()))
                     .getOwnConsumer(builder -> {
                         OpMap<Integer, IGetter> map = getCache().getPagedInventory(getPage());

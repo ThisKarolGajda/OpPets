@@ -8,18 +8,18 @@ package me.opkarol.oppets.listeners;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+import me.opkarol.oppets.api.files.MessagesHolder;
+import me.opkarol.oppets.api.map.OpMap;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.events.PrestigeChangeEvent;
-import me.opkarol.oppets.files.MessagesHolder;
 import me.opkarol.oppets.inventory.OpInventories;
 import me.opkarol.oppets.particles.ParticlesManager;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.prestiges.PrestigeManager;
-import me.opkarol.oppets.skills.types.Ability;
+import me.opkarol.oppets.skills.Skill;
 import me.opkarol.oppets.utils.external.FormatUtils;
 import me.opkarol.oppets.utils.external.MathUtils;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -30,13 +30,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.UUID;
 
-import static me.opkarol.oppets.utils.PetsUtils.equalsFormatNames;
+import static me.opkarol.oppets.utils.Utils.equalsComponentAndPetName;
 
 public class PetListeners implements Listener {
     private final Database database = Database.getInstance();
@@ -55,41 +53,15 @@ public class PetListeners implements Listener {
         if (pet.getPetName() == null) {
             return;
         }
-        player.sendMessage(messages.getString("Messages.petLevelUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_level%", String.valueOf(pet.getLevel())).replace("%max_level%", String.valueOf(MathUtils.getMaxLevel(pet))).replace("%experience_level%", String.valueOf(MathUtils.getPetLevelExperience(pet))));
+        player.sendMessage(messages.getString("Messages.petLevelUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_level%", String.valueOf(pet.getLevel())).replace("%max_level%", String.valueOf(MathUtils.getPrestigeLevel(pet))).replace("%experience_level%", String.valueOf(MathUtils.getPetLevelExperience(pet))));
         if (pet.settings.areParticlesEnabled()) {
             particlesManager.spawnLevelUpPetEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().petUUID.getOwnUUID()));
         }
-        List<Ability> abilities = database.getOpPets().getSkillDatabase().getSkillFromMap(pet.getSkillName()).getAbilityList();
-        for (Ability ability : abilities) {
-            switch (ability.getAbility()) {
-                case PLUGIN_CONNECTION -> {
-                    if (ability.getPLUGIN_CONNECTION().equalsIgnoreCase("Vault")) {
-                        Object economy = database.getOpPets().getEconomy();
-                        if (economy != null) {
-                            Economy economy1 = (Economy) economy;
-                            economy1.depositPlayer(player, Double.parseDouble(ability.getPluginAction()));
-                        }
-                    }
-                }
-                case CUSTOM_COMMAND -> {
-                    String command = ability.getPluginAction();
-                    if (command != null) {
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
-                    }
-                }
-                case VANILLA_EFFECT -> {
-                    String[] strings = ability.getVANILLA_EFFECT().split(";");
-                    if (strings.length != 3) return;
-                    PotionEffectType potion = PotionEffectType.getByName(strings[0]);
-                    if (potion == null) return;
-                    event.getPlayer().addPotionEffect(potion.createEffect(Integer.parseInt(strings[1]), Integer.parseInt(strings[2])));
-                }
-                case TREASURE -> {
 
-                }
-                case CUSTOM_MESSAGE -> player.sendMessage(ability.getMESSAGE());
-            }
-        }
+        database.getOpPets().getSkillDatabase().getSkills().stream()
+                .map(Skill::getAbilities)
+                .map(OpMap::getValues)
+                .forEach(lists -> lists.forEach(list -> list.forEach(iAbility -> iAbility.use(player))));
     }
 
     @EventHandler
@@ -103,7 +75,7 @@ public class PetListeners implements Listener {
         pet.setPetExperience(0);
         pet.setPrestige(pm.getFormatForNumber(pm.getPrestigeLevel(pet.getPrestige()) + 1));
         Player player = event.getPlayer();
-        player.sendMessage(messages.getString("Messages.prestigeUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_prestige%", pm.getFilledPrestige(pet.getPrestige())).replace("%max_level%", String.valueOf(MathUtils.getMaxLevel(pet))));
+        player.sendMessage(messages.getString("Messages.prestigeUpMessage").replace("%newline%", "\n").replace("%pet_name%", FormatUtils.formatMessage(pet.getPetName())).replace("%current_prestige%", pm.getFilledPrestige(pet.getPrestige())).replace("%max_level%", String.valueOf(MathUtils.getPrestigeLevel(pet))));
         database.getOpPets().getUtils().respawnPet(pet, player);
         if (pet.settings.areParticlesEnabled()) {
             particlesManager.prestigeChangeEffect(player, database.getOpPets().getUtils().getEntityByUniqueId(event.getPet().petUUID.getOwnUUID()));
@@ -118,7 +90,7 @@ public class PetListeners implements Listener {
         }
         Pet currentPet = database.getDatabase().getCurrentPet(player.getUniqueId());
         String name = event.getRightClicked().getName();
-        if (currentPet != null && equalsFormatNames(currentPet, name)) {
+        if (currentPet != null && equalsComponentAndPetName(currentPet, name)) {
             event.setCancelled(true);
             player.openInventory(new OpInventories.PetMainInventory().buildInventory());
             return;

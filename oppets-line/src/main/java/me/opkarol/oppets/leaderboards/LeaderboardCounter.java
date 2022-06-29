@@ -9,9 +9,9 @@ package me.opkarol.oppets.leaderboards;
  */
 
 import me.opkarol.oppets.inventory.cache.InventoryCache;
-import me.opkarol.oppets.collections.map.OpMap;
+import me.opkarol.oppets.api.map.OpMap;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.exceptions.ExceptionLogger;
+import me.opkarol.oppets.api.exceptions.ExceptionLogger;
 import me.opkarol.oppets.inventory.OpInventories;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.scheduler.BukkitRunnable;

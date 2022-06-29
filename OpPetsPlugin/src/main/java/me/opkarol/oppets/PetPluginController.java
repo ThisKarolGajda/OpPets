@@ -9,25 +9,25 @@ package me.opkarol.oppets;
  */
 
 import me.opkarol.oppets.cache.NamespacedKeysCache;
-import me.opkarol.oppets.collections.map.OpMap;
+import me.opkarol.oppets.api.map.OpMap;
 import me.opkarol.oppets.commands.builder.OpCommandBuilder;
 import me.opkarol.oppets.commands.OpSubCommand;
 import me.opkarol.oppets.commands.OpPetsCommandExecutor;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.entities.manager.IEntityManager;
-import me.opkarol.oppets.files.manager.FileManager;
-import me.opkarol.oppets.files.MessagesHolder;
-import me.opkarol.oppets.graphic.GraphicInterface;
+import me.opkarol.oppets.api.entities.manager.IEntityManager;
+import me.opkarol.oppets.api.files.manager.FileManager;
+import me.opkarol.oppets.api.files.MessagesHolder;
+import me.opkarol.oppets.api.graphic.GraphicInterface;
 import me.opkarol.oppets.interfaces.IUtils;
 import me.opkarol.oppets.inventory.OpInventories;
 import me.opkarol.oppets.listeners.*;
-import me.opkarol.oppets.misc.external.bstats.Metrics;
-import me.opkarol.oppets.versions.ServerVersion;
+import me.opkarol.oppets.api.misc.bstats.Metrics;
+import me.opkarol.oppets.api.versions.ServerVersion;
 import me.opkarol.oppets.packets.IPacketPlayInSteerVehicleEvent;
 import me.opkarol.oppets.packets.PacketManager;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.utils.external.MathUtils;
-import me.opkarol.oppets.utils.OpUtils;
+import me.opkarol.oppets.utils.Utils;
 import me.opkarol.oppets.utils.external.PDCUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -109,7 +109,7 @@ public class PetPluginController {
     public void killAllPets() {
         database.getDatabase().getActivePetMap().keySet().forEach(uuid -> {
             if (uuid != null) {
-                OpUtils.killPetFromPlayerUUID(uuid);
+                Utils.killPetFromPlayerUUID(uuid);
             }
         });
         Bukkit.getWorlds()
@@ -145,9 +145,8 @@ public class PetPluginController {
         try {
             ServerVersion.setSeverVersion(MathUtils.substringFromEnd(versionR, 1));
             versionR = "me.opkarol.oppets." + versionR;
-            IUtils utils = (IUtils) Class.forName(versionR + "Utils").newInstance();
+            IUtils utils = (IUtils) Class.forName(versionR + "VersionUtils").newInstance();
             instance.setUtils(utils);
-            PacketManager.setUtils(utils);
             instance.setEntityManager((IEntityManager) Class.forName(versionR + "entities.EntityManager").newInstance());
             this.setPacketEvent((IPacketPlayInSteerVehicleEvent) Class.forName(versionR + "PacketPlayInSteerVehicleEvent_" + substring).newInstance());
             manager.registerEvents((Listener) Class.forName(versionR + "PlayerSteerVehicleEvent_" + substring).newInstance(), instance);

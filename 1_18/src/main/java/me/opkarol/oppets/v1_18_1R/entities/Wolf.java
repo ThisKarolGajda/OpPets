@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Wolf extends net.minecraft.world.entity.animal.Wolf {
     public Wolf(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.WOLF, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

@@ -28,7 +28,6 @@ public class PlayerSteerVehicleEvent_v1_18_2 implements Listener {
             mot.rotateAroundY(Math.toRadians(player.getLocation().getYaw() * -1.0F + 90.0F));
             mot.normalize().multiply(0.25F);
         }
-
         return mot.add(vector);
     }
 
@@ -48,7 +47,7 @@ public class PlayerSteerVehicleEvent_v1_18_2 implements Listener {
 
         if (sneaking) {
             vehicle.removePassenger(player);
-            PacketManager.removePlayer(player);
+            PacketManager.removeRider(player);
         }
 
         if (jump && vehicle.isOnGround()) {

@@ -47,7 +47,7 @@ public class PlayerSteerVehicleEvent_v1_16_5 implements Listener {
         }
 
         if (sneaking) {
-            PacketManager.removePlayer(player);
+            PacketManager.removeRider(player);
             vehicle.removePassenger(player);
         }
 

@@ -12,9 +12,9 @@ import me.opkarol.oppets.addons.types.AddonConfig;
 import me.opkarol.oppets.addons.types.IAddon;
 import me.opkarol.oppets.inventory.cache.InventoryCache;
 import me.opkarol.oppets.databases.Database;
-import me.opkarol.oppets.exceptions.Exception;
-import me.opkarol.oppets.exceptions.ExceptionLogger;
-import me.opkarol.oppets.exceptions.types.InvalidAddonException;
+import me.opkarol.oppets.api.exceptions.Exception;
+import me.opkarol.oppets.api.exceptions.ExceptionLogger;
+import me.opkarol.oppets.api.exceptions.types.InvalidAddonException;
 import me.opkarol.oppets.inventory.OpInventories;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class AddonManager {
     public static final List<String> verifiedAddons = new ArrayList<>(Collections.singletonList("OpPetsDiscord"));
     private static final List<IAddon> addons = new ArrayList<>();
-    private static Database database = null;
+    private static final Database database = Database.getInstance();
 
     public static void addAddon(@NotNull AddonConfig addon) {
         if (addon.canBeLaunched()) {
@@ -74,12 +74,6 @@ public class AddonManager {
 
     public static List<String> getStringAddons() {
         return addons.stream().map(IAddon::getName).collect(Collectors.toList());
-    }
-
-    public static void setDatabase(Database database) {
-        if (AddonManager.database == null) {
-            AddonManager.database = database;
-        }
     }
 
     @TestOnly

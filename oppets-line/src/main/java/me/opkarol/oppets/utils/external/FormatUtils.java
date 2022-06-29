@@ -1,14 +1,6 @@
 package me.opkarol.oppets.utils.external;
 
 /*
- * Copyright (c) 2021-2022.
- * [OpPets] ThisKarolGajda
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- */
-
-/*
  = Copyright (c) 2021-2022.
  = [OpPets] ThisKarolGajda
  = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -32,7 +24,7 @@ public final class FormatUtils {
 
     public static @NotNull String formatMessage(String message) {
         try {
-            return hexFormatMessage("#<", ">", format(message));
+            return hexFormatMessage(format(message));
         } catch (Exception ignored) {
             return format(message);
         }
@@ -52,12 +44,12 @@ public final class FormatUtils {
         return true;
     }
 
-    public static String getNameString(String string) {
+    public static String getNameString(@NotNull String string) {
         return ChatColor.stripColor(formatMessage(string.replace("%p%", "")));
     }
 
-    public static @NotNull String hexFormatMessage(String startTag, String endTag, String message) {
-        final Pattern hexPattern = Pattern.compile(startTag + HEX_PATTERN + endTag);
+    private static @NotNull String hexFormatMessage(String message) {
+        final Pattern hexPattern = Pattern.compile("#<" + HEX_PATTERN + ">");
         Matcher matcher = hexPattern.matcher(message);
         StringBuffer buffer = new StringBuffer(message.length() + 32);
         while (matcher.find()) {

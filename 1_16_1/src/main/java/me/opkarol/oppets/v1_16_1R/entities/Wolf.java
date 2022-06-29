@@ -21,6 +21,6 @@ import java.util.Objects;
 public class Wolf extends EntityWolf {
     public Wolf(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.WOLF, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

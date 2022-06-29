@@ -11,8 +11,8 @@ package me.opkarol.oppets.commands;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
-import me.opkarol.oppets.storage.OpObjects;
-import me.opkarol.oppets.utils.OpUtils;
+import me.opkarol.oppets.api.storage.OpObjects;
+import me.opkarol.oppets.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +38,7 @@ public class AdminSubCommand extends OpSubCommand {
             return returnMessage(sender, getMessages().getString("Commands.badCommandUsage").replace("%proper_usage%", "/oppets admin <PLAYER> <PET> <KEY> <VALUE>"));
         }
         String playerName = args[1];
-        UUID uuid = OpUtils.getUUIDFromName(playerName);
+        UUID uuid = Utils.getUUIDFromName(playerName);
         List<Pet> petList = database.getDatabase().getPetList(uuid);
         if (petList.size() == 0) {
             return returnMessage(sender, getMessages().getString("Commands.petListEmpty"));

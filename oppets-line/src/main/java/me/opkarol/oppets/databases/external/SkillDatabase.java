@@ -9,98 +9,101 @@ package me.opkarol.oppets.databases.external;
  */
 
 /*
- = Copyright (c) 2021-2022.
- = [OpPets] ThisKarolGajda
- = Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
- = http://www.apache.org/licenses/LICENSE-2.0
- = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * Copyright (c) 2021-2022.
+ * [OpPets] ThisKarolGajda
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.collections.map.OpMap;
+import me.opkarol.oppets.api.map.OpMap;
+import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.events.PetLevelupEvent;
 import me.opkarol.oppets.pets.Pet;
 import me.opkarol.oppets.pets.TypeOfEntity;
+import me.opkarol.oppets.skills.manager.ProgressingLevel;
 import me.opkarol.oppets.skills.Skill;
-import me.opkarol.oppets.skills.SkillEnums;
-import me.opkarol.oppets.utils.SkillUtils;
-import me.opkarol.oppets.skills.types.Ability;
-import me.opkarol.oppets.skills.types.Adder;
-import me.opkarol.oppets.skills.types.Requirement;
-import me.opkarol.oppets.utils.external.ConfigUtils;
-import me.opkarol.oppets.utils.PetsUtils;
+import me.opkarol.oppets.skills.SkillLoader;
+import me.opkarol.oppets.skills.pointers.IPointer;
+import me.opkarol.oppets.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static me.opkarol.oppets.utils.external.MathUtils.getRandomNumber;
 
 public class SkillDatabase {
-    private final APIDatabase database = APIDatabase.getInstance();
-    private final OpMap<String, Skill> skillMap = new OpMap<>();
-    private final SkillUtils utils;
-    private final FileConfiguration config = ConfigUtils.getConfig();
-    private String basicPath = "Skills";
+    private final OpMap<String, Skill> skillsMap = new OpMap<>();
 
     public SkillDatabase() {
-        utils = new SkillUtils(this);
-        ConfigurationSection sec = config.getConfigurationSection(basicPath);
-        basicPath = "Skills.";
-        if (sec == null) {
-            return;
-        }
-        for (String key : sec.getKeys(false)) {
-            Skill skill = getSkillFromPath(key);
-            skillMap.put(key, skill);
-        }
+        new SkillLoader().startup().forEach(this::addSkill);
+    }
+
+    public void addSkill(Skill skill) {
+        skillsMap.set(skill.getSkillName(), skill);
+    }
+
+    public Optional<Skill> getSkill(String skillName) {
+        return skillsMap.getByKey(skillName);
     }
 
     public List<Skill> getSkills() {
-        return new ArrayList<>(skillMap.getValues());
+        return new ArrayList<>(skillsMap.getValues());
     }
 
-    public Skill getSkillFromPath(@NotNull String skillName) {
-        String iPath = basicPath + skillName + ".";
-        if (config.getString(iPath + "available_pets") == null) {
-            return null;
-        }
-        List<TypeOfEntity> entities = utils.getAllowedEntities(Objects.requireNonNull(config.getString(iPath + "available_pets")));
-        List<Ability> abilities = utils.getSkillAbilitiesFromSection(iPath);
-        List<Requirement> requirements = utils.getSkillRequirementFromSection(iPath);
-        List<Adder> adders = utils.getSkillAdderFromSection(iPath);
-        int maxLevel = config.getInt(iPath + "max_level");
-        return new Skill(skillName, abilities, requirements, adders, entities, maxLevel);
-
-    }
-
-    public Skill getSkillFromMap(String name) {
-        return skillMap.getOrDefault(name, null);
-    }
-
-    public List<Skill> getAccessibleSkillsToPetType(TypeOfEntity type) {
-        if (skillMap.isEmpty()) {
+    public List<Skill> getSkillsToType(TypeOfEntity type) {
+        if (skillsMap.isEmpty()) {
             return new ArrayList<>();
         }
-        return skillMap.getValues().stream().filter(skill -> skill.getTypeOfEntityList().contains(type)).collect(Collectors.toList());
+        return skillsMap.getValues().stream().filter(skill -> skill.getAvailableTypes().contains(type)).collect(Collectors.toList());
     }
 
-    public void addPoint(SkillEnums.SkillsAdders skillEnums, @NotNull Pet pet, @NotNull Player player) {
+    public void addPoints(@NotNull Pet pet, @NotNull Player player, String type, Material material, double... multipliers) {
+        double multiplier = Database.getInstance().getOpPets().getBoosterProvider().getMultiplier(player.getUniqueId().toString());
         double experience = pet.getPetExperience();
-        double grantedPoints = utils.getGrantedPointsFromEnum(pet, skillEnums);
-        double multiplier = database.getBoosterProvider().getMultiplier(player.getUniqueId().toString());
-        pet.setPetExperience(experience + grantedPoints * multiplier);
-        double maxPoints = utils.getMaxPointsFromEnum(pet, skillEnums);
-        Stream<Requirement> stream = database.getSkillDatabase().getSkillFromMap(pet.getSkillName()).getRequirementList().stream().filter(requirement -> requirement.getRequirement().equals(SkillEnums.SkillsRequirements.PET_LEVEL));
-        if (stream.findAny().isPresent()) {
-            if (maxPoints <= pet.getPetExperience()) {
-                Bukkit.getPluginManager().callEvent(new PetLevelupEvent(player, pet));
-            }
+        String skillName = pet.getSkillName();
+        Optional<Skill> optional = getSkill(skillName);
+        if (!optional.isPresent()) {
+            return;
         }
-        PetsUtils.savePetProgress(pet, pet.petUUID.getOwnerUUID());
+        if (multipliers.length != 0) {
+            multiplier *= Arrays.stream(multipliers).reduce(1, (a, b) -> a * b);
+        }
+        Skill skill = optional.get();
+        ProgressingLevel progressingLevel = skill.getProgressingLevel();
+        IPointer pointer = skill.getPointer(type, material);
+        if (pointer == null) {
+            return;
+        }
+        double maxPoints = progressingLevel.calculatePointsForLevel(pet.getLevel());
+        pet.setPetExperience(experience + pointer.getPointsAwarded() * multiplier);
+        if (maxPoints <= pet.getPetExperience()) {
+            Bukkit.getPluginManager().callEvent(new PetLevelupEvent(player, pet));
+        }
+        Utils.savePetProgress(pet, pet.petUUID.getOwnerUUID());
+    }
+
+    public String getRandomSkillName(TypeOfEntity type) {
+        List<Skill> list = getSkillsToType(type);
+        if (list == null || list.size() == 0) {
+            return "";
+        }
+        if (list.size() == 1) {
+            return list.get(0).getSkillName();
+        } else {
+            return list.get(getRandomNumber(0, list.size() - 1)).getSkillName();
+        }
+    }
+
+    public double getAllPointsForSkill(@NotNull Pet pet) {
+        Optional<Skill> optional = getSkill(pet.getSkillName());
+        return optional.map(skill -> skill.getProgressingLevel().calculatePointsForLevel(pet.getLevel())).orElse(-1D);
     }
 }

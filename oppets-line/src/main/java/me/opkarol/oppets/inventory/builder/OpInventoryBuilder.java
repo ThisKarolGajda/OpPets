@@ -8,19 +8,20 @@ package me.opkarol.oppets.inventory.builder;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.collections.map.OpLinkedMap;
+import me.opkarol.oppets.api.graphic.GraphicInterface;
+import me.opkarol.oppets.api.graphic.builder.GraphicInventoryDataBuilder;
+import me.opkarol.oppets.api.items.builder.OpItemBuilder;
+import me.opkarol.oppets.api.map.OpLinkedMap;
 import me.opkarol.oppets.databases.external.APIDatabase;
-import me.opkarol.oppets.graphic.GraphicInterface;
-import me.opkarol.oppets.graphic.builder.GraphicInventoryDataBuilder;
 import me.opkarol.oppets.interfaces.IHolder;
 import me.opkarol.oppets.inventory.accessors.IInventoryAccess;
-import me.opkarol.oppets.items.builder.OpItemBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -28,7 +29,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static me.opkarol.oppets.utils.OpUtils.replaceAndGet;
+import static me.opkarol.oppets.utils.Utils.replaceAndGet;
 
 public class OpInventoryBuilder implements Cloneable {
     private String title;
@@ -286,6 +287,10 @@ public class OpInventoryBuilder implements Cloneable {
         return this;
     }
 
+    public OpInventoryBuilder addEmptyTranslations(String... keys) {
+        return addTranslationsWithValue("", keys);
+    }
+
     public OpInventoryBuilder addTranslationFunction(String key, String translation) {
         translations.replace(key, translation);
         return this;
@@ -293,6 +298,13 @@ public class OpInventoryBuilder implements Cloneable {
 
     public OpInventoryBuilder addTranslationsWithValue(@NotNull List<String> keys, String translation) {
         keys.forEach(key -> addTranslationFunction(key, translation));
+        return this;
+    }
+
+    public OpInventoryBuilder addTranslationsWithValue(String translation, String... keys) {
+        if (keys != null) {
+            Arrays.stream(keys).forEach(key -> addTranslationFunction(key, translation));
+        }
         return this;
     }
 
@@ -308,6 +320,23 @@ public class OpInventoryBuilder implements Cloneable {
         return addTranslationFunction(key, translation);
     }
 
+    public OpInventoryBuilder fillVariablesFromStart(Object... translations) {
+        if (translations != null) {
+            int i = 0;
+            for (Object translation : translations) {
+                if (translation instanceof Boolean) {
+                    fillVariable(i, (boolean) translation);
+                } else if (translation instanceof String) {
+                    fillVariable(i, (String) translation);
+                } else {
+                    fillVariable(i, translation.toString());
+                }
+                i++;
+            }
+        }
+        return this;
+    }
+
     public OpInventoryBuilder fillVariable(int translationIndex, boolean translation) {
         String key = translations.getByIndex(translationIndex);
         if (key == null) {
@@ -320,7 +349,7 @@ public class OpInventoryBuilder implements Cloneable {
         return translations.getValueByIndex(index);
     }
 
-    public boolean hasVariable(int index) {
+    public boolean hasVariableOfIndex(int index) {
         return translations.keySet().size() > index;
     }
 
@@ -391,7 +420,7 @@ public class OpInventoryBuilder implements Cloneable {
         return this;
     }
 
-    public OpInventoryBuilder cloneWithClearGraphic() {
+    public OpInventoryBuilder cloneWithClearedGraphic() {
         return clone().clearGraphicInterface();
     }
 

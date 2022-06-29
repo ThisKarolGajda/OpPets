@@ -22,7 +22,7 @@ public class Cow extends net.minecraft.world.entity.animal.Cow {
 
     public Cow(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.COW, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

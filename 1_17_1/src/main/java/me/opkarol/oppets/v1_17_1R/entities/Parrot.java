@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Parrot extends net.minecraft.world.entity.animal.Parrot {
     public Parrot(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.PARROT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

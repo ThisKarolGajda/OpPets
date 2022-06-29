@@ -11,7 +11,7 @@ package me.opkarol.oppets.commands;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.inventory.OpInventories;
 import me.opkarol.oppets.pets.Pet;
-import me.opkarol.oppets.utils.PetsUtils;
+import me.opkarol.oppets.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,7 @@ public class SummonSubCommand extends OpSubCommand {
         if (playerPets == null || playerPets.size() == 0) {
             return returnMessage(sender, getMessages().getString("Commands.petListEmpty"));
         }
-        if (PetsUtils.summonPet(args[1], player)) {
+        if (Utils.summonPet(args[1], player)) {
             return true;
         }
         return returnMessage(sender, getMessages().getString("Commands.invalidPet"));

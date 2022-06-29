@@ -22,6 +22,6 @@ public class Fox extends EntityFox {
 
     public Fox(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.FOX, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

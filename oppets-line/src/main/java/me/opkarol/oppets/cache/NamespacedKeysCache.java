@@ -18,5 +18,5 @@ public class NamespacedKeysCache {
     public static NamespacedKey priceKey = new NamespacedKey(plugin, "oppets-shop-price");
     public static NamespacedKey petKey = new NamespacedKey(plugin, "oppets-entity-key");
     public static NamespacedKey summonItemKey = new NamespacedKey(plugin, "oppets-summon-item-key");
-    public static String noPetsString = "<NO-PETS>" ;
+    public static String noPetsString = "<NO-PETS>";
 }

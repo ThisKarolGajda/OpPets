@@ -18,7 +18,7 @@ public abstract class PetInventoryAccessor extends InventoryAccessor {
     }
 
     public Pet getPet() {
-        return pet;
+        return pet == null ? new Pet() : pet;
     }
 
     public void setPet(Pet pet) {

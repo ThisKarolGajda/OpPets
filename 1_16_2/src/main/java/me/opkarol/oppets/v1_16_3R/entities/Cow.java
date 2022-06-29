@@ -22,6 +22,6 @@ public class Cow extends EntityCow {
 
     public Cow(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.COW, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }

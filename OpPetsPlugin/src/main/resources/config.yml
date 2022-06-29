@@ -6,7 +6,7 @@
 # MySQL values (by default turned off, switch enabled value to true, in order to activate SQL).
 sql:
   # Available types: "mysql", "flat"
-  type: "mysql"
+  type: "flat"
   user: "login"
   password: "password"
   url: "jdbc:mysql://localhost:3306/database"
@@ -23,80 +23,6 @@ Prestiges:
   # levels. ☆
   enabled: true
   format: "&8[&l%prestige%&e&l☆&8]"
-
-Skills:
-  example_skill:
-    available_pets: '[ALL]'
-    # This isn't a maximum level that player can get, but it is a required level
-    # from which player can prestige-up their pet.
-    max_level: 5
-    abilities:
-      ability1:
-        type: PLUGIN_CONNECTION
-        connection: Vault
-        options:
-          action: 500
-      # Custom commands will be executed by console.
-      # This feature is coming soon!
-      ability2:
-        type: CUSTOM_COMMAND
-        options:
-          command: eco give %player% 500
-      ability3:
-        type: VANILLA_EFFECT
-        options:
-          effect: SPEED
-          # Duration is provided in ticks, 1 second = 20 ticks.
-          duration: 100
-          amplifier: 1
-      # Treasures will be a JSON Object
-      # This feature is coming soon!
-      ability4:
-        type: TREASURE
-        name: '&bLevel Treasure!'
-        options: { }
-      ability5:
-        type: CUSTOM_MESSAGE
-        message: '&bYou got speed effect for 100 seconds and 500$!'
-    requirements:
-      requirement1:
-        type: PET_LEVEL
-    adders:
-      adder1:
-        type: MINING
-        materials: STONE, COBBLESTONE
-        levelup:
-          grantedPoints: 0
-          everyAction: 0
-          progressiveLevel: 32;true;up;10;true
-      adder2:
-        type: HARVESTING
-        materials: WHEAT, SWEET_BERRY_BUSH
-        levelup:
-          grantedPoints: 0
-          everyAction: 0
-          progressiveLevel: 32;true;up;10;true
-      adder3:
-        type: CRAFTING
-        materials: ALL
-        levelup:
-          grantedPoints: 0
-          everyAction: 0
-          progressiveLevel: 32;true;up;10;true
-      adder4:
-        type: SMELTING
-        materials: ALL
-        levelup:
-          grantedPoints: 0
-          everyAction: 0
-          progressiveLevel: 32;true;up;10;true
-      adder5:
-        type: FISHING
-        materials: ALL
-        levelup:
-          grantedPoints: 0
-          everyAction: 0
-          progressiveLevel: 32;true;up;10;true
 
 # ------------------------- #
 # Others section:           #

@@ -10,9 +10,9 @@ package me.opkarol.oppets.abilities;
 
 import me.opkarol.oppets.databases.external.APIDatabase;
 import me.opkarol.oppets.databases.external.PetsDatabase;
-import me.opkarol.oppets.exceptions.ExceptionLogger;
-import me.opkarol.oppets.misc.external.api.CooldownModule;
-import me.opkarol.oppets.misc.external.api.PetDatabaseObject;
+import me.opkarol.oppets.api.exceptions.ExceptionLogger;
+import me.opkarol.oppets.api.misc.CooldownModule;
+import me.opkarol.oppets.api.misc.PetDatabaseObject;
 import me.opkarol.oppets.pets.TypeOfEntity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

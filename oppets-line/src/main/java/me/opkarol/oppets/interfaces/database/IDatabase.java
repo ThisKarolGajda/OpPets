@@ -9,7 +9,7 @@ package me.opkarol.oppets.interfaces.database;
  */
 
 import me.opkarol.oppets.databases.external.APIDatabase;
-import me.opkarol.oppets.misc.external.api.CooldownModule;
+import me.opkarol.oppets.api.misc.CooldownModule;
 import me.opkarol.oppets.pets.Pet;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;

@@ -27,8 +27,6 @@ import java.util.logging.Logger;
 
 public class Database {
     protected static Database database;
-    public boolean mySQLAccess = false;
-    private String sqlFormat = "";
     private final Plugin instance;
     private IOpPets opPets;
     private IPetsDatabase iPetsDatabase;
@@ -43,15 +41,15 @@ public class Database {
     }
 
     public void setupDatabase() {
-        mySQLAccess = instance.getConfig().getBoolean("sql.enabled");
-        cache = new LastIDCache(this);
-        switch (sqlFormat) {
+        String sqlFormat = instance.getConfig().getString("sql.type");
+        switch (sqlFormat != null ? sqlFormat : "") {
             case "mysql": {
                 iDatabase = new MySQLDatabase.MySQL().setupDatabase();
                 setDatabase(new MySQLDatabase());
                 break;
             }
-            case "flat": {
+            case "flat":
+            default: {
                 setDatabase(new FlatDatabase());
                 sendMultiMessageWarning("SQL database isn't enabled.", "Please enable it to get the best experience from OpPets plugin.", "Current database could have a problems with performance.", "For more information visit this page: https://github.com/ThisKarolGajda/OpPets/wiki/");
                 break;
@@ -59,6 +57,7 @@ public class Database {
         }
         apiDatabase = new APIDatabase(this);
         iPetsDatabase.startLogic();
+        cache = new LastIDCache();
     }
 
     public IPetsDatabase getDatabase() {

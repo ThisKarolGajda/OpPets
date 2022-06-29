@@ -9,15 +9,15 @@ package me.opkarol.oppets;
  */
 
 import me.opkarol.oppets.abilities.AbilitiesDatabase;
+import me.opkarol.oppets.api.entities.manager.IEntityManager;
 import me.opkarol.oppets.boosters.BoosterProvider;
 import me.opkarol.oppets.broadcasts.BroadcastManager;
 import me.opkarol.oppets.databases.Database;
 import me.opkarol.oppets.databases.external.PetsDatabase;
 import me.opkarol.oppets.eggs.EggManager;
-import me.opkarol.oppets.entities.manager.IEntityManager;
 import me.opkarol.oppets.interfaces.IOpPets;
-import me.opkarol.oppets.interfaces.database.IPetsDatabase;
 import me.opkarol.oppets.interfaces.IUtils;
+import me.opkarol.oppets.interfaces.database.IPetsDatabase;
 import me.opkarol.oppets.leaderboards.LeaderboardCounter;
 import me.opkarol.oppets.prestiges.PrestigeManager;
 import me.opkarol.oppets.databases.external.SkillDatabase;
@@ -49,8 +49,8 @@ public final class OpPets extends JavaPlugin implements IOpPets {
         abilitiesDatabase = new AbilitiesDatabase();
         eggManager = new EggManager();
         controller = new PetPluginController(opPets);
-        skillDatabase = new SkillDatabase();
         this.setEnabled(controller.setupVersion());
+        skillDatabase = new SkillDatabase();
         boosterProvider = new BoosterProvider(database);
         prestigeManager = new PrestigeManager();
         leaderboardCounter = new LeaderboardCounter(database);

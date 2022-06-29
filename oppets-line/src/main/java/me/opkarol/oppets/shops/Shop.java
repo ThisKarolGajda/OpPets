@@ -8,9 +8,9 @@ package me.opkarol.oppets.shops;
  = Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import me.opkarol.oppets.graphic.IGetter;
-import me.opkarol.oppets.items.builder.OpItemBuilder;
-import me.opkarol.oppets.items.data.OpItemShopData;
+import me.opkarol.oppets.api.graphic.IGetter;
+import me.opkarol.oppets.api.items.builder.OpItemBuilder;
+import me.opkarol.oppets.api.items.data.OpItemShopData;
 import me.opkarol.oppets.utils.external.FormatUtils;
 
 import java.util.List;

@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Mule extends net.minecraft.world.entity.animal.horse.Mule {
     public Mule(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityType.MULE, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 
     @Override

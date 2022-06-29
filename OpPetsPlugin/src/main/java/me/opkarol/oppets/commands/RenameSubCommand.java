@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static me.opkarol.oppets.utils.external.FormatUtils.returnMessage;
-import static me.opkarol.oppets.utils.OpUtils.getPetByName;
+import static me.opkarol.oppets.utils.Utils.getPetByName;
 
 public class RenameSubCommand extends OpSubCommand {
     private final Database database = Database.getInstance();

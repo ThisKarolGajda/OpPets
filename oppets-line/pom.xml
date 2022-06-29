@@ -2,14 +2,6 @@
 <!--
   ~ Copyright (c) 2021-2022.
   ~ [OpPets] ThisKarolGajda
-  ~  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
-  ~  compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-  ~   Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-  -->
-
-<!--
-  ~ Copyright (c) 2021-2022.
-  ~ [OpPets] ThisKarolGajda
   ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
   ~ http://www.apache.org/licenses/LICENSE-2.0
   ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -47,15 +39,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <target>1.8</target>
-                    <source>1.8</source>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
                 <executions>
@@ -70,7 +53,6 @@
                                 <excludes>
                                     <exclude>junit:junit</exclude>
                                     <exclude>org.hamcrest:hamcrest-core</exclude>
-                                    <exclude>com.googlecode.json-simple:json-simple</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
@@ -89,12 +71,6 @@
             <artifactId>spigot</artifactId>
             <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>

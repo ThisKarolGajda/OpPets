@@ -21,6 +21,6 @@ import java.util.Objects;
 public class Parrot extends EntityParrot {
     public Parrot(@NotNull Location location, @NotNull Player player, @NotNull Pet pet) {
         super(EntityTypes.PARROT, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-        new EntityManager().spawnEntity(this, player, pet);
+        
     }
 }
